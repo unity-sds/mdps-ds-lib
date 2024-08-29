@@ -5,7 +5,7 @@ from botocore.exceptions import ClientError
 
 from uds_lib.lib.aws.aws_cred import AwsCred
 
-LOGGER = logging.getLogger()
+LOGGER = logging.getLogger(__name__)
 
 
 class AwsParamStore(AwsCred):

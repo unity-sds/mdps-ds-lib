@@ -1,9 +1,9 @@
 import base64
 import json
+import logging
 from copy import deepcopy
 
 from uds_lib.lib.utils.json_validator import JsonValidator
-from uds_lib.lib.lambda_logger_generator import LambdaLoggerGenerator
 
 API_GATEWAY_EVENT_SCHEMA = {
     'type': 'object',
@@ -42,7 +42,7 @@ API_GATEWAY_EVENT_SCHEMA = {
         'httpMethod': {'type': 'string'},
     }
 }
-LOGGER = LambdaLoggerGenerator.get_logger(__name__, LambdaLoggerGenerator.get_level_from_env())
+LOGGER = logging.getLogger(__name__)
 
 
 SAMPLE = {

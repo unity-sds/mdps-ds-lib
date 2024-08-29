@@ -4,7 +4,7 @@ import os.path
 from glob import glob
 from multiprocessing import Manager
 
-from cumulus_lambda_functions.cumulus_stac.granules_catalog import GranulesCatalog
+from uds_lib.lib.cumulus_stac.granules_catalog import GranulesCatalog
 
 from uds_lib.lib.aws.aws_s3 import AwsS3
 from uds_lib.lib.processing_jobs.job_manager_memory import JobManagerMemory

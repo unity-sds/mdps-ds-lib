@@ -6,13 +6,12 @@ import requests
 
 from uds_lib.lib.cognito_login.cognito_token_retriever import CognitoTokenRetriever
 from uds_lib.lib.constants import Constants
-from cumulus_lambda_functions.uds_api.web_service_constants import WebServiceConstants
 
 LOGGER = logging.getLogger(__name__)
 
 
 class DapaClient:
-    def __init__(self, api_base_prefix=WebServiceConstants.API_PREFIX):
+    def __init__(self, api_base_prefix=Constants.API_PREFIX):
         self.__token_retriever = CognitoTokenRetriever()
         self.__token = None
         self.__dapa_base_api = None

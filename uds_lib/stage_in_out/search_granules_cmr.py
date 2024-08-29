@@ -4,7 +4,6 @@ import os
 
 import requests
 
-from cumulus_lambda_functions.cumulus_stac.stac_utils import StacUtils
 from uds_lib.stage_in_out.search_granules_abstract import SearchGranulesAbstract
 
 LOGGER = logging.getLogger(__name__)

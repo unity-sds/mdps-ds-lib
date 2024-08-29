@@ -3,7 +3,6 @@ import shutil
 import requests
 
 from uds_lib.stage_in_out.download_granules_abstract import DownloadGranulesAbstract
-import json
 import logging
 import os
 

@@ -2,7 +2,7 @@ import logging
 import time
 
 from uds_lib.stage_in_out.dapa_client import DapaClient
-from cumulus_lambda_functions.cumulus_stac.item_transformer import ItemTransformer
+from uds_lib.lib.cumulus_stac.item_transformer import ItemTransformer
 
 LOGGER = logging.getLogger(__name__)
 

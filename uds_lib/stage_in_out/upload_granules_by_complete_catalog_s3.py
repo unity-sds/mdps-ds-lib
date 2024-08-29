@@ -7,7 +7,7 @@ from uds_lib.lib.utils.file_utils import FileUtils
 
 from pystac import ItemCollection
 
-from cumulus_lambda_functions.cumulus_stac.granules_catalog import GranulesCatalog
+from uds_lib.lib.cumulus_stac.granules_catalog import GranulesCatalog
 from uds_lib.lib.processing_jobs.job_executor_abstract import JobExecutorAbstract
 from uds_lib.lib.processing_jobs.job_manager_abstract import JobManagerProps
 from uds_lib.lib.processing_jobs.job_manager_memory import JobManagerMemory

@@ -2,8 +2,8 @@ import json
 import logging
 import os
 
-from cumulus_lambda_functions.uds_api.web_service_constants import WebServiceConstants
 
+from uds_lib.lib.constants import Constants
 from uds_lib.stage_in_out.dapa_client import DapaClient
 from uds_lib.stage_in_out.search_granules_abstract import SearchGranulesAbstract
 
@@ -26,7 +26,7 @@ class SearchGranulesUnity(SearchGranulesAbstract):
         self.__date_to = ''
         self.__limit = 1000
         self.__verify_ssl = True
-        self.__api_base_prefix = WebServiceConstants.API_PREFIX
+        self.__api_base_prefix = Constants.API_PREFIX
 
     def __set_props_from_env(self):
         missing_keys = [k for k in [self.COLLECTION_ID_KEY] if k not in os.environ]
@@ -41,7 +41,7 @@ class SearchGranulesUnity(SearchGranulesAbstract):
 
         self.__date_from = os.environ.get(self.DATE_FROM_KEY, '')
         self.__date_to = os.environ.get(self.DATE_TO_KEY, '')
-        self.__api_base_prefix = os.environ.get('API_PREFIX', WebServiceConstants.API_PREFIX)
+        self.__api_base_prefix = os.environ.get('API_PREFIX', Constants.API_PREFIX)
         self.__verify_ssl = os.environ.get(self.VERIFY_SSL_KEY, 'TRUE').strip().upper() == 'TRUE'
         return self
 

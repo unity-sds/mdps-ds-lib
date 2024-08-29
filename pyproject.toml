@@ -16,7 +16,7 @@ requests-aws4auth="1.2.3"
 pystac="1.9.0"
 xmltodict="0.13.0"
 requests="2.31.0"
-
+tenacity="8.2.3"
 
 
 [build-system]

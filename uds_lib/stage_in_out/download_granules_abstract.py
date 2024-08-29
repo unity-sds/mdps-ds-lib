@@ -2,7 +2,7 @@ import json
 import logging
 import os
 from abc import ABC, abstractmethod
-from multiprocessing import Queue, Manager
+from multiprocessing import Manager
 
 import requests
 from uds_lib.lib.cognito_login.cognito_token_retriever import CognitoTokenRetriever
