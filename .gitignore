@@ -1,0 +1,16 @@
+.DS_Store
+.idea
+.eggs
+build
+scratch*
+local*
+*egg-info*
+dist
+__pycache__
+.env
+.terraform
+.run
+.terraform.lock.hcl
+terraform.tf
+terraform.tfvars
+cumulus_lambda_functions_deployment.zip
