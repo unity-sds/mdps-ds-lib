@@ -354,7 +354,7 @@ class ItemTransformer(StacTransformerAbstract):
             description=''.join(descriptions),
             extra_fields={
                 'file:size': input_dict['size'] if 'size' in input_dict else -1,
-                'file:checksum': input_dict['checksum'] if 'checksum' in input_dict else -1,
+                'file:checksum': input_dict['checksum'] if 'checksum' in input_dict else '',
             },
             roles=[input_dict['type']]
         )
