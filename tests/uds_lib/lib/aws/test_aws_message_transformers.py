@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from src.uds_lib.lib.aws.aws_message_transformers import AwsMessageTransformers
+from uds_lib.lib.aws.aws_message_transformers import AwsMessageTransformers
 
 
 class TestAwsMessageTransformers(TestCase):

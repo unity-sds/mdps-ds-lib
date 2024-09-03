@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from src.uds_lib.lib.aws.aws_cognito import AwsCognito
+from uds_lib.lib.aws.aws_cognito import AwsCognito
 
 
 class TestAwsCognitor(TestCase):

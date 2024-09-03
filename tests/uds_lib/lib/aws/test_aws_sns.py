@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from src.uds_lib.lib.aws.aws_sns import AwsSns
+from uds_lib.lib.aws.aws_sns import AwsSns
 
 
 class TestAwsSns(TestCase):

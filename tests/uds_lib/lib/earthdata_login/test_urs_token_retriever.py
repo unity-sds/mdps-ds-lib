@@ -1,8 +1,8 @@
 import os
 from unittest import TestCase
 
-from src.uds_lib.lib.constants import Constants
-from src.uds_lib.lib.earthdata_login.urs_token_retriever import URSTokenRetriever
+from uds_lib.lib.constants import Constants
+from uds_lib.lib.earthdata_login.urs_token_retriever import URSTokenRetriever
 
 
 class TestURSTokenRetriever(TestCase):

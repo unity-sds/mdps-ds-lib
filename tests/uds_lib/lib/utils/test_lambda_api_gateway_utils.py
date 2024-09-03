@@ -1,6 +1,6 @@
 import unittest
 
-from src.uds_lib.lib.utils.lambda_api_gateway_utils import LambdaApiGatewayUtils
+from uds_lib.lib.utils.lambda_api_gateway_utils import LambdaApiGatewayUtils
 
 
 class TestCognitoLogin(unittest.TestCase):

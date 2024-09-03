@@ -1,8 +1,8 @@
 from datetime import datetime
 from unittest import TestCase
 
-from src.uds_lib.lib.cumulus_stac.unity_collection_stac import UnityCollectionStac
-from src.uds_lib.lib.aws.aws_lambda import AwsLambda
+from uds_lib.lib.cumulus_stac.unity_collection_stac import UnityCollectionStac
+from uds_lib.lib.aws.aws_lambda import AwsLambda
 
 
 class TestAwsLambda(TestCase):

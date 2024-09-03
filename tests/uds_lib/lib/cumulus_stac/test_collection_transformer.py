@@ -2,8 +2,8 @@ import json
 from unittest import TestCase
 
 
-from src.uds_lib.lib.cumulus_stac.collection_transformer import STAC_COLLECTION_SCHEMA, CollectionTransformer
-from src.uds_lib.lib.utils.json_validator import JsonValidator
+from uds_lib.lib.cumulus_stac.collection_transformer import STAC_COLLECTION_SCHEMA, CollectionTransformer
+from uds_lib.lib.utils.json_validator import JsonValidator
 
 
 class TestCollectionTransformer(TestCase):

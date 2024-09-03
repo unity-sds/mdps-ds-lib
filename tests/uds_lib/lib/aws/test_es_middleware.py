@@ -2,11 +2,8 @@ import os
 import time
 from unittest import TestCase
 
-from src.uds_lib.lib.uds_db.db_constants import DBConstants
-
-from src.uds_lib.lib.aws.es_abstract import ESAbstract
-
-from src.uds_lib.lib.aws.es_factory import ESFactory
+from uds_lib.lib.aws.es_abstract import ESAbstract
+from uds_lib.lib.aws.es_factory import ESFactory
 
 
 class TestESMiddleware(TestCase):
@@ -15,7 +12,7 @@ class TestESMiddleware(TestCase):
         # os.environ['ES_URL'] = 'localhost'
         os.environ['ES_PORT'] = '9200'
         es: ESAbstract = ESFactory().get_instance('NO_AUTH',
-                                                 index=DBConstants.collections_index,
+                                                 index='unity_collections',
                                                  base_url=os.getenv('ES_URL'),
                                                  port=int(os.getenv('ES_PORT', '443'))
                                                  )

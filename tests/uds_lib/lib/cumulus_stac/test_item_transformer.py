@@ -1,8 +1,8 @@
 import json
 from unittest import TestCase
 
-from src.uds_lib.lib.cumulus_stac.item_transformer import ItemTransformer, STAC_ITEM_SCHEMA
-from src.uds_lib.lib.utils.json_validator import JsonValidator
+from uds_lib.lib.cumulus_stac.item_transformer import ItemTransformer, STAC_ITEM_SCHEMA
+from uds_lib.lib.utils.json_validator import JsonValidator
 
 
 class TestItemTransformer(TestCase):

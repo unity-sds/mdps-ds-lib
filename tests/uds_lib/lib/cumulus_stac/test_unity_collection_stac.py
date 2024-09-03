@@ -4,7 +4,7 @@ from unittest import TestCase
 
 import pystac
 
-from src.uds_lib.lib.cumulus_stac.unity_collection_stac import \
+from uds_lib.lib.cumulus_stac.unity_collection_stac import \
     UnityCollectionStac
 
 

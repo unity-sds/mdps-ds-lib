@@ -1,7 +1,7 @@
 import json
 from unittest import TestCase
 
-from src.uds_lib.lib.cumulus_stac.stac_utils import StacUtils
+from uds_lib.lib.cumulus_stac.stac_utils import StacUtils
 
 
 class TestStacUtils(TestCase):

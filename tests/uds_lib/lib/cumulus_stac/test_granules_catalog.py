@@ -2,8 +2,8 @@ import os
 import tempfile
 from unittest import TestCase
 
-from src.uds_lib.lib.cumulus_stac.granules_catalog import GranulesCatalog
-from src.uds_lib.lib.utils.file_utils import FileUtils
+from uds_lib.lib.cumulus_stac.granules_catalog import GranulesCatalog
+from uds_lib.lib.utils.file_utils import FileUtils
 
 
 class TestGranulesCatalog(TestCase):

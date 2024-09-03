@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from src.uds_lib.lib.utils.file_utils import FileUtils
+from uds_lib.lib.utils.file_utils import FileUtils
 
 
 class TestFileUtils(TestCase):

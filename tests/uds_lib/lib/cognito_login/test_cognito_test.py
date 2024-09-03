@@ -1,7 +1,7 @@
 import unittest
 
-from src.uds_lib.lib.cognito_login.cognito_login import CognitoLogin
-from src.uds_lib.lib.utils.file_utils import FileUtils
+from uds_lib.lib.cognito_login.cognito_login import CognitoLogin
+from uds_lib.lib.utils.file_utils import FileUtils
 
 
 class TestCognitoLogin(unittest.TestCase):

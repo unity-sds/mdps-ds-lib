@@ -1,8 +1,8 @@
 import os
 from unittest import TestCase
 
-from src.uds_lib.lib.cognito_login.cognito_token_retriever import CognitoTokenRetriever
-from src.uds_lib.lib.constants import Constants
+from uds_lib.lib.cognito_login.cognito_token_retriever import CognitoTokenRetriever
+from uds_lib.lib.constants import Constants
 
 
 class TestCognitoTokenRetriever(TestCase):
