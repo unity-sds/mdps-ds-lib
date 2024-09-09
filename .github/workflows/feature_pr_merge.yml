@@ -22,7 +22,7 @@ jobs:
       - run: |
           echo "${PR_TITLE} -- ${PR_NUMBER}"
       - run: |
-          python3 "${GITHUB_WORKSPACE}/ci.cd/update_setup_version.py" FEATURE
+          python3 "${GITHUB_WORKSPACE}/.ci/update_setup_version.py" FEATURE
       - run: |
-          chmod +x "${GITHUB_WORKSPACE}/ci.cd/update_version_commit.sh"
-          "${GITHUB_WORKSPACE}/ci.cd/update_version_commit.sh"
+          chmod +x "${GITHUB_WORKSPACE}/.ci/update_version_commit.sh"
+          "${GITHUB_WORKSPACE}/.ci/update_version_commit.sh"
