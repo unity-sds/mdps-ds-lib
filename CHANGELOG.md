@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - [#2](https://github.com/unity-sds/unity-data-services/pull/2) fix: getting it working.
 
+## [0.1.0-D-0.0.2] - 2024-09-09
+### Fixed
+- [#4](https://github.com/unity-sds/unity-data-services/pull/4) fix: sample feature 2
+
 ## [0.1.0] - 2024-09-10
 ### Added
 - Copied code form https://github.com/unity-sds/unity-data-services
