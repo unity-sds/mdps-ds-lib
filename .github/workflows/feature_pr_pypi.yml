@@ -1,4 +1,4 @@
-name: Feature PR Merge
+name: Feature PR PYPI
 on:
   pull_request:
     types: [ closed ]
@@ -16,14 +16,13 @@ jobs:
   if_merged:
     if: github.event.pull_request.merged == true && (contains(github.event.pull_request.title, 'update version + change log'))
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
         with:
           python-version: '3.9'
       - run: |
-          python3 -m pip python3 -m pip install poetry
+          python3 -m pip install poetry
       - run: |
           python3 -m poetry build
       - run: |
