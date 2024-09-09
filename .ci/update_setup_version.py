@@ -57,7 +57,7 @@ class VersionUpdate:
         if is_release and '-D-' not in current_version:
             raise ValueError(f'no development updates to release: {current_version}')
 
-        main_version, dev_version = current_version.split('-D-')
+        main_version, dev_version = current_version.split('-D-') if '-D-' in current_version else [current_version, '0.0.0']
         if is_release:
             print('this is a formal release')
             self.major1, self.minor1, self.patch1 = [int(k) for k in dev_version.split('.')]
@@ -110,5 +110,5 @@ class VersionUpdate:
 if __name__ == '__main__':
     is_releasing = argv[1].strip().upper() == 'RELEASE'
     version_update = VersionUpdate()
-    new_version_from_setup = version_update.update_version(True)
+    new_version_from_setup = version_update.update_version(is_releasing)
     version_update.update_change_log()
