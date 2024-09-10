@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - [#4](https://github.com/unity-sds/unity-data-services/pull/4) fix: sample feature 2
 
+## [0.1.0.dev003] - 2024-09-10
+### Fixed
+- [#6](https://github.com/unity-sds/unity-data-services/pull/6) fix: valid pypi version
+
 ## [0.1.0] - 2024-09-10
 ### Added
 - Copied code form https://github.com/unity-sds/unity-data-services
