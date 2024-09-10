@@ -54,10 +54,11 @@ class VersionUpdate:
         # Find the current version using the regular expression pattern
         current_version = re.search(self.version_pattern, setup_contents).group(1)
         print(f'current_version: {current_version}')
-        if is_release and '-D-' not in current_version:
+        if is_release and '.dev' not in current_version:
             raise ValueError(f'no development updates to release: {current_version}')
 
-        main_version, dev_version = current_version.split('-D-') if '-D-' in current_version else [current_version, '0.0.0']
+        main_version, dev_version = current_version.split('.dev') if '.dev' in current_version else [current_version, '0' *6]
+        dev_version = '.'.join([dev_version[i:i+2] for i in range(0, 6, 2)])
         if is_release:
             print('this is a formal release')
             self.major1, self.minor1, self.patch1 = [int(k) for k in dev_version.split('.')]
@@ -65,8 +66,8 @@ class VersionUpdate:
         else:
             print('this is a feature merge')
             self.get_new_bumps_from_title()
-            new_version = self.get_new_version(dev_version)
-            new_version = f'{main_version}-D-{new_version}'
+            new_version = self.get_new_version(dev_version).replace('.', '')
+            new_version = f'{main_version}.dev{new_version}'
         print(f'new_version: {new_version}')
 
         # Replace the old version with the new version in setup.py
