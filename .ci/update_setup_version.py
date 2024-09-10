@@ -66,7 +66,7 @@ class VersionUpdate:
         else:
             print('this is a feature merge')
             self.get_new_bumps_from_title()
-            new_version = self.get_new_version(dev_version).replace('.', '')
+            new_version = ''.join([f'{i}:02' for i in self.get_new_version(dev_version).split('.')])
             new_version = f'{main_version}.dev{new_version}'
         print(f'new_version: {new_version}')
 

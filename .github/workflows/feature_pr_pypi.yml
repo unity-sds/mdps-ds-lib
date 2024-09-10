@@ -22,7 +22,7 @@ jobs:
         with:
           python-version: '3.9'
       - run: |
-          python3 -m pip install poetry
+          python3 -m pip install poetry twine
       - run: |
           python3 -m poetry build
       - run: |
