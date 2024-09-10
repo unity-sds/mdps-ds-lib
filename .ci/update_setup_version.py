@@ -90,7 +90,7 @@ class VersionUpdate:
         ]
         with open(change_log_path, 'r') as change_log_file:
             change_logs = change_log_file.read().splitlines()
-        pattern = r"## \[\d+\.\d+\.\d+\] - \d{4}-\d{2}-\d{2}"
+        pattern = r"## \[\d+\.\d+\.\d+.*\] - \d{4}-\d{2}-\d{2}"
 
         inserting_line = 0
         for i, each_line in enumerate(change_logs):
