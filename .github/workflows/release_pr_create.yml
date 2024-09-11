@@ -10,18 +10,19 @@ env:
   PR_TITLE: ${{ github.event.pull_request.title }}
   GH_TOKEN: ${{ github.token }}
 jobs:
-  if: !(contains(github.event.pull_request.title, 'update version + change log'))
-  runs-on: ubuntu-latest
+  if_pr_opened:
+    if: github.event.pull_request.merged == false && !(contains(github.event.pull_request.title, 'update version + change log'))
+    runs-on: ubuntu-latest
 
-  steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-python@v3
-      with:
-        python-version: '3.9'
-    - run: |
-        echo "${PR_TITLE} -- ${PR_NUMBER}"
-    - run: |
-        python3 "${GITHUB_WORKSPACE}/.ci/update_setup_version.py" RELEASE
-    - run: |
-        chmod +x "${GITHUB_WORKSPACE}/.ci/update_version_commit.sh"
-        "${GITHUB_WORKSPACE}/.ci/update_version_commit.sh"
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
+        with:
+          python-version: '3.9'
+      - run: |
+          echo "${PR_TITLE} -- ${PR_NUMBER}"
+      - run: |
+          python3 "${GITHUB_WORKSPACE}/.ci/update_setup_version.py" RELEASE
+      - run: |
+          chmod +x "${GITHUB_WORKSPACE}/.ci/update_version_commit.sh"
+          "${GITHUB_WORKSPACE}/.ci/update_version_commit.sh"

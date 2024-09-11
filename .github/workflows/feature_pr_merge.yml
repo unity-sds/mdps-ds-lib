@@ -2,7 +2,6 @@ name: Feature PR Merge
 on:
   pull_request:
     types: [ closed ]
-    branches: [ develop ]
 
 env:
   ARTIFACT_BASE_NAME: mdps-ds-lib
@@ -11,7 +10,7 @@ env:
   GH_TOKEN: ${{ github.token }}
 jobs:
   if_merged:
-    if: github.event.pull_request.merged == true && !(contains(github.event.pull_request.title, 'update version + change log'))
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'develop' && !(contains(github.event.pull_request.title, 'update version + change log'))
     runs-on: ubuntu-latest
 
     steps:
