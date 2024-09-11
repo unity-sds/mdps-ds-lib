@@ -11,7 +11,7 @@ env:
   GH_TOKEN: ${{ github.token }}
 jobs:
   if_pr_opened:
-    if: !(contains(github.event.pull_request.title, 'update version + change log'))
+    if: github.event.pull_request.merged == false && !(contains(github.event.pull_request.title, 'update version + change log'))
     runs-on: ubuntu-latest
 
     steps:
