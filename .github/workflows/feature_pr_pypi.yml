@@ -1,0 +1,29 @@
+name: Feature PR PYPI
+on:
+  pull_request:
+    types: [ closed ]
+    branches: [ develop ]
+
+env:
+  ARTIFACT_BASE_NAME: mdps-ds-lib
+  PR_NUMBER: ${{ github.event.number }}
+  PR_TITLE: ${{ github.event.pull_request.title }}
+  GH_TOKEN: ${{ github.token }}
+  TWINE_USERNAME: __token__
+  TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+
+jobs:
+  if_merged:
+    if: github.event.pull_request.merged == true && (contains(github.event.pull_request.title, 'update version + change log'))
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
+        with:
+          python-version: '3.9'
+      - run: |
+          python3 -m pip install poetry twine
+      - run: |
+          python3 -m poetry build
+      - run: |
+          python3 -m twine upload --repository pypi dist/*
