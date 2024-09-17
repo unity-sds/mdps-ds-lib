@@ -25,4 +25,4 @@ jobs:
           python3 "${GITHUB_WORKSPACE}/.ci/update_setup_version.py" RELEASE
       - run: |
           chmod +x "${GITHUB_WORKSPACE}/.ci/update_version_commit.sh"
-          "${GITHUB_WORKSPACE}/.ci/update_version_commit.sh"
+          "${GITHUB_WORKSPACE}/.ci/update_version_commit.sh main"

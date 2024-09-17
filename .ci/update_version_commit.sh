@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
-current_branch=`git branch --show-current`
+
+if [ -n "$1" ]; then
+    current_branch="$1"
+else
+    current_branch=`git branch --show-current`
+fi
+
 echo "current_branch: ${current_branch}"
 #current_branch='develop-2023-10-02'
 current_date=$(date +%Y-%m-%dT%H-%M-%S)
