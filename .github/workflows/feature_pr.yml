@@ -1,0 +1,53 @@
+name: Feature PR Merge / PYPI
+on:
+  pull_request:
+    types: [ closed ]
+
+env:
+  ARTIFACT_BASE_NAME: mdps-ds-lib
+  PR_NUMBER: ${{ github.event.number }}
+  PR_TITLE: ${{ github.event.pull_request.title }}
+  GH_TOKEN: ${{ github.token }}
+  TWINE_USERNAME: __token__
+  TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+
+jobs:
+  if_merged:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
+        with:
+          python-version: '3.9'
+
+      - name: Log PR info
+        if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'develop' && !(contains(github.event.pull_request.title, 'update version + change log'))
+        run: |
+          echo "${PR_TITLE} -- ${PR_NUMBER}"
+
+      - name: Update setup version
+        if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'develop' && !(contains(github.event.pull_request.title, 'update version + change log'))
+        run: |
+          python3 "${GITHUB_WORKSPACE}/.ci/update_setup_version.py" FEATURE
+
+      - name: Run version commit script
+        if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'develop' && !(contains(github.event.pull_request.title, 'update version + change log'))
+        run: |
+          chmod +x "${GITHUB_WORKSPACE}/.ci/update_version_commit.sh"
+          "${GITHUB_WORKSPACE}/.ci/update_version_commit.sh"
+
+      - name: Install dependencies
+        if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'develop' && contains(github.event.pull_request.title, 'update version + change log')
+        run: |
+          python3 -m pip install poetry twine
+
+      - name: Build the project
+        if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'develop' && contains(github.event.pull_request.title, 'update version + change log')
+        run: |
+          python3 -m poetry build
+
+      - name: Upload to PyPI
+        if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'develop' && contains(github.event.pull_request.title, 'update version + change log')
+        run: |
+          python3 -m twine upload --repository pypi dist/*
+

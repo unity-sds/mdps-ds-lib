@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mdps-ds-lib"
-version = "0.1.0"
+version="0.3.0"
 description = "Mission Data System - MDPS (Unity) Data Service Core library"
 authors = ["Wai Phyo <wai.phyo@jpl.nasa.gov>"]
 license = "Apache 2.0"
