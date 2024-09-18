@@ -5,10 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+===================================================================
+
+## [0.5.0.dev000001] - 2024-09-18
+### Fixed
+- [#39](https://github.com/unity-sds/unity-data-services/pull/39) fix: logic is a bit wrong
+
 ## [0.5.0] - 2024-09-18
 
 - [#36](https://github.com/unity-sds/unity-data-services/pull/36) release
 
+-----------------------------------------
 ## [0.4.0.dev000200] - 2024-09-18
 ### Changed
 - [#34](https://github.com/unity-sds/unity-data-services/pull/34) feat: new ways to write release notes
@@ -17,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#32](https://github.com/unity-sds/unity-data-services/pull/32) release
 
+-----------------------------------------
 ## [0.3.0.dev000100] - 2024-09-18
 ### Changed
 - [#30](https://github.com/unity-sds/unity-data-services/pull/30) feat: merge into a single ci/cd
@@ -25,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#27](https://github.com/unity-sds/unity-data-services/pull/27) release
 
+-----------------------------------------
 ## [0.2.0.dev000100] - 2024-09-17
 ### Changed
 - [#21](https://github.com/unity-sds/unity-data-services/pull/21) feat: sample feature
@@ -33,10 +42,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [#19](https://github.com/unity-sds/unity-data-services/pull/19) release
 
+-----------------------------------------
 ## [0.1.1] - 2024-09-11
 
 - [#16](https://github.com/unity-sds/unity-data-services/pull/16) release
 
+-----------------------------------------
 ## [0.1.0.dev000005] - 2024-09-10
 ### Fixed
 - [#13](https://github.com/unity-sds/unity-data-services/pull/13) fix: wrong insertion location in changelog

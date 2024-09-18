@@ -80,7 +80,7 @@ class VersionUpdate:
         print(f"Version bumped up from {current_version} to {new_version}")
         return new_version
 
-    def update_change_log(self):
+    def update_change_log(self, is_releasing=False):
         change_log_path = os.path.join(self.root_dir, 'CHANGELOG.md')
         change_log_blob = [
             f'## [{new_version_from_setup}] - {datetime.now().strftime("%Y-%m-%d")}',
@@ -88,6 +88,8 @@ class VersionUpdate:
             f'- [#{self.pr_number}](https://github.com/unity-sds/unity-data-services/pull/{self.pr_number}) {self.pr_title}',
             ''
         ]
+        if is_releasing:
+            change_log_blob.append('-----------------------------------------')
         with open(change_log_path, 'r') as change_log_file:
             change_logs = change_log_file.read().splitlines()
         pattern = r"## \[\d+\.\d+\.\d+.*\] - \d{4}-\d{2}-\d{2}"
@@ -120,8 +122,18 @@ class VersionUpdate:
         with open(change_log_path, 'r') as ff:
             all_lines = ff.read().splitlines()
         i = 0
+        start = end = -1  # Find the previous version section range
         while i < len(all_lines):
-            if f'{software_version}.dev' not in all_lines[i]:
+            if '-----------------------------------------' in all_lines[i]:
+                if start == end:
+                    start = i+1
+                else:
+                    end = i
+                    break
+            i += 1
+        i = start
+        while i < end:
+            if f'.dev' not in all_lines[i]:
                 i += 1
                 continue
             release_lines[all_lines[i+1].replace('###', '').strip()].append(all_lines[i+2])
@@ -150,7 +162,7 @@ if __name__ == '__main__':
         new_version_from_setup = version_update.generate_release_msg()
     elif argv[1].strip().upper() == 'RELEASE':
         new_version_from_setup = version_update.update_version(True)
-        version_update.update_change_log()
+        version_update.update_change_log(True)
     else:
         new_version_from_setup = version_update.update_version(False)
-        version_update.update_change_log()
+        version_update.update_change_log(False)
