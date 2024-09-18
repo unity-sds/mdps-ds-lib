@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2024-09-18
+
+- [#36](https://github.com/unity-sds/unity-data-services/pull/36) release
+
 ## [0.4.0.dev000200] - 2024-09-18
 ### Changed
 - [#34](https://github.com/unity-sds/unity-data-services/pull/34) feat: new ways to write release notes
