@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ===================================================================
 
+## [0.5.0.dev000001] - 2024-09-18
+### Fixed
+- [#39](https://github.com/unity-sds/unity-data-services/pull/39) fix: logic is a bit wrong
+
 ## [0.5.0] - 2024-09-18
 
 - [#36](https://github.com/unity-sds/unity-data-services/pull/36) release
