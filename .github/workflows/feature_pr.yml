@@ -1,4 +1,4 @@
-name: Feature PR Merge / PYPI
+name: PR Merge / PYPI
 on:
   pull_request:
     types: [ closed ]
@@ -20,34 +20,100 @@ jobs:
         with:
           python-version: '3.9'
 
-      - name: Log PR info
-        if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'develop' && !(contains(github.event.pull_request.title, 'update version + change log'))
+      - name: Develop -- Log PR info
+        if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'develop' && !(contains(github.event.pull_request.title, 'update version + change log')) && !(contains(github.event.pull_request.title, 'catchup from main'))
         run: |
           echo "${PR_TITLE} -- ${PR_NUMBER}"
 
-      - name: Update setup version
-        if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'develop' && !(contains(github.event.pull_request.title, 'update version + change log'))
+      - name: Develop -- Update setup version
+        if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'develop' && !(contains(github.event.pull_request.title, 'update version + change log')) && !(contains(github.event.pull_request.title, 'catchup from main'))
         run: |
           python3 "${GITHUB_WORKSPACE}/.ci/update_setup_version.py" FEATURE
 
-      - name: Run version commit script
-        if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'develop' && !(contains(github.event.pull_request.title, 'update version + change log'))
+      - name: Develop -- Run version commit script
+        if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'develop' && !(contains(github.event.pull_request.title, 'update version + change log')) && !(contains(github.event.pull_request.title, 'catchup from main'))
         run: |
           chmod +x "${GITHUB_WORKSPACE}/.ci/update_version_commit.sh"
           "${GITHUB_WORKSPACE}/.ci/update_version_commit.sh"
 
-      - name: Install dependencies
+
+
+
+
+      - name: MAIN -- Log PR info
+        if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main' && (contains(github.event.pull_request.title, 'RELEASE'))
+        run: |
+          echo "${PR_TITLE} -- ${PR_NUMBER}"
+
+      - name: MAIN -- Update setup version
+        if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main' && (contains(github.event.pull_request.title, 'RELEASE'))
+        run: |
+          python3 "${GITHUB_WORKSPACE}/.ci/update_setup_version.py" RELEASE
+
+      - name: MAIN -- Run version commit script
+        if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main' && (contains(github.event.pull_request.title, 'RELEASE'))
+        run: |
+          chmod +x "${GITHUB_WORKSPACE}/.ci/update_version_commit.sh"
+          "${GITHUB_WORKSPACE}/.ci/update_version_commit.sh" main
+
+
+
+
+
+
+
+      - name: Develop -- Install dependencies
         if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'develop' && contains(github.event.pull_request.title, 'update version + change log')
         run: |
           python3 -m pip install poetry twine
 
-      - name: Build the project
+      - name: Develop -- Build the project
         if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'develop' && contains(github.event.pull_request.title, 'update version + change log')
         run: |
           python3 -m poetry build
 
-      - name: Upload to PyPI
+      - name: Develop -- Upload to PyPI
         if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'develop' && contains(github.event.pull_request.title, 'update version + change log')
         run: |
           python3 -m twine upload --repository pypi dist/*
 
+
+
+
+      - name: MAIN -- Install dependencies
+        if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main' && contains(github.event.pull_request.title, 'update version + change log')
+        run: |
+          python3 -m pip install poetry twine
+
+      - name: MAIN -- Build the project
+        if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main' && contains(github.event.pull_request.title, 'update version + change log')
+        run: |
+          python3 -m poetry build
+
+      - name: MAIN -- Upload to PyPI
+        if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main' && contains(github.event.pull_request.title, 'update version + change log')
+        run: |
+          python3 -m twine upload --repository pypi dist/*
+
+      - name: MAIN -- Upload to PyPI
+        if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main' && contains(github.event.pull_request.title, 'update version + change log')
+        run: |
+          # make file runnable, might not be necessary
+          chmod +x "${GITHUB_WORKSPACE}/.ci/store_version.sh"
+          "${GITHUB_WORKSPACE}/.ci/store_version.sh"
+
+      - name: MAIN -- Create Release
+        if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main' && contains(github.event.pull_request.title, 'update version + change log')
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: "v${{ env.software_version }}"
+          release_name: "Release v${{ env.software_version }} - ${{ github.ref }}"
+          body: |
+            Changes in this release:
+            ${{ github.event.head_commit.message }}
+          body_path: release.md
+          draft: false
+          prerelease: false
