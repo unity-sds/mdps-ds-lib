@@ -107,9 +107,50 @@ class VersionUpdate:
             change_log_file.write(change_logs)
         return
 
+    def generate_release_msg(self):
+        software_version = os.environ.get('software_version', '')
+        if software_version == '':
+            raise ValueError(f'missing software_version')
+        release_lines = {
+            'Added': ['### Added'],
+            'Fixed': ['### Fixed'],
+            'Changed': ['### Changed'],
+        }
+        change_log_path = os.path.join(self.root_dir, 'CHANGELOG.md')
+        with open(change_log_path, 'r') as ff:
+            all_lines = ff.read().splitlines()
+        i = 0
+        while i < len(all_lines):
+            if f'{software_version}.dev' not in all_lines[i]:
+                i += 1
+                continue
+            release_lines[all_lines[i+1].replace('###', '').strip()].append(all_lines[i+2])
+            i += 3
+
+        message = [
+            f'Link: https://pypi.org/project/mdps-ds-lib/{software_version}/',
+            '',
+            'Changes in this release:',
+            ''
+        ] + \
+            (release_lines['Added'] if len(release_lines['Added']) > 1 else []) + \
+            (release_lines['Fixed'] if len(release_lines['Fixed']) > 1 else []) + \
+            (release_lines['Changed'] if len(release_lines['Changed']) > 1 else [])
+        message = '\n'.join(message)
+        release_path = os.path.join(self.root_dir, 'release_body.txt')
+        with open(release_path, 'w') as f:
+            f.write(message)
+        return message
+
 
 if __name__ == '__main__':
-    is_releasing = argv[1].strip().upper() == 'RELEASE'
+    arg1 = argv[1].strip().upper()
     version_update = VersionUpdate()
-    new_version_from_setup = version_update.update_version(is_releasing)
-    version_update.update_change_log()
+    if arg1 == 'RELEASE_BODY':
+        new_version_from_setup = version_update.generate_release_msg()
+    elif argv[1].strip().upper() == 'RELEASE':
+        new_version_from_setup = version_update.update_version(True)
+        version_update.update_change_log()
+    else:
+        new_version_from_setup = version_update.update_version(False)
+        version_update.update_change_log()
