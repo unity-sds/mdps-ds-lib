@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [0.3.0.dev000100] - 2024-09-18
+### Changed
+- [#30](https://github.com/unity-sds/unity-data-services/pull/30) feat: merge into a single ci/cd
+
 ## [0.3.0] - 2024-09-17
 
 - [#27](https://github.com/unity-sds/unity-data-services/pull/27) release
