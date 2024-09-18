@@ -95,12 +95,24 @@ jobs:
         run: |
           python3 -m twine upload --repository pypi dist/*
 
+      - name: MAIN -- Catch up PR
+        if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main' && contains(github.event.pull_request.title, 'update version + change log')
+        run: |
+          chmod +x "${GITHUB_WORKSPACE}/.ci/catchup_pr.sh"
+          "${GITHUB_WORKSPACE}/.ci/catchup_pr.sh"
+
+
       - name: MAIN -- Upload to PyPI
         if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main' && contains(github.event.pull_request.title, 'update version + change log')
         run: |
           # make file runnable, might not be necessary
           chmod +x "${GITHUB_WORKSPACE}/.ci/store_version.sh"
           "${GITHUB_WORKSPACE}/.ci/store_version.sh"
+
+      - name: MAIN -- Create Release Body
+        if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main' && contains(github.event.pull_request.title, 'update version + change log')
+        run: |
+          python3 "${GITHUB_WORKSPACE}/.ci/update_setup_version.py" RELEASE_BODY
 
       - name: MAIN -- Create Release
         if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main' && contains(github.event.pull_request.title, 'update version + change log')
@@ -111,9 +123,6 @@ jobs:
         with:
           tag_name: "v${{ env.software_version }}"
           release_name: "Release v${{ env.software_version }} - ${{ github.ref }}"
-          body: |
-            Changes in this release:
-            ${{ github.event.head_commit.message }}
-          body_path: release.md
+          body_path: ./release_body.txt
           draft: false
           prerelease: false
