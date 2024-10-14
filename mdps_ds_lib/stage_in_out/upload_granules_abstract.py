@@ -1,3 +1,18 @@
+import logging
+
+# Define the new log level AUDIT
+AUDIT_LEVEL = 60
+logging.addLevelName(AUDIT_LEVEL, "AUDIT")
+
+
+# Define a custom method for logging at AUDIT level
+def audit(self, message, *args, **kwargs):
+    if self.isEnabledFor(AUDIT_LEVEL):
+        self._log(AUDIT_LEVEL, message, args, **kwargs)
+
+
+logging.Logger.audit = audit
+
 import os
 from abc import ABC, abstractmethod
 

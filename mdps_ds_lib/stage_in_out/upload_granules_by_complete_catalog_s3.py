@@ -64,7 +64,7 @@ class UploadItemExecutor(JobExecutorAbstract):
             uploading_current_granule_stac = None
             for asset_type, asset_hrefs in current_assets.items():
                 for each_asset_href in asset_hrefs:
-                    LOGGER.debug(f'uploading {asset_type}, {each_asset_href}')
+                    LOGGER.audit(f'uploading {asset_type}: {each_asset_href}')
                     s3_url = self.__s3.upload(each_asset_href, self.__staging_bucket,
                                               f'{self.__collection_id}/{self.__collection_id}:{current_granule_id}',
                                               self.__delete_files)
