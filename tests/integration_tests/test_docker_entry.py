@@ -18,7 +18,6 @@ from pystac import Item, Asset, Catalog, Link, ItemCollection
 
 from mdps_ds_lib.lib.constants import Constants
 
-from cumulus_lambda_functions.docker_entrypoint.__main__ import choose_process
 from mdps_ds_lib.lib.utils.time_utils import TimeUtils
 from mdps_ds_lib.lib.utils.file_utils import FileUtils
 
