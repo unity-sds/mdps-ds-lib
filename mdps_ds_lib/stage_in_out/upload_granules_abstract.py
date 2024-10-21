@@ -47,6 +47,8 @@ class UploadGranulesAbstract(ABC):
         self._collection_id = os.environ.get(self.COLLECTION_ID_KEY)
         self._staging_bucket = os.environ.get(self.STAGING_BUCKET_KEY)
         self._result_path_prefix = os.environ.get(self.RESULT_PATH_PREFIX, self.DEFAULT_RESULT_PATH_PREFIX)
+        if self._result_path_prefix is None or self._result_path_prefix.strip() == '':
+            self._result_path_prefix = self.DEFAULT_RESULT_PATH_PREFIX
         self._result_path_prefix = self._result_path_prefix[:-1] if self._result_path_prefix.endswith('/') else self._result_path_prefix
         self._result_path_prefix = self._result_path_prefix[1:] if self._result_path_prefix.startswith('/') else self._result_path_prefix
 

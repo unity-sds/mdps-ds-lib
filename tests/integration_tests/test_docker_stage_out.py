@@ -1,4 +1,5 @@
 import logging
+
 logging.basicConfig(level=20, format="%(asctime)s [%(levelname)s] [%(name)s::%(lineno)d] %(message)s")
 
 from datetime import datetime
@@ -30,7 +31,7 @@ class TestDockerStageOut(TestCase):
         self.tenant = 'UDS_MY_LOCAL_ARCHIVE_TEST'  # 'uds_local_test'  # 'uds_sandbox'
         self.tenant_venue = 'DEV'  # 'DEV1'  # 'dev'
         self.collection_name = 'UDS_UNIT_COLLECTION'  # 'uds_collection'  # 'sbx_collection'
-        self.collection_version = '24.08.29.09.00'.replace('.', '')  # '2402011200'
+        self.collection_version = '24.10.21.12.00'.replace('.', '')  # '2402011200'
 
     def not_in_used_test_03_upload(self):
         os.environ[Constants.USERNAME] = '/unity/uds/user/wphyo/username'
@@ -791,7 +792,7 @@ class TestDockerStageOut(TestCase):
         os.environ['COLLECTION_ID'] = temp_collection_id
         os.environ['STAGING_BUCKET'] = 'uds-sbx-cumulus-staging'
         os.environ['VERIFY_SSL'] = 'FALSE'
-        os.environ['RESULT_PATH_PREFIX'] = 'stage_out'
+        os.environ['RESULT_PATH_PREFIX'] = ''
         os.environ['PARALLEL_COUNT'] = '1'
 
         if len(argv) > 1:
@@ -882,7 +883,7 @@ class TestDockerStageOut(TestCase):
             """
             s3 = AwsS3()
             s3_keys = [k for k in s3.get_child_s3_files(os.environ['STAGING_BUCKET'],
-                                  f"{os.environ['RESULT_PATH_PREFIX']}/successful_features_{starting_time}",
+                                  f"stage_out/successful_features_{starting_time}",
                                   )]
             s3_keys = sorted(s3_keys)
             print(f's3_keys: {s3_keys}')
