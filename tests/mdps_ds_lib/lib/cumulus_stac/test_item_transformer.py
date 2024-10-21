@@ -151,7 +151,7 @@ class TestItemTransformer(TestCase):
                                     "title": "P1570515ATMSSCIENCEAAT16032024518500.PDS",
                                     "description": "size=760;",
                                     'file:size': 760,
-                                    'file:checksum': '',
+                                    'file:checksum': '00000000000000000000000000000000',
                                     "roles": [
                                         "data"
                                     ]
@@ -161,7 +161,7 @@ class TestItemTransformer(TestCase):
                                     "title": "P1570515ATMSSCIENCEAAT16032024518501.PDS",
                                     "description": "size=18084600;",
                                     'file:size': 18084600,
-                                    'file:checksum': '',
+                                    'file:checksum': '00000000000000000000000000000000',
                                     "roles": [
                                         "metadata"
                                     ]
@@ -171,7 +171,7 @@ class TestItemTransformer(TestCase):
                                     "title": "P1570515ATMSSCIENCEAAT16032024518501.PDS.xml",
                                     "description": "size=9547;",
                                     'file:size': 9547,
-                                    'file:checksum': '',
+                                    'file:checksum': '00000000000000000000000000000000',
                                     "roles": [
                                         "metadata"
                                     ]
@@ -181,7 +181,7 @@ class TestItemTransformer(TestCase):
                                     "title": "P1570515ATMSSCIENCEAAT16032024518500.PDS.cmr.xml",
                                     "description": "size=1749;",
                                     'file:size': 1749,
-                                    'file:checksum': '',
+                                    'file:checksum': '00000000000000000000000000000000',
                                     "roles": [
                                         "metadata"
                                     ]
@@ -358,7 +358,7 @@ class TestItemTransformer(TestCase):
                                     "title": "P1570515ATMSSCIENCEAAT16032024518500.PDS.cmr.xml",
                                     "description": "size=1749;",
                                     'file:size': 1749,
-                                    'file:checksum': '',
+                                    'file:checksum': '00000000000000000000000000000000',
                                     "roles": [
                                         "metadata"
                                     ]
