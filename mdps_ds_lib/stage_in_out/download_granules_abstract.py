@@ -8,7 +8,7 @@ import requests
 from mdps_ds_lib.lib.cognito_login.cognito_token_retriever import CognitoTokenRetriever
 
 from mdps_ds_lib.lib.constants import Constants
-from pystac import ItemCollection, Asset, Item
+from pystac import ItemCollection, Asset, Item, Catalog, Link
 
 from mdps_ds_lib.lib.processing_jobs.job_executor_abstract import JobExecutorAbstract
 from mdps_ds_lib.lib.processing_jobs.job_manager_abstract import JobManagerProps
@@ -133,10 +133,17 @@ class DownloadGranulesAbstract(ABC):
     def download(self, **kwargs) -> str:
         self._set_props_from_env()
         LOGGER.debug(f'creating download dir: {self._download_dir}')
+
+        catalog = Catalog(
+            id='NA',
+            description='NA')
+        catalog.set_self_href(os.path.join(self._download_dir, 'catalog.json'))
+        # catalog.add_link(Link('item', failed_features_file, 'application/json'))
+
         if len(self._granules_json.items) < 1:
             LOGGER.warning(f'cannot find any granules')
             granules_json_dict = self._granules_json.to_dict(False)
-            FileUtils.write_json(os.path.join(self._download_dir, 'downloaded_feature_collection.json'), granules_json_dict, overwrite=True, prettify=True)
+            FileUtils.write_json(os.path.join(self._download_dir, 'catalog.json'), catalog.to_dict(False, False), overwrite=True, prettify=True)
             return json.dumps(granules_json_dict)
         # local_items = []
         # error_list = []
@@ -162,10 +169,15 @@ class DownloadGranulesAbstract(ABC):
         while not error_list.empty():
             error_list_list.append(error_list.get())
 
+        for each_local_stac_item in local_items_list:
+            FileUtils.write_json(os.path.join(self._download_dir, f'{each_local_stac_item.id}.stac.json'),
+                                 each_local_stac_item.to_dict(False, False), overwrite=False, prettify=True)
+            catalog.add_link(Link('item', f'{each_local_stac_item.id}.stac.json', 'application/json'))
         self._granules_json.items = local_items_list
         LOGGER.debug(f'writing features collection json to downloading directory')
         granules_json_dict = self._granules_json.to_dict(transform_hrefs=False)
-        FileUtils.write_json(os.path.join(self._download_dir, 'downloaded_feature_collection.json'), granules_json_dict, overwrite=True, prettify=True)
+        # TODO throw error when there is a <id>.stac.json
+        FileUtils.write_json(os.path.join(self._download_dir, 'catalog.json'), catalog.to_dict(False, False), overwrite=True, prettify=True)
         LOGGER.debug(f'writing errors if any')
         if len(error_list_list) > 0:
             with open(f'{self._download_dir}/error.log', 'w') as error_file:

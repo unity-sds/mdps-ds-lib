@@ -73,4 +73,3 @@ class TestESMiddleware(TestCase):
         self.assertTrue(query_by_id is None, f'query_by_id is not None: {query_by_id}')
 
         return
-
