@@ -5,7 +5,7 @@ from mdps_ds_lib.lib.utils.time_utils import TimeUtils
 
 from mdps_ds_lib.lib.utils.file_utils import FileUtils
 
-from pystac import ItemCollection
+from pystac import ItemCollection, Item
 
 from mdps_ds_lib.lib.cumulus_stac.granules_catalog import GranulesCatalog
 from mdps_ds_lib.lib.processing_jobs.job_executor_abstract import JobExecutorAbstract
@@ -48,10 +48,10 @@ class UploadItemExecutor(JobExecutorAbstract):
     #     return
 
     def execute_job(self, each_child, lock) -> bool:
-        current_granule_stac = self.__gc.get_granules_item(each_child)
+        current_granule_stac: Item = self.__gc.get_granules_item(each_child)
         try:
             current_granules_dir = os.path.dirname(each_child)
-            current_assets = self.__gc.extract_assets_href(current_granule_stac, current_granules_dir)
+            current_assets = self.__gc.extract_assets_href(current_granule_stac, current_granules_dir)  # returns defaultdict(list)
             if 'data' not in current_assets:  # this is still ok .coz extract_assets_href is {'data': [url1, url2], ...}
                 LOGGER.warning(f'skipping {each_child}. no data in {current_assets}')
                 current_granule_stac.properties['upload_error'] = f'missing "data" in assets'
@@ -63,14 +63,14 @@ class UploadItemExecutor(JobExecutorAbstract):
             updating_assets = {}
             uploading_current_granule_stac = None
             for asset_type, asset_hrefs in current_assets.items():
-                for each_asset_href in asset_hrefs:
-                    LOGGER.audit(f'uploading {asset_type}: {each_asset_href}')
-                    s3_url = self.__s3.upload(each_asset_href, self.__staging_bucket,
-                                              f'{self.__collection_id}/{self.__collection_id}:{current_granule_id}',
-                                              self.__delete_files)
-                    if each_asset_href == each_child:
+                for asset_name, asset_href in asset_hrefs.items():
+                    LOGGER.audit(f'uploading type={asset_type}, name={asset_name}, href={asset_href}')
+                    s3_url = self.__s3.upload(asset_href, self.__staging_bucket,
+                                          f'{self.__collection_id}/{self.__collection_id}:{current_granule_id}',
+                                          self.__delete_files)
+                    if asset_href == each_child:
                         uploading_current_granule_stac = s3_url
-                    updating_assets[os.path.basename(s3_url)] = s3_url
+                    updating_assets[asset_name] = s3_url
             self.__gc.update_assets_href(current_granule_stac, updating_assets)
             current_granule_stac.id = current_granule_id
             current_granule_stac.collection_id = self.__collection_id
