@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ===================================================================
 
+## [0.5.1.dev000100] - 2024-10-21
+### Changed
+- [#46](https://github.com/unity-sds/unity-data-services/pull/46) feat: adding audit log for uploading files
+
 ## [0.5.1.dev000001] - 2024-10-03
 ### Fixed
 - [#44](https://github.com/unity-sds/unity-data-services/pull/44) fix: valid default values for checksum & file size
