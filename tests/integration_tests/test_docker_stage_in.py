@@ -1908,7 +1908,7 @@ class TestDockerStageIn(TestCase):
             download_result_str = DownloadGranulesFactory().get_class(os.getenv('GRANULES_DOWNLOAD_TYPE', 'MISSING_GRANULES_DOWNLOAD_TYPE')).download()
             download_result = json.loads(download_result_str)
             self.assertTrue('features' in download_result, f'missing features in download_result')
-            self.assertEqual(len(download_result['features']) + 1, len(glob(os.path.join(downloading_dir, '*'))),
+            self.assertEqual(len(download_result['features']) + 1 + len(granule_json['features']), len(glob(os.path.join(downloading_dir, '*'))),
                              f'downloaded file does not match: {download_result["features"]} v. {glob(os.path.join(downloading_dir, "*"))}')
             error_file = os.path.join(tmp_dir_name, 'error.log')
             if FileUtils.file_exist(error_file):
@@ -1917,7 +1917,11 @@ class TestDockerStageIn(TestCase):
             self.assertTrue('assets' in download_result[0], f'no assets in download_result: {download_result}')
             downloaded_file_hrefs = set([list(k['assets'].values())[0]['href'] for k in download_result])
             # print(granule_json['features'], download_result)
-            print(FileUtils.read_json(f'{downloading_dir}/downloaded_feature_collection.json'))
+            catalog_result = FileUtils.read_json(f'{downloading_dir}/catalog.json')
+            print(catalog_result)
+            catalog_result = Catalog.from_dict(catalog_result)
+            for each in catalog_result.links[1:]:
+                print(FileUtils.read_json(f'{downloading_dir}/{each.href}'))
             for each_granule in zip(granule_json['features'], download_result):
                 remote_filename = [k['href'] for k in each_granule[0]['assets'].values() if 'data' in k['roles']]
                 remote_filename = os.path.basename(remote_filename[0])
