@@ -479,7 +479,7 @@ class TestDockerStageOut(TestCase):
                                      "datetime": "2022-03-23T15:48:19.079000Z"
                                  },
                                  href=os.path.join('some_granules', f'{filename}.nc.stac.json'),
-                                 collection='NA',
+                                 collection=f'NA_{i:02d}',
                                  assets={
                                     f'{filename}.nc': Asset(os.path.join('.', f'{filename}.nc'), title='test_file01.nc', roles=['data']),
                                     f'{filename}.nc.cas': Asset(os.path.join('.', f'{filename}.nc.cas'), title='test_file01.nc.cas', roles=['metadata']),
@@ -521,10 +521,10 @@ class TestDockerStageOut(TestCase):
             result_key_prefix = result_key.split('.')[0]
             self.assertTrue(f'{result_key_prefix}.nc.cas' in upload_result['assets'], f'missing assets#metadata asset: {result_key_prefix}.nc.cas')
             self.assertTrue('href' in upload_result['assets'][f'{result_key_prefix}.nc.cas'], 'missing assets#metadata__cas#href')
-            self.assertTrue(upload_result['assets'][f'{result_key_prefix}.nc.cas']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/URN:NASA:UNITY:{os.environ["PROJECT"]}:{os.environ["VENUE"]}:NA/'))
+            self.assertTrue(upload_result['assets'][f'{result_key_prefix}.nc.cas']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/URN:NASA:UNITY:{os.environ["PROJECT"]}:{os.environ["VENUE"]}:NA_0'))
             self.assertTrue(f'{result_key_prefix}.nc' in upload_result['assets'], f'missing assets#data: {result_key_prefix}.nc')
             self.assertTrue('href' in upload_result['assets'][f'{result_key_prefix}.nc'], 'missing assets#data#href')
-            self.assertTrue(upload_result['assets'][f'{result_key_prefix}.nc']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/URN:NASA:UNITY:{os.environ["PROJECT"]}:{os.environ["VENUE"]}:NA/'))
+            self.assertTrue(upload_result['assets'][f'{result_key_prefix}.nc']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/URN:NASA:UNITY:{os.environ["PROJECT"]}:{os.environ["VENUE"]}:NA_0'))
             """
             Example output: 
             {
