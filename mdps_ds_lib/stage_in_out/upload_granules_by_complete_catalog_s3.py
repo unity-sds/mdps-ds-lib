@@ -22,9 +22,9 @@ LOGGER = logging.getLogger(__name__)
 
 
 class UploadItemExecutor(JobExecutorAbstract):
-    def __init__(self, result_list, error_list, collection_id, staging_bucket, retry_wait_time_sec, retry_times, delete_files: bool) -> None:
+    def __init__(self, result_list, error_list, project_venue_set, staging_bucket, retry_wait_time_sec, retry_times, delete_files: bool) -> None:
         super().__init__()
-        self.__collection_id = collection_id
+        self.__project_venue_set = project_venue_set
         self.__staging_bucket = staging_bucket
         self.__delete_files = delete_files
 
@@ -49,7 +49,10 @@ class UploadItemExecutor(JobExecutorAbstract):
 
     def execute_job(self, each_child, lock) -> bool:
         current_granule_stac: Item = self.__gc.get_granules_item(each_child)
+        current_collection_id = current_granule_stac.collection_id.strip()
         try:
+            current_collection_id = GranulesCatalog.get_unity_formatted_collection_id(current_collection_id, self.__project_venue_set)
+            LOGGER.debug(f'reformatted current_collection_id: {current_collection_id}')
             current_granules_dir = os.path.dirname(each_child)
             current_assets = self.__gc.extract_assets_href(current_granule_stac, current_granules_dir)  # returns defaultdict(list)
             if 'data' not in current_assets:  # this is still ok .coz extract_assets_href is {'data': [url1, url2], ...}
@@ -66,18 +69,18 @@ class UploadItemExecutor(JobExecutorAbstract):
                 for asset_name, asset_href in asset_hrefs.items():
                     LOGGER.audit(f'uploading type={asset_type}, name={asset_name}, href={asset_href}')
                     s3_url = self.__s3.upload(asset_href, self.__staging_bucket,
-                                          f'{self.__collection_id}/{self.__collection_id}:{current_granule_id}',
-                                          self.__delete_files)
+                                              f'{current_collection_id}/{current_collection_id}:{current_granule_id}',
+                                              self.__delete_files)
                     if asset_href == each_child:
                         uploading_current_granule_stac = s3_url
                     updating_assets[asset_name] = s3_url
             self.__gc.update_assets_href(current_granule_stac, updating_assets)
             current_granule_stac.id = current_granule_id
-            current_granule_stac.collection_id = self.__collection_id
+            current_granule_stac.collection_id = current_collection_id
             if uploading_current_granule_stac is not None:  # upload metadata file again
                 self.__s3.set_s3_url(uploading_current_granule_stac)
                 self.__s3.upload_bytes(json.dumps(current_granule_stac.to_dict(False, False)).encode())
-            current_granule_stac.id = f'{self.__collection_id}:{current_granule_id}'
+            current_granule_stac.id = f'{current_collection_id}:{current_granule_id}'
             self.__result_list.put(current_granule_stac.to_dict(False, False))
         except Exception as e:
             current_granule_stac.properties['upload_error'] = str(e)
@@ -110,10 +113,11 @@ class UploadGranulesByCompleteCatalogS3(UploadGranulesAbstract):
         for each_child in child_links:
             job_manager_props.memory_job_dict[each_child] = each_child
 
+        project_venue_set = (self._project, self._venue)
         # https://www.infoworld.com/article/3542595/6-python-libraries-for-parallel-processing.html
         multithread_processor_props = MultiThreadProcessorProps(self._parallel_count)
         multithread_processor_props.job_manager = JobManagerMemory(job_manager_props)
-        multithread_processor_props.job_executor = UploadItemExecutor(local_items, error_list, self._collection_id, self._staging_bucket, self._retry_wait_time_sec, self._retry_times, self._delete_files)
+        multithread_processor_props.job_executor = UploadItemExecutor(local_items, error_list, project_venue_set, self._staging_bucket, self._retry_wait_time_sec, self._retry_times, self._delete_files)
         multithread_processor = MultiThreadProcessor(multithread_processor_props)
         multithread_processor.start()
 
@@ -130,12 +134,12 @@ class UploadGranulesByCompleteCatalogS3(UploadGranulesAbstract):
         failed_item_collections = ItemCollection(items=errors)
         successful_features_file = os.path.join(output_dir, 'successful_features.json')
 
-
-
         failed_features_file = os.path.join(output_dir, 'failed_features.json')
         LOGGER.debug(f'writing results: {successful_features_file} && {failed_features_file}')
         FileUtils.write_json(successful_features_file, successful_item_collections.to_dict(False))
         FileUtils.write_json(failed_features_file, failed_item_collections.to_dict(False))
+        if len(failed_item_collections.items) > 0:
+            LOGGER.fatal(f'One or more Failures: {failed_item_collections.to_dict(False)}')
         s3_url = self.__s3.upload(successful_features_file, self._staging_bucket,
                                   self._result_path_prefix,
                                   s3_name=f'successful_features_{TimeUtils.get_current_time()}.json',

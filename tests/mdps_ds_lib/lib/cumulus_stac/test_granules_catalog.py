@@ -912,3 +912,27 @@ class TestGranulesCatalog(TestCase):
         validation_result = stac_item.validate()
         return
 
+    def test_get_unity_formatted_collection_id(self):
+        with self.assertRaises(ValueError) as context:
+            GranulesCatalog.get_unity_formatted_collection_id(None, (None, None))
+        self.assertTrue(str(context.exception).startswith('NULL or EMPTY collection_id'))
+        with self.assertRaises(ValueError) as context:
+            GranulesCatalog.get_unity_formatted_collection_id('', (None, None))
+        self.assertTrue(str(context.exception).startswith('NULL or EMPTY collection_id'))
+        with self.assertRaises(ValueError) as context:
+            GranulesCatalog.get_unity_formatted_collection_id('NA', (None, None))
+        self.assertTrue(str(context.exception).startswith('missing project or venue'))
+        with self.assertRaises(ValueError) as context:
+            GranulesCatalog.get_unity_formatted_collection_id('NA', (None, 'DEV'))
+        self.assertTrue(str(context.exception).startswith('missing project or venue'))
+        with self.assertRaises(ValueError) as context:
+            GranulesCatalog.get_unity_formatted_collection_id('NA', ('LOCAL', None))
+        self.assertTrue(str(context.exception).startswith('missing project or venue'))
+
+        result = GranulesCatalog.get_unity_formatted_collection_id('NA', ('LOCAL', 'DEV'))
+        self.assertEqual(result, 'URN:NASA:UNITY:LOCAL:DEV:NA', f'wrong collection id output')
+
+        result = GranulesCatalog.get_unity_formatted_collection_id('URN:JPL:IDS:LOCAL1:DEV2:A:B:C:D:E:F:G', ('LOCAL', 'DEV'))
+        self.assertEqual(result, 'URN:JPL:IDS:LOCAL1:DEV2:A:B:C:D:E:F:G', f'wrong collection id output')
+
+        return

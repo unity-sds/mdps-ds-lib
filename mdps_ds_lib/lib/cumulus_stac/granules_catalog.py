@@ -9,6 +9,22 @@ LOGGER = logging.getLogger(__name__)
 
 
 class GranulesCatalog:
+    @staticmethod
+    def get_unity_formatted_collection_id(current_collection_id: str, project_venue_set: tuple):
+        if current_collection_id == '' or current_collection_id is None:
+            raise ValueError(f'NULL or EMPTY collection_id: {current_collection_id}')
+        collection_identifier_parts = current_collection_id.split(':')
+        if len(collection_identifier_parts) >= 6:
+            LOGGER.debug(f'current_collection_id is assumed to be in UNITY format: {current_collection_id}')
+            return current_collection_id
+
+        LOGGER.info(f'current_collection_id is not UNITY formatted ID: {current_collection_id}')
+        if project_venue_set[0] is None or project_venue_set[1] is None:
+            raise ValueError(f'missing project or venue in ENV which is needed due to current_collection_id not UNITY format: {project_venue_set}')
+        new_collection = f'URN:NASA:UNITY:{project_venue_set[0]}:{project_venue_set[1]}:{current_collection_id}'
+        LOGGER.info(f'UNITY formatted ID: {new_collection}')
+        return new_collection
+    
     def update_catalog(self, catalog_file_path: str, file_paths: list, rel_name: str = 'item'):
         if not FileUtils.file_exist(catalog_file_path):
             raise ValueError(f'missing file: {catalog_file_path}')

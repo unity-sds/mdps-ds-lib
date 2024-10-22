@@ -336,7 +336,8 @@ class TestDockerStageOut(TestCase):
     def test_03_upload_complete_catalog(self):
         os.environ['VERIFY_SSL'] = 'FALSE'
         os.environ['RESULT_PATH_PREFIX'] = 'integration_test/stage_out'
-        os.environ['COLLECTION_ID'] = 'NEW_COLLECTION_EXAMPLE_L1B___9'
+        os.environ['PROJECT'] = 'LOCAL'
+        os.environ['VENUE'] = 'UNIT_TEST'
         os.environ['STAGING_BUCKET'] = 'uds-sbx-cumulus-staging'
 
         os.environ['GRANULES_SEARCH_DOMAIN'] = 'UNITY'
@@ -520,10 +521,10 @@ class TestDockerStageOut(TestCase):
             result_key_prefix = result_key.split('.')[0]
             self.assertTrue(f'{result_key_prefix}.nc.cas' in upload_result['assets'], f'missing assets#metadata asset: {result_key_prefix}.nc.cas')
             self.assertTrue('href' in upload_result['assets'][f'{result_key_prefix}.nc.cas'], 'missing assets#metadata__cas#href')
-            self.assertTrue(upload_result['assets'][f'{result_key_prefix}.nc.cas']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/{os.environ["COLLECTION_ID"]}/'))
+            self.assertTrue(upload_result['assets'][f'{result_key_prefix}.nc.cas']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/URN:NASA:UNITY:{os.environ["PROJECT"]}:{os.environ["VENUE"]}:NA/'))
             self.assertTrue(f'{result_key_prefix}.nc' in upload_result['assets'], f'missing assets#data: {result_key_prefix}.nc')
             self.assertTrue('href' in upload_result['assets'][f'{result_key_prefix}.nc'], 'missing assets#data#href')
-            self.assertTrue(upload_result['assets'][f'{result_key_prefix}.nc']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/{os.environ["COLLECTION_ID"]}/'))
+            self.assertTrue(upload_result['assets'][f'{result_key_prefix}.nc']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/URN:NASA:UNITY:{os.environ["PROJECT"]}:{os.environ["VENUE"]}:NA/'))
             """
             Example output: 
             {
@@ -564,7 +565,8 @@ class TestDockerStageOut(TestCase):
     def test_03_upload_complete_catalog_role_as_key(self):
         os.environ['VERIFY_SSL'] = 'FALSE'
         os.environ['RESULT_PATH_PREFIX'] = 'integration_test/stage_out'
-        os.environ['COLLECTION_ID'] = 'NEW_COLLECTION_EXAMPLE_L1B___9'
+        os.environ['PROJECT'] = 'LOCAL'
+        os.environ['VENUE'] = 'UNIT_TEST'
         os.environ['STAGING_BUCKET'] = 'uds-sbx-cumulus-staging'
 
         os.environ['GRANULES_SEARCH_DOMAIN'] = 'UNITY'
@@ -748,10 +750,10 @@ class TestDockerStageOut(TestCase):
             self.assertEqual(result_key, 'data', f'worng asset key: {result_key}')
             self.assertTrue(f'metadata1' in upload_result['assets'], f'missing assets#metadata asset: metadata1')
             self.assertTrue('href' in upload_result['assets'][f'metadata1'], 'missing assets#metadata__cas#href')
-            self.assertTrue(upload_result['assets'][f'metadata1']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/{os.environ["COLLECTION_ID"]}/'))
+            self.assertTrue(upload_result['assets'][f'metadata1']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/URN:NASA:UNITY:{os.environ["PROJECT"]}:{os.environ["VENUE"]}:NA/'))
             self.assertTrue(f'data' in upload_result['assets'], f'missing assets#data: data')
             self.assertTrue('href' in upload_result['assets'][f'data'], 'missing assets#data#href')
-            self.assertTrue(upload_result['assets'][f'data']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/{os.environ["COLLECTION_ID"]}/'))
+            self.assertTrue(upload_result['assets'][f'data']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/URN:NASA:UNITY:{os.environ["PROJECT"]}:{os.environ["VENUE"]}:NA/'))
             """
             Example output: 
             {
@@ -788,10 +790,10 @@ class TestDockerStageOut(TestCase):
             self.assertEqual(len(successful_feature_collection), total_files, f'wrong length: {successful_feature_collection}')
         return
 
-
     def test_03_02_upload_complete_catalog(self):
         os.environ['VERIFY_SSL'] = 'FALSE'
-        os.environ['COLLECTION_ID'] = 'NEW_COLLECTION_EXAMPLE_L1B___9'
+        os.environ['PROJECT'] = 'LOCAL'
+        os.environ['VENUE'] = 'UNIT_TEST'
         os.environ['STAGING_BUCKET'] = 'uds-sbx-cumulus-staging'
 
         os.environ['GRANULES_SEARCH_DOMAIN'] = 'UNITY'
@@ -975,10 +977,10 @@ class TestDockerStageOut(TestCase):
             result_key_prefix = result_key.split('.')[0]
             self.assertTrue(f'{result_key_prefix}.nc.cas' in upload_result['assets'], f'missing assets#metadata asset: {result_key_prefix}.nc.cas')
             self.assertTrue('href' in upload_result['assets'][f'{result_key_prefix}.nc.cas'], 'missing assets#metadata__cas#href')
-            self.assertTrue(upload_result['assets'][f'{result_key_prefix}.nc.cas']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/{os.environ["COLLECTION_ID"]}/'))
+            self.assertTrue(upload_result['assets'][f'{result_key_prefix}.nc.cas']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/URN:NASA:UNITY:{os.environ["PROJECT"]}:{os.environ["VENUE"]}:NA/'))
             self.assertTrue(f'{result_key_prefix}.nc' in upload_result['assets'], f'missing assets#data: {result_key_prefix}.nc')
             self.assertTrue('href' in upload_result['assets'][f'{result_key_prefix}.nc'], 'missing assets#data#href')
-            self.assertTrue(upload_result['assets'][f'{result_key_prefix}.nc']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/{os.environ["COLLECTION_ID"]}/'))
+            self.assertTrue(upload_result['assets'][f'{result_key_prefix}.nc']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/URN:NASA:UNITY:{os.environ["PROJECT"]}:{os.environ["VENUE"]}:NA/'))
             """
             Example output: 
             {
