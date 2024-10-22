@@ -9,6 +9,22 @@ LOGGER = logging.getLogger(__name__)
 
 
 class GranulesCatalog:
+    @staticmethod
+    def get_unity_formatted_collection_id(current_collection_id: str, project_venue_set: tuple):
+        if current_collection_id == '' or current_collection_id is None:
+            raise ValueError(f'NULL or EMPTY collection_id: {current_collection_id}')
+        collection_identifier_parts = current_collection_id.split(':')
+        if len(collection_identifier_parts) >= 6:
+            LOGGER.debug(f'current_collection_id is assumed to be in UNITY format: {current_collection_id}')
+            return current_collection_id
+
+        LOGGER.info(f'current_collection_id is not UNITY formatted ID: {current_collection_id}')
+        if project_venue_set[0] is None or project_venue_set[1] is None:
+            raise ValueError(f'missing project or venue in ENV which is needed due to current_collection_id not UNITY format: {project_venue_set}')
+        new_collection = f'URN:NASA:UNITY:{project_venue_set[0]}:{project_venue_set[1]}:{current_collection_id}'
+        LOGGER.info(f'UNITY formatted ID: {new_collection}')
+        return new_collection
+    
     def update_catalog(self, catalog_file_path: str, file_paths: list, rel_name: str = 'item'):
         if not FileUtils.file_exist(catalog_file_path):
             raise ValueError(f'missing file: {catalog_file_path}')
@@ -46,23 +62,23 @@ class GranulesCatalog:
             self_dir = os.path.dirname(granules_stac.self_href)
         except:
             self_dir = None
-        assets = defaultdict(list)
+        assets = defaultdict(dict)
         for k, v in granules_stac.get_assets().items():
             href = v.href
             if v.roles is None or len(v.roles) < 1:
                 LOGGER.warning(f'asset do not have roles: {v}')
                 continue
-            k = v.roles[0]
+            role_key = v.roles[0]
             if not FileUtils.is_relative_path(href):
-                assets[k].append(href)
+                assets[role_key][k] = href
                 continue
             if dir_name is not None and len(dir_name) > 0:
-                assets[k].append(os.path.join(dir_name, href))
+                assets[role_key][k] = os.path.join(dir_name, href)
                 continue
             if self_dir is not None and len(self_dir) > 0:
-                assets[k].append(os.path.join(self_dir, href))
+                assets[role_key][k] = os.path.join(self_dir, href)
                 continue
-            assets[k].append(href)
+            assets[role_key][k] = href
         return assets
 
     def update_assets_href(self, granules_stac: Item,  new_assets: dict):

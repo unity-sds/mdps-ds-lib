@@ -111,6 +111,8 @@ class UploadArbitraryFilesAsGranules(UploadGranulesAbstract):
         :return:
         """
         self._set_props_from_env()
+        if self._collection_id is None:
+            raise ValueError(f'missing COLLECTION ID in ENV')
         output_dir = os.environ.get(self.OUTPUT_DIRECTORY)
         if not FileUtils.dir_exist(output_dir):
             raise ValueError(f'OUTPUT_DIRECTORY: {output_dir} does not exist')
