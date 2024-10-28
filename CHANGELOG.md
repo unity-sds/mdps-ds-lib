@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ===================================================================
 
+## [0.5.1.dev010000] - 2024-10-28
+### Added
+- [#50](https://github.com/unity-sds/unity-data-services/pull/50) breaking: accept empty result_path_prefix + do not need to use filename as keys
+
 ## [0.5.1.dev000200] - 2024-10-21
 ### Changed
 - [#48](https://github.com/unity-sds/unity-data-services/pull/48) feat: download granules: write a catalog
