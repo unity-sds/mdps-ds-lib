@@ -208,9 +208,10 @@ class TestGranulesCatalog(TestCase):
             pystac_catalog = gc.get_granules_item(granules_catalog_path)
             self.assertEqual(pystac_catalog.id, 'SNDR.SNPP.ATMS.L1A.nominal2.12')
             assets = gc.extract_assets_href(pystac_catalog)
-            expected_assets = {'data': ['s3://uds-test-cumulus-protected/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.nc'],
-                               'metadata__data': ['s3://uds-test-cumulus-protected/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.nc.cas'],
-                               'metadata__cmr': ['s3://uds-test-cumulus-private/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.cmr.xml']}
+            expected_assets = {'data': {'SNDR.SNPP.ATMS.L1A.nominal2.12.nc': 's3://uds-test-cumulus-protected/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.nc'},
+                               'metadata__data': {'SNDR.SNPP.ATMS.L1A.nominal2.12.nc.cas': 's3://uds-test-cumulus-protected/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.nc.cas'},
+                               'metadata__cmr': {'SNDR.SNPP.ATMS.L1A.nominal2.12.cmr.xml': 's3://uds-test-cumulus-private/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.cmr.xml'}
+                               }
             self.assertEqual(assets, expected_assets, 'wrong assets')
         return
 
@@ -276,9 +277,9 @@ class TestGranulesCatalog(TestCase):
             self.assertEqual(pystac_catalog.id, 'SNDR.SNPP.ATMS.L1A.nominal2.12')
             assets = gc.extract_assets_href(pystac_catalog)
             expected_assets = {
-                'data': ['./SNDR.SNPP.ATMS.L1A.nominal2.12.nc'],
-                'metadata__data': ['SNDR.SNPP.ATMS.L1A.nominal2.12.nc.cas'],
-                'metadata__cmr': ['s3://uds-test-cumulus-private/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.cmr.xml']}
+                'data': {'SNDR.SNPP.ATMS.L1A.nominal2.12.nc': './SNDR.SNPP.ATMS.L1A.nominal2.12.nc'},
+                'metadata__data': {'SNDR.SNPP.ATMS.L1A.nominal2.12.nc.cas': 'SNDR.SNPP.ATMS.L1A.nominal2.12.nc.cas'},
+                'metadata__cmr': {'SNDR.SNPP.ATMS.L1A.nominal2.12.cmr.xml': 's3://uds-test-cumulus-private/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.cmr.xml'}}
             self.assertEqual(assets, expected_assets, 'wrong assets')
         return
 
@@ -350,9 +351,10 @@ class TestGranulesCatalog(TestCase):
             self.assertEqual(pystac_catalog.id, 'SNDR.SNPP.ATMS.L1A.nominal2.12')
             assets = gc.extract_assets_href(pystac_catalog, '/some/temp/directory/../hehe')
             expected_assets = {
-                'data': ['/some/temp/directory/../hehe/./SNDR.SNPP.ATMS.L1A.nominal2.12.nc', 's3://uds-test-cumulus-protected/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.1.nc'],
-                'metadata__data': ['/some/temp/directory/../hehe/SNDR.SNPP.ATMS.L1A.nominal2.12.nc.cas'],
-                'metadata__cmr': ['s3://uds-test-cumulus-private/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.cmr.xml']}
+                'data': {'SNDR.SNPP.ATMS.L1A.nominal2.12.nc': '/some/temp/directory/../hehe/./SNDR.SNPP.ATMS.L1A.nominal2.12.nc',
+                         'SNDR.SNPP.ATMS.L1A.nominal2.12.1.nc': 's3://uds-test-cumulus-protected/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.1.nc'},
+                'metadata__data': {'SNDR.SNPP.ATMS.L1A.nominal2.12.nc.cas': '/some/temp/directory/../hehe/SNDR.SNPP.ATMS.L1A.nominal2.12.nc.cas'},
+                'metadata__cmr': {'SNDR.SNPP.ATMS.L1A.nominal2.12.cmr.xml': 's3://uds-test-cumulus-private/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.cmr.xml'}}
             self.assertEqual(assets, expected_assets, 'wrong assets')
         return
 
@@ -428,9 +430,10 @@ class TestGranulesCatalog(TestCase):
             self.assertEqual(pystac_catalog.id, 'SNDR.SNPP.ATMS.L1A.nominal2.12')
             assets = gc.extract_assets_href(pystac_catalog)
             expected_assets = {
-                'data': ['/some/temp/directory/../hehe/./SNDR.SNPP.ATMS.L1A.nominal2.12.nc'],
-                'metadata__data': ['/some/temp/directory/../hehe/SNDR.SNPP.ATMS.L1A.nominal2.12.nc.cas', '/some/temp/directory/../hehe/SNDR.SNPP.ATMS.L1A.nominal2.12.nc.2.cas'],
-                'metadata__cmr': ['s3://uds-test-cumulus-private/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.cmr.xml']}
+                'data': {'SNDR.SNPP.ATMS.L1A.nominal2.12.nc': '/some/temp/directory/../hehe/./SNDR.SNPP.ATMS.L1A.nominal2.12.nc'},
+                'metadata__data': {'SNDR.SNPP.ATMS.L1A.nominal2.12.nc.cas': '/some/temp/directory/../hehe/SNDR.SNPP.ATMS.L1A.nominal2.12.nc.cas',
+                                   'SNDR.SNPP.ATMS.L1A.nominal2.12.nc.2.cas': '/some/temp/directory/../hehe/SNDR.SNPP.ATMS.L1A.nominal2.12.nc.2.cas'},
+                'metadata__cmr': {'SNDR.SNPP.ATMS.L1A.nominal2.12.cmr.xml': 's3://uds-test-cumulus-private/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.cmr.xml'}}
             self.assertEqual(assets, expected_assets, 'wrong assets')
         return
 
@@ -496,9 +499,9 @@ class TestGranulesCatalog(TestCase):
             self.assertEqual(pystac_catalog.id, 'SNDR.SNPP.ATMS.L1A.nominal2.12')
             assets = gc.extract_assets_href(pystac_catalog)
             expected_assets = {
-                'data': ['s3://uds-test-cumulus-protected/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.nc'],
-                'metadata__data': ['s3://uds-test-cumulus-protected/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.nc.cas'],
-                'metadata__cmr': ['s3://uds-test-cumulus-private/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.cmr.xml']
+                'data': {'SNDR.SNPP.ATMS.L1A.nominal2.12.nc': 's3://uds-test-cumulus-protected/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.nc'},
+                'metadata__data': {'SNDR.SNPP.ATMS.L1A.nominal2.12.nc.cas': 's3://uds-test-cumulus-protected/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.nc.cas'},
+                'metadata__cmr': {'SNDR.SNPP.ATMS.L1A.nominal2.12.cmr.xml': 's3://uds-test-cumulus-private/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.cmr.xml'}
             }
             self.assertEqual(assets, expected_assets, 'wrong assets')
             updating_assets = {
@@ -509,9 +512,96 @@ class TestGranulesCatalog(TestCase):
             }
 
             updating_assets_result = {
-                'data': ['file:///absolute/file/some/file/data'],
-                'metadata__data': ['s3://uds-test-cumulus-protected/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.nc.cas'],
-                'metadata__cmr': ['s3://uds-test-cumulus-private/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.cmr.xml']
+                'data': {'SNDR.SNPP.ATMS.L1A.nominal2.12.nc': 'file:///absolute/file/some/file/data'},
+                'metadata__data': {'SNDR.SNPP.ATMS.L1A.nominal2.12.nc.cas': 's3://uds-test-cumulus-protected/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.nc.cas'},
+                'metadata__cmr': {'SNDR.SNPP.ATMS.L1A.nominal2.12.cmr.xml': 's3://uds-test-cumulus-private/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.cmr.xml'}
+            }
+            gc.update_assets_href(pystac_catalog, updating_assets)
+            updated_assets = gc.extract_assets_href(pystac_catalog)
+            self.assertEqual(updated_assets, updating_assets_result, 'wrong updated assets')
+
+        return
+
+    def test_update_assets_href_02(self):
+        sample_granules = {
+          "type": "Feature",
+          "stac_version": "1.0.0",
+          "id": "SNDR.SNPP.ATMS.L1A.nominal2.12",
+          "properties": {
+            "start_datetime": "2016-01-14T11:00:00Z",
+            "end_datetime": "2016-01-14T11:06:00Z",
+            "created": "2020-12-14T13:50:00Z",
+            "updated": "2022-08-15T06:26:25.344000Z",
+            "datetime": "2022-08-15T06:26:17.938000Z"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              0.0,
+              0.0
+            ]
+          },
+          "links": [
+            {
+              "rel": "collection",
+              "href": "."
+            }
+          ],
+          "assets": {
+              "data1": {
+                  "href": "s3://uds-test-cumulus-protected/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.nc",
+                  "title": "SNDR.SNPP.ATMS.L1A.nominal2.12.nc",
+                  "description": "SNDR.SNPP.ATMS.L1A.nominal2.12.nc",
+                  "roles": ["data"],
+              },
+            "metadata1": {
+              "href": "s3://uds-test-cumulus-protected/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.nc.cas",
+              "title": "SNDR.SNPP.ATMS.L1A.nominal2.12.nc.cas",
+              "description": "SNDR.SNPP.ATMS.L1A.nominal2.12.nc.cas",
+                             "roles": ["metadata"],
+        },
+            "metadata2": {
+              "href": "s3://uds-test-cumulus-private/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.cmr.xml",
+              "title": "SNDR.SNPP.ATMS.L1A.nominal2.12.cmr.xml",
+              "description": "SNDR.SNPP.ATMS.L1A.nominal2.12.cmr.xml",
+                             "roles": ["metadata"],
+        }
+          },
+          "bbox": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "stac_extensions": [],
+          "collection": "SNDR_SNPP_ATMS_L1A___1"
+        }
+        with tempfile.TemporaryDirectory() as tmp_dir_name:
+            granules_catalog_path = os.path.join(tmp_dir_name, 'sample_granules.json')
+            FileUtils.write_json(granules_catalog_path, sample_granules)
+            gc = GranulesCatalog()
+            pystac_catalog = gc.get_granules_item(granules_catalog_path)
+            self.assertEqual(pystac_catalog.id, 'SNDR.SNPP.ATMS.L1A.nominal2.12')
+            assets = gc.extract_assets_href(pystac_catalog)
+            expected_assets = {
+                'data': {'data1': 's3://uds-test-cumulus-protected/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.nc'},
+                'metadata': {'metadata1': 's3://uds-test-cumulus-protected/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.nc.cas',
+                             'metadata2': 's3://uds-test-cumulus-private/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.cmr.xml'
+                             },
+            }
+            self.assertEqual(assets, expected_assets, 'wrong assets')
+            updating_assets = {
+                'data1': 'file:///absolute/file/some/file/data',
+                'metadata1': 's3://uds-test-cumulus-protected/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.nc.cas',
+                'other.name': '/absolute/file/some/file/metadata__extra',
+                'metadata2': 's3://uds-test-cumulus-private/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.cmr.xml'
+            }
+
+            updating_assets_result = {
+                'data': {'data1': 'file:///absolute/file/some/file/data'},
+                'metadata': {'metadata1': 's3://uds-test-cumulus-protected/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.nc.cas',
+                           'metadata2': 's3://uds-test-cumulus-private/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.cmr.xml'
+                                   },
             }
             gc.update_assets_href(pystac_catalog, updating_assets)
             updated_assets = gc.extract_assets_href(pystac_catalog)
@@ -822,3 +912,27 @@ class TestGranulesCatalog(TestCase):
         validation_result = stac_item.validate()
         return
 
+    def test_get_unity_formatted_collection_id(self):
+        with self.assertRaises(ValueError) as context:
+            GranulesCatalog.get_unity_formatted_collection_id(None, (None, None))
+        self.assertTrue(str(context.exception).startswith('NULL or EMPTY collection_id'))
+        with self.assertRaises(ValueError) as context:
+            GranulesCatalog.get_unity_formatted_collection_id('', (None, None))
+        self.assertTrue(str(context.exception).startswith('NULL or EMPTY collection_id'))
+        with self.assertRaises(ValueError) as context:
+            GranulesCatalog.get_unity_formatted_collection_id('NA', (None, None))
+        self.assertTrue(str(context.exception).startswith('missing project or venue'))
+        with self.assertRaises(ValueError) as context:
+            GranulesCatalog.get_unity_formatted_collection_id('NA', (None, 'DEV'))
+        self.assertTrue(str(context.exception).startswith('missing project or venue'))
+        with self.assertRaises(ValueError) as context:
+            GranulesCatalog.get_unity_formatted_collection_id('NA', ('LOCAL', None))
+        self.assertTrue(str(context.exception).startswith('missing project or venue'))
+
+        result = GranulesCatalog.get_unity_formatted_collection_id('NA', ('LOCAL', 'DEV'))
+        self.assertEqual(result, 'URN:NASA:UNITY:LOCAL:DEV:NA', f'wrong collection id output')
+
+        result = GranulesCatalog.get_unity_formatted_collection_id('URN:JPL:IDS:LOCAL1:DEV2:A:B:C:D:E:F:G', ('LOCAL', 'DEV'))
+        self.assertEqual(result, 'URN:JPL:IDS:LOCAL1:DEV2:A:B:C:D:E:F:G', f'wrong collection id output')
+
+        return
