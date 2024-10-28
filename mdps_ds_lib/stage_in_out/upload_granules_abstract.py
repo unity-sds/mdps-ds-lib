@@ -29,6 +29,7 @@ class UploadGranulesAbstract(ABC):
     STAGING_BUCKET_KEY = 'STAGING_BUCKET'  # S3 Bucket
     VERIFY_SSL_KEY = 'VERIFY_SSL'
     DELETE_FILES_KEY = 'DELETE_FILES'
+    DRY_RUN = 'DRY_RUN'
 
     def __init__(self) -> None:
         super().__init__()
@@ -41,6 +42,7 @@ class UploadGranulesAbstract(ABC):
         self._retry_wait_time_sec = int(os.environ.get('UPLOAD_RETRY_WAIT_TIME', '30'))
         self._retry_times = int(os.environ.get('UPLOAD_RETRY_TIMES', '5'))
         self._verify_ssl = True
+        self._dry_run = False
         self._delete_files = False
 
     def _set_props_from_env(self):
@@ -48,6 +50,7 @@ class UploadGranulesAbstract(ABC):
         if len(missing_keys) > 0:
             raise ValueError(f'missing environment keys: {missing_keys}')
 
+        self._dry_run = os.environ.get(self.DRY_RUN, 'FALSE').upper().strip() == 'TRUE'
         self._collection_id = os.environ.get(self.COLLECTION_ID_KEY)
         self._project = os.environ.get(self.PROJECT_KEY)
         self._venue = os.environ.get(self.VENUE_KEY)
