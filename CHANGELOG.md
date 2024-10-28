@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ===================================================================
 
+## [0.5.1.dev010100] - 2024-10-28
+### Changed
+- [#52](https://github.com/unity-sds/unity-data-services/pull/52) feat : add dry-run option for stage-out
+
 ## [0.5.1.dev010000] - 2024-10-28
 ### Added
 - [#50](https://github.com/unity-sds/unity-data-services/pull/50) breaking: accept empty result_path_prefix + do not need to use filename as keys
