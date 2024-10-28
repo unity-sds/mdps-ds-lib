@@ -1,4 +1,5 @@
 import json
+import sys
 from multiprocessing import Manager
 
 from mdps_ds_lib.lib.utils.time_utils import TimeUtils
@@ -24,7 +25,7 @@ LOGGER = logging.getLogger(__name__)
 class UploadItemExecutor(JobExecutorAbstract):
     def __init__(self, result_list, error_list, project_venue_set, staging_bucket, retry_wait_time_sec, retry_times, delete_files: bool, dry_run=False) -> None:
         super().__init__()
-        self.__dry_run = False
+        self.__dry_run = dry_run
         self.__project_venue_set = project_venue_set
         self.__staging_bucket = staging_bucket
         self.__delete_files = delete_files
@@ -137,7 +138,7 @@ class UploadItemExecutor(JobExecutorAbstract):
             current_granule_stac.id = current_granule_id
             current_granule_stac.collection_id = current_collection_id
             current_granule_stac.id = f'{current_collection_id}:{current_granule_id}'
-            self.__result_list.put(current_granule_stac.to_dict(False, False))
+            # self.__result_list.append(current_granule_stac.to_dict(False, False))
         except Exception as e:
             self.__error_list.append({
                 'granule_file': each_child,
@@ -219,22 +220,28 @@ class UploadGranulesByCompleteCatalogS3(UploadGranulesAbstract):
         errors = []
         results = []
         if self.OUTPUT_DIRECTORY not in os.environ:
-            errors.append(f'missing {self.OUTPUT_DIRECTORY} to write result files')
+            errors.append({
+                'error': f'missing {self.OUTPUT_DIRECTORY} to write result files'
+            })
         else:
             output_dir = os.environ.get(self.OUTPUT_DIRECTORY)
             if not FileUtils.dir_exist(output_dir):
-                errors.append(f'OUTPUT_DIRECTORY: {output_dir} does not exist')
+                errors.append({
+                    'error': f'OUTPUT_DIRECTORY: {output_dir} does not exist'
+                })
         catalog_file_path = os.environ.get(self.CATALOG_FILE)
         child_links = self.__gc.get_child_link_hrefs(catalog_file_path)
         project_venue_set = (self._project, self._venue)
         for each_child in child_links:
             UploadItemExecutor(results, errors, project_venue_set, self._staging_bucket, self._retry_wait_time_sec, self._retry_times, self._delete_files, True).execute_job(each_child, None)
         if len(errors) > 0:
+            print('There are ERRORS in the setup.', file=sys.stderr)
             for each in errors:
-                LOGGER.error(json.dumps(each, indent=4))
+                print(json.dumps(each, indent=4), file=sys.stderr)
             return "{}"
+        print('Result of dry-run')
         for each in results:
-            LOGGER.audit(json.dumps(each, indent=4))
+            print(json.dumps(each, indent=4))
         return "{}"
 
     def upload(self, **kwargs) -> str:
