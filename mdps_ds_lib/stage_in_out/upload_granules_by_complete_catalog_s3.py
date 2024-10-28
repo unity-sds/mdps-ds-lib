@@ -92,14 +92,20 @@ class UploadItemExecutor(JobExecutorAbstract):
         return True
 
     def __exec_dry_run(self, each_child, lock) -> bool:
+        local_errors, local_results = [], []
         try:
             current_granule_stac: Item = self.__gc.get_granules_item(each_child)
         except Exception as e:
-            self.__error_list.put({
+            local_errors.append({
                 'granule_file': each_child,
                 'error': 'unable to read the stac file',
                 'details': str(e)
             })
+            if len(local_errors) > 0:
+                self.__error_list.put(local_errors)
+            if len(local_results) > 0:
+                self.__result_list.put(local_results)
+
             return True
         current_collection_id = current_granule_stac.collection_id.strip()
         try:
@@ -110,14 +116,14 @@ class UploadItemExecutor(JobExecutorAbstract):
                                                            current_granules_dir)  # returns defaultdict(list)
 
             if 'data' not in current_assets:  # this is still ok .coz extract_assets_href is {'data': [url1, url2], ...}
-                self.__error_list.put({
+                local_errors.append({
                     'granule_file': each_child,
                     'error': 'missing "data" in assets',
                     'details': current_assets,
                 })
             current_granule_id = str(current_granule_stac.id)
             if current_granule_id in ['', 'NA', None]:
-                self.__error_list.put({
+                local_errors.append({
                     'granule_file': each_child,
                     'error': 'invalid current_granule_id in granule',
                     'details': current_granule_id,
@@ -126,22 +132,26 @@ class UploadItemExecutor(JobExecutorAbstract):
             for asset_type, asset_hrefs in current_assets.items():
                 for asset_name, asset_href in asset_hrefs.items():
                     if not FileUtils.file_exist(asset_href):
-                        self.__error_list.put({
+                        local_errors.append({
                             'granule_file': each_child,
                             'error': f'missing uploading file for {asset_type} - {asset_name}',
                             'details': asset_href,
                         })
-                    self.__result_list.put({
+                    local_results.append({
                         'granule_file': each_child,
                         's3_url': f'{self.__staging_bucket}://{current_collection_id}/{current_collection_id}:{current_granule_id}/{os.path.basename(asset_href)}'
                     })
         except Exception as e:
-            self.__error_list.put({
+            local_errors.append({
                 'granule_file': each_child,
                 'error': 'unexpected error',
                 'details': str(e),
             })
             LOGGER.exception(f'error while processing: {each_child}')
+        if len(local_errors) > 0:
+            self.__error_list.put(local_errors)
+        if len(local_results) > 0:
+            self.__result_list.put(local_results)
         return True
 
     def execute_job(self, each_child, lock) -> bool:
@@ -244,10 +254,10 @@ class UploadGranulesByCompleteCatalogS3(UploadGranulesAbstract):
 
         LOGGER.debug(f'finished dry-run uploading all granules')
         while not local_items.empty():
-            results.append(local_items.get())
+            results.extend(local_items.get())
 
         while not error_list.empty():
-            errors.append(error_list.get())
+            errors.extend(error_list.get())
 
         if len(errors) > 0:
             print('There are ERRORS in the setup.', file=sys.stderr)
