@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ===================================================================
 
+## [0.5.1.dev010100] - 2024-10-28
+### Changed
+- [#52](https://github.com/unity-sds/unity-data-services/pull/52) feat : add dry-run option for stage-out
+
+## [0.5.1.dev010000] - 2024-10-28
+### Added
+- [#50](https://github.com/unity-sds/unity-data-services/pull/50) breaking: accept empty result_path_prefix + do not need to use filename as keys
+
+## [0.5.1.dev000200] - 2024-10-21
+### Changed
+- [#48](https://github.com/unity-sds/unity-data-services/pull/48) feat: download granules: write a catalog
+
+## [0.5.1.dev000100] - 2024-10-21
+### Changed
+- [#46](https://github.com/unity-sds/unity-data-services/pull/46) feat: adding audit log for uploading files
+
+## [0.5.1.dev000001] - 2024-10-03
+### Fixed
+- [#44](https://github.com/unity-sds/unity-data-services/pull/44) fix: valid default values for checksum & file size
+
 ## [0.5.1] - 2024-09-18
 
 - [#41](https://github.com/unity-sds/unity-data-services/pull/41) release

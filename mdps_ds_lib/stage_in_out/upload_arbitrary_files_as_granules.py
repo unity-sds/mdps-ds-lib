@@ -77,6 +77,7 @@ class UploadItemExecutor(JobExecutorAbstract):
         sample_stac_item = self.generate_sample_stac(job_obj)
         updating_assets = {}
         try:
+            LOGGER.audit(f'uploading auxiliary file: {job_obj}')
             s3_url = self.__s3.upload(job_obj, self.__staging_bucket, f'{self.__collection_id}/{self.__collection_id}:{sample_stac_item.id}', self.__delete_files)
             updating_assets[os.path.basename(s3_url)] = s3_url
             uploading_current_granule_stac = f'{s3_url}.stac.json'
@@ -110,6 +111,8 @@ class UploadArbitraryFilesAsGranules(UploadGranulesAbstract):
         :return:
         """
         self._set_props_from_env()
+        if self._collection_id is None:
+            raise ValueError(f'missing COLLECTION ID in ENV')
         output_dir = os.environ.get(self.OUTPUT_DIRECTORY)
         if not FileUtils.dir_exist(output_dir):
             raise ValueError(f'OUTPUT_DIRECTORY: {output_dir} does not exist')
