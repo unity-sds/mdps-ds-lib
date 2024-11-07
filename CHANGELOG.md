@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ===================================================================
 
+## [1.0.0.dev000001] - 2024-11-07
+### Fixed
+- [#57](https://github.com/unity-sds/mdps-ds-lib/pull/57) fix: change log url error
+
 ## [1.0.0] - 2024-11-04
 
 - [#54](https://github.com/unity-sds/mdps-ds-lib/pull/54) release attempt
