@@ -139,7 +139,7 @@ class UploadItemExecutor(JobExecutorAbstract):
                         })
                     local_results.append({
                         'granule_file': each_child,
-                        's3_url': f'{self.__staging_bucket}://{current_collection_id}/{current_collection_id}:{current_granule_id}/{os.path.basename(asset_href)}'
+                        's3_url': f's3://{self.__staging_bucket}/{current_collection_id}/{current_collection_id}:{current_granule_id}/{os.path.basename(asset_href)}'
                     })
         except Exception as e:
             local_errors.append({
