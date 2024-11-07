@@ -85,7 +85,7 @@ class VersionUpdate:
         change_log_blob = [
             f'## [{new_version_from_setup}] - {datetime.now().strftime("%Y-%m-%d")}',
             self.change_log_line,
-            f'- [#{self.pr_number}](https://github.com/unity-sds/unity-data-services/pull/{self.pr_number}) {self.pr_title}',
+            f'- [#{self.pr_number}](https://github.com/unity-sds/mdps-ds-lib/pull/{self.pr_number}) {self.pr_title}',
             ''
         ]
         if is_releasing:
