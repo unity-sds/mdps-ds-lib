@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ===================================================================
 
+## [1.0.0] - 2024-11-04
+
+- [#54](https://github.com/unity-sds/unity-data-services/pull/54) release attempt
+
+-----------------------------------------
 ## [0.5.1.dev010100] - 2024-10-28
 ### Changed
 - [#52](https://github.com/unity-sds/unity-data-services/pull/52) feat : add dry-run option for stage-out
