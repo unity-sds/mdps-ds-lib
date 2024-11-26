@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ===================================================================
 
+## [1.0.0.dev000003] - 2024-11-26
+### Fixed
+- [#61](https://github.com/unity-sds/mdps-ds-lib/pull/61) fix: add default version during stageout collection id transformation
+
 ## [1.0.0.dev000002] - 2024-11-07
 ### Fixed
 - [#59](https://github.com/unity-sds/mdps-ds-lib/pull/59) fix: wrong dry run s3 url
