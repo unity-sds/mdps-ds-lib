@@ -16,12 +16,14 @@ class GranulesCatalog:
         collection_identifier_parts = current_collection_id.split(':')
         if len(collection_identifier_parts) >= 6:
             LOGGER.debug(f'current_collection_id is assumed to be in UNITY format: {current_collection_id}')
+            current_collection_id = f'{current_collection_id}___001' if '___' not in current_collection_id else current_collection_id
             return current_collection_id
 
         LOGGER.info(f'current_collection_id is not UNITY formatted ID: {current_collection_id}')
         if project_venue_set[0] is None or project_venue_set[1] is None:
             raise ValueError(f'missing project or venue in ENV which is needed due to current_collection_id not UNITY format: {project_venue_set}')
         new_collection = f'URN:NASA:UNITY:{project_venue_set[0]}:{project_venue_set[1]}:{current_collection_id}'
+        new_collection = f'{new_collection}___001' if '___' not in new_collection else new_collection
         LOGGER.info(f'UNITY formatted ID: {new_collection}')
         return new_collection
     

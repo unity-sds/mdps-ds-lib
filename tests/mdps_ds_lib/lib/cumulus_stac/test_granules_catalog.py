@@ -929,10 +929,16 @@ class TestGranulesCatalog(TestCase):
             GranulesCatalog.get_unity_formatted_collection_id('NA', ('LOCAL', None))
         self.assertTrue(str(context.exception).startswith('missing project or venue'))
 
-        result = GranulesCatalog.get_unity_formatted_collection_id('NA', ('LOCAL', 'DEV'))
-        self.assertEqual(result, 'URN:NASA:UNITY:LOCAL:DEV:NA', f'wrong collection id output')
+        result = GranulesCatalog.get_unity_formatted_collection_id('NA__FOO', ('LOCAL', 'DEV'))
+        self.assertEqual(result, 'URN:NASA:UNITY:LOCAL:DEV:NA__FOO___001', f'wrong collection id output')
 
         result = GranulesCatalog.get_unity_formatted_collection_id('URN:JPL:IDS:LOCAL1:DEV2:A:B:C:D:E:F:G', ('LOCAL', 'DEV'))
-        self.assertEqual(result, 'URN:JPL:IDS:LOCAL1:DEV2:A:B:C:D:E:F:G', f'wrong collection id output')
+        self.assertEqual(result, 'URN:JPL:IDS:LOCAL1:DEV2:A:B:C:D:E:F:G___001', f'wrong collection id output')
+
+        result = GranulesCatalog.get_unity_formatted_collection_id('NA___HELLO', ('LOCAL', 'DEV'))
+        self.assertEqual(result, 'URN:NASA:UNITY:LOCAL:DEV:NA___HELLO', f'wrong collection id output')
+
+        result = GranulesCatalog.get_unity_formatted_collection_id('URN:JPL:IDS:LOCAL1:DEV2:A:B:C:D:E:F:G___FOO', ('LOCAL', 'DEV'))
+        self.assertEqual(result, 'URN:JPL:IDS:LOCAL1:DEV2:A:B:C:D:E:F:G___FOO', f'wrong collection id output')
 
         return
