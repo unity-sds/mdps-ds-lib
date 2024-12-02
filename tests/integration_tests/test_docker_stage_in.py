@@ -1920,6 +1920,7 @@ class TestDockerStageIn(TestCase):
             catalog_result = FileUtils.read_json(f'{downloading_dir}/catalog.json')
             print(catalog_result)
             catalog_result = Catalog.from_dict(catalog_result)
+            self.assertEqual(catalog_result.links[0].href, 'catalog.json', f'wrong root: {catalog_result.links[0]}')
             for each in catalog_result.links[1:]:
                 print(FileUtils.read_json(f'{downloading_dir}/{each.href}'))
             for each_granule in zip(granule_json['features'], download_result):
