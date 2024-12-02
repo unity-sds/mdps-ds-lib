@@ -22,7 +22,7 @@ class DownloadGranulesHttp(DownloadGranulesAbstract):
         self._setup_download_dir()
         return self
 
-    def _download_one_item(self, downloading_url):
+    def download_one_item(self, downloading_url):
         downloading_response = requests.get(downloading_url, stream=True)
         downloading_response.raise_for_status()
         downloading_response.raw.decode_content = True
