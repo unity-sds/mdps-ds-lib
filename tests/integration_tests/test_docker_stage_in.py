@@ -1,14 +1,16 @@
 import os
+import logging
+logging.getLogger('botocore').setLevel(logging.CRITICAL)
+logging.getLogger('boto3').setLevel(logging.CRITICAL)
+logging.basicConfig(level=30, format="%(asctime)s [%(levelname)s] [%(name)s::%(lineno)d] %(message)s")
 
 from mdps_ds_lib.stage_in_out.download_granules_factory import DownloadGranulesFactory
 
 os.environ['OBJC_DISABLE_INITIALIZE_FORK_SAFETY'] = 'YES'
 os.environ['no_proxy'] = '*'
-import logging
 
 import requests
 
-logging.basicConfig(level=10, format="%(asctime)s [%(levelname)s] [%(name)s::%(lineno)d] %(message)s")
 
 import math
 from unittest.mock import patch, MagicMock
@@ -38,7 +40,7 @@ class TestDockerStageIn(TestCase):
         with tempfile.TemporaryDirectory() as tmp_dir_name:
             os.environ['OUTPUT_FILE'] = os.path.join(tmp_dir_name, 'some_output', 'output.json')
             os.environ['DOWNLOAD_DIR'] = tmp_dir_name
-            download_result_str = DownloadGranulesFactory().get_class(os.getenv('GRANULES_DOWNLOAD_TYPE', 'MISSING_GRANULES_DOWNLOAD_TYPE')).download()
+            download_result_str = DownloadGranulesFactory().get_class(os.getenv('GRANULES_DOWNLOAD_TYPE', DownloadGranulesFactory.AMALGAMATION)).download()
             download_result = json.loads(download_result_str)
             self.assertTrue('features' in download_result, f'missing features in download_result')
             self.assertEqual(len(download_result['features']) + 2, len(glob(os.path.join(tmp_dir_name, '*'))),
@@ -72,7 +74,7 @@ class TestDockerStageIn(TestCase):
         with tempfile.TemporaryDirectory() as tmp_dir_name:
             os.environ['OUTPUT_FILE'] = os.path.join(tmp_dir_name, 'some_output', 'output.json')
             os.environ['DOWNLOAD_DIR'] = tmp_dir_name
-            download_result_str = DownloadGranulesFactory().get_class(os.getenv('GRANULES_DOWNLOAD_TYPE', 'MISSING_GRANULES_DOWNLOAD_TYPE')).download()
+            download_result_str = DownloadGranulesFactory().get_class(os.getenv('GRANULES_DOWNLOAD_TYPE', DownloadGranulesFactory.AMALGAMATION)).download()
             download_result = json.loads(download_result_str)
             self.assertTrue('features' in download_result, f'missing features in download_result')
             self.assertEqual(len(download_result['features']) + 2, len(glob(os.path.join(tmp_dir_name, '*'))),
@@ -108,7 +110,7 @@ class TestDockerStageIn(TestCase):
         with tempfile.TemporaryDirectory() as tmp_dir_name:
             os.environ['OUTPUT_FILE'] = os.path.join(tmp_dir_name, 'some_output', 'output.json')
             os.environ['DOWNLOAD_DIR'] = tmp_dir_name
-            download_result_str = DownloadGranulesFactory().get_class(os.getenv('GRANULES_DOWNLOAD_TYPE', 'MISSING_GRANULES_DOWNLOAD_TYPE')).download()
+            download_result_str = DownloadGranulesFactory().get_class(os.getenv('GRANULES_DOWNLOAD_TYPE', DownloadGranulesFactory.AMALGAMATION)).download()
             download_result = json.loads(download_result_str)
             print(download_result)
             self.assertTrue('features' in download_result, f'missing features in download_result')
@@ -149,7 +151,7 @@ class TestDockerStageIn(TestCase):
             FileUtils.write_json(granule_json_file, granule_json)
             os.environ['STAC_JSON'] = granule_json_file
             os.environ['DOWNLOAD_DIR'] = downloading_dir
-            download_result_str = DownloadGranulesFactory().get_class(os.getenv('GRANULES_DOWNLOAD_TYPE', 'MISSING_GRANULES_DOWNLOAD_TYPE')).download()
+            download_result_str = DownloadGranulesFactory().get_class(os.getenv('GRANULES_DOWNLOAD_TYPE', DownloadGranulesFactory.AMALGAMATION)).download()
             download_result = json.loads(download_result_str)
             self.assertTrue('features' in download_result, f'missing features in download_result')
             self.assertEqual(len(download_result['features']) + 1, len(glob(os.path.join(downloading_dir, '*'))),
@@ -1085,7 +1087,7 @@ class TestDockerStageIn(TestCase):
             FileUtils.write_json(granule_json_file, granule_json)
             os.environ['STAC_JSON'] = granule_json_file
             os.environ['DOWNLOAD_DIR'] = downloading_dir
-            download_result_str = DownloadGranulesFactory().get_class(os.getenv('GRANULES_DOWNLOAD_TYPE', 'MISSING_GRANULES_DOWNLOAD_TYPE')).download()
+            download_result_str = DownloadGranulesFactory().get_class(os.getenv('GRANULES_DOWNLOAD_TYPE', DownloadGranulesFactory.AMALGAMATION)).download()
             download_result = json.loads(download_result_str)
             self.assertTrue('features' in download_result, f'missing features in download_result')
             error_file = os.path.join(downloading_dir, 'error.log')
@@ -1113,7 +1115,7 @@ class TestDockerStageIn(TestCase):
             os.environ['OUTPUT_FILE'] = os.path.join(tmp_dir_name, 'some_output', 'output.json')
             # TODO this is downloading a login page HTML
             os.environ['DOWNLOAD_DIR'] = tmp_dir_name
-            download_result_str = DownloadGranulesFactory().get_class(os.getenv('GRANULES_DOWNLOAD_TYPE', 'MISSING_GRANULES_DOWNLOAD_TYPE')).download()
+            download_result_str = DownloadGranulesFactory().get_class(os.getenv('GRANULES_DOWNLOAD_TYPE', DownloadGranulesFactory.AMALGAMATION)).download()
             download_result = json.loads(download_result_str)
             self.assertTrue('features' in download_result, f'missing features in download_result')
             print(glob(os.path.join(tmp_dir_name, '*')))
@@ -1147,7 +1149,7 @@ class TestDockerStageIn(TestCase):
             FileUtils.mk_dir_p(downloading_dir)
             os.environ['STAC_JSON'] = dapa_url
             os.environ['DOWNLOAD_DIR'] = downloading_dir
-            download_result_str = DownloadGranulesFactory().get_class(os.getenv('GRANULES_DOWNLOAD_TYPE', 'MISSING_GRANULES_DOWNLOAD_TYPE')).download()
+            download_result_str = DownloadGranulesFactory().get_class(os.getenv('GRANULES_DOWNLOAD_TYPE', DownloadGranulesFactory.AMALGAMATION)).download()
             download_result = json.loads(download_result_str)
             self.assertTrue('features' in download_result, f'missing features in download_result')
             self.assertEqual(len(download_result['features']) * 4 + 1, len(glob(os.path.join(downloading_dir, '*'))),
@@ -1219,7 +1221,7 @@ class TestDockerStageIn(TestCase):
             FileUtils.write_json(granule_json_file, granule_json)
             os.environ['STAC_JSON'] = granule_json_file
             os.environ['DOWNLOAD_DIR'] = downloading_dir
-            download_result_str = DownloadGranulesFactory().get_class(os.getenv('GRANULES_DOWNLOAD_TYPE', 'MISSING_GRANULES_DOWNLOAD_TYPE')).download()
+            download_result_str = DownloadGranulesFactory().get_class(os.getenv('GRANULES_DOWNLOAD_TYPE', DownloadGranulesFactory.AMALGAMATION)).download()
             download_result = json.loads(download_result_str)
             self.assertTrue('features' in download_result, f'missing features in download_result')
             self.assertEqual(len(download_result['features']) * 4 + 1, len(glob(os.path.join(downloading_dir, '*'))),
@@ -1363,7 +1365,7 @@ class TestDockerStageIn(TestCase):
             FileUtils.write_json(granule_json_file, granule_json)
             os.environ['STAC_JSON'] = granule_json_file
             os.environ['DOWNLOAD_DIR'] = downloading_dir
-            download_result_str = DownloadGranulesFactory().get_class(os.getenv('GRANULES_DOWNLOAD_TYPE', 'MISSING_GRANULES_DOWNLOAD_TYPE')).download()
+            download_result_str = DownloadGranulesFactory().get_class(os.getenv('GRANULES_DOWNLOAD_TYPE', DownloadGranulesFactory.AMALGAMATION)).download()
             download_result = json.loads(download_result_str)
             self.assertTrue('features' in download_result, f'missing features in download_result')
             self.assertEqual(len(download_result['features']) + 1, len(glob(os.path.join(downloading_dir, '*'))),
@@ -1417,7 +1419,7 @@ class TestDockerStageIn(TestCase):
             downloading_dir = os.path.join(tmp_dir_name, 'downloading_dir')
             FileUtils.mk_dir_p(downloading_dir)
             os.environ['DOWNLOAD_DIR'] = downloading_dir
-            download_result_str = DownloadGranulesFactory().get_class(os.getenv('GRANULES_DOWNLOAD_TYPE', 'MISSING_GRANULES_DOWNLOAD_TYPE')).download()
+            download_result_str = DownloadGranulesFactory().get_class(os.getenv('GRANULES_DOWNLOAD_TYPE', DownloadGranulesFactory.AMALGAMATION)).download()
             download_result = json.loads(download_result_str)
             self.assertTrue('features' in download_result, f'missing features in download_result')
             self.assertEqual(len(download_result['features']) + 1, len(glob(os.path.join(downloading_dir, '*'))),
@@ -1471,7 +1473,7 @@ class TestDockerStageIn(TestCase):
             downloading_dir = os.path.join(tmp_dir_name, 'downloading_dir')
             FileUtils.mk_dir_p(downloading_dir)
             os.environ['DOWNLOAD_DIR'] = downloading_dir
-            download_result_str = DownloadGranulesFactory().get_class(os.getenv('GRANULES_DOWNLOAD_TYPE', 'MISSING_GRANULES_DOWNLOAD_TYPE')).download()
+            download_result_str = DownloadGranulesFactory().get_class(os.getenv('GRANULES_DOWNLOAD_TYPE', DownloadGranulesFactory.AMALGAMATION)).download()
             download_result = json.loads(download_result_str)
             self.assertTrue('features' in download_result, f'missing features in download_result')
             self.assertEqual(len(download_result['features']) * 4 + 1, len(glob(os.path.join(downloading_dir, '*'))),
@@ -1513,7 +1515,7 @@ class TestDockerStageIn(TestCase):
             FileUtils.write_json(granule_json_file, granule_json)
             os.environ['STAC_JSON'] = granule_json_file
             os.environ['DOWNLOAD_DIR'] = downloading_dir
-            download_result_str = DownloadGranulesFactory().get_class(os.getenv('GRANULES_DOWNLOAD_TYPE', 'MISSING_GRANULES_DOWNLOAD_TYPE')).download()
+            download_result_str = DownloadGranulesFactory().get_class(os.getenv('GRANULES_DOWNLOAD_TYPE', DownloadGranulesFactory.AMALGAMATION)).download()
             download_result = json.loads(download_result_str)
             print(len(download_result['features']))
             self.assertTrue('features' in download_result, f'missing features in download_result')
@@ -1549,7 +1551,7 @@ class TestDockerStageIn(TestCase):
             os.environ['STAC_JSON'] = granule_json_file
             os.environ['DOWNLOAD_DIR'] = downloading_dir
             os.environ['DOWNLOADING_KEYS'] = 'data'
-            download_result_str = DownloadGranulesFactory().get_class(os.getenv('GRANULES_DOWNLOAD_TYPE', 'MISSING_GRANULES_DOWNLOAD_TYPE')).download()
+            download_result_str = DownloadGranulesFactory().get_class(os.getenv('GRANULES_DOWNLOAD_TYPE', DownloadGranulesFactory.AMALGAMATION)).download()
             download_result = json.loads(download_result_str)
             self.assertTrue('features' in download_result, f'missing features in download_result')
             self.assertEqual(len(download_result['features']) + 1, len(glob(os.path.join(downloading_dir, '*'))),
@@ -1905,8 +1907,377 @@ class TestDockerStageIn(TestCase):
             os.environ['STAC_JSON'] = granule_json_file
             os.environ['DOWNLOAD_DIR'] = downloading_dir
             os.environ['DOWNLOADING_ROLES'] = 'data'
-            download_result_str = DownloadGranulesFactory().get_class(os.getenv('GRANULES_DOWNLOAD_TYPE', 'MISSING_GRANULES_DOWNLOAD_TYPE')).download()
+            download_result_str = DownloadGranulesFactory().get_class(os.getenv('GRANULES_DOWNLOAD_TYPE', DownloadGranulesFactory.AMALGAMATION)).download()
             download_result = json.loads(download_result_str)
+            self.assertTrue('features' in download_result, f'missing features in download_result')
+            print(glob(os.path.join(downloading_dir, '*')))
+            self.assertEqual(len(download_result['features']) + 1 + len(granule_json['features']), len(glob(os.path.join(downloading_dir, '*'))),
+                             f'downloaded file does not match: {download_result["features"]} v. {glob(os.path.join(downloading_dir, "*"))}')
+            error_file = os.path.join(tmp_dir_name, 'error.log')
+            if FileUtils.file_exist(error_file):
+                self.assertTrue(False, f'some downloads failed. error.log exists. {FileUtils.read_json(error_file)}')
+            download_result = download_result['features']
+            self.assertTrue('assets' in download_result[0], f'no assets in download_result: {download_result}')
+            downloaded_file_hrefs = set([list(k['assets'].values())[0]['href'] for k in download_result])
+            # print(granule_json['features'], download_result)
+            catalog_result = FileUtils.read_json(f'{downloading_dir}/catalog.json')
+            print(catalog_result)
+            catalog_result = Catalog.from_dict(catalog_result)
+            self.assertEqual(catalog_result.links[0].href, 'catalog.json', f'wrong root: {catalog_result.links[0]}')
+            for each in catalog_result.links[1:]:
+                print(FileUtils.read_json(f'{downloading_dir}/{each.href}'))
+            for each_granule in zip(granule_json['features'], download_result):
+                remote_filename = [k['href'] for k in each_granule[0]['assets'].values() if 'data' in k['roles']]
+                remote_filename = os.path.basename(remote_filename[0])
+                # self.assertTrue(os.path.join('.', remote_filename) in downloaded_file_hrefs, f'mismatched: {remote_filename}')
+                self.assertTrue(remote_filename in downloaded_file_hrefs, f'mismatched: {remote_filename}')
+                self.assertTrue(FileUtils.get_size(os.path.join(downloading_dir, remote_filename)) > 0, f'empty file: {remote_filename}')
+            # self.assertTrue(FileUtils.file_exist(os.environ['OUTPUT_FILE']), f'missing output file')
+        return
+
+    def test_02_download__from_http_with_role_amalgamation(self):
+        granule_json = '''{
+      "numberMatched": 20,
+      "numberReturned": 20,
+      "stac_version": "1.0.0",
+      "type": "FeatureCollection",
+      "links": [
+        {
+          "rel": "self",
+          "href": "https://58nbcawrvb.execute-api.us-west-2.amazonaws.com/test/am-uds-dapa/collections/SNDR_SNPP_ATMS_L1A___1/items?datetime=2016-01-14T08:00:00Z/2016-01-14T11:59:59Z&limit=100&offset=0"
+        },
+        {
+          "rel": "root",
+          "href": "https://58nbcawrvb.execute-api.us-west-2.amazonaws.com"
+        },
+        {
+          "rel": "next",
+          "href": "https://58nbcawrvb.execute-api.us-west-2.amazonaws.com/test/am-uds-dapa/collections/SNDR_SNPP_ATMS_L1A___1/items?datetime=2016-01-14T08:00:00Z/2016-01-14T11:59:59Z&limit=100&offset=100"
+        },
+        {
+          "rel": "prev",
+          "href": "https://58nbcawrvb.execute-api.us-west-2.amazonaws.com/test/am-uds-dapa/collections/SNDR_SNPP_ATMS_L1A___1/items?datetime=2016-01-14T08:00:00Z/2016-01-14T11:59:59Z&limit=100&offset=0"
+        }
+      ],
+      "features": [
+        {
+          "type": "Feature",
+          "stac_version": "1.0.0",
+          "id": "SNDR.SNPP.ATMS.L1A.nominal2.01",
+          "properties": {
+            "start_datetime": "2016-01-14T09:54:00Z",
+            "end_datetime": "2016-01-14T10:00:00Z",
+            "created": "2020-12-14T13:50:00Z",
+            "updated": "2022-08-15T06:26:39.830000Z",
+            "datetime": "2022-08-15T06:26:37.029000Z"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              0.0,
+              0.0
+            ]
+          },
+          "links": [
+            {
+              "rel": "collection",
+              "href": "."
+            }
+          ],
+          "assets": {
+            "SNDR.SNPP.ATMS.L1A.nominal2.01.nc": {
+              "href": "s3://uds-sbx-cumulus-staging/sbx_collection___70112703/sbx_collection___70112703:test_file01/test_file01.nc",
+              "title": "SNDR.SNPP.ATMS.L1A.nominal2.01.nc",
+              "description": "SNDR.SNPP.ATMS.L1A.nominal2.01.nc",
+              "roles": [
+                "data"
+              ]
+            },
+            "SNDR.SNPP.ATMS.L1A.nominal2.01.nc.cas": {
+              "href": "s3://uds-test-cumulus-protected/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.01.nc.cas",
+              "title": "SNDR.SNPP.ATMS.L1A.nominal2.01.nc.cas",
+              "description": "SNDR.SNPP.ATMS.L1A.nominal2.01.nc.cas",
+              "roles": [
+                "metadata__data"
+              ]
+            },
+            "SNDR.SNPP.ATMS.L1A.nominal2.01.cmr.xml": {
+              "href": "s3://uds-test-cumulus-private/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.01.cmr.xml",
+              "title": "SNDR.SNPP.ATMS.L1A.nominal2.01.cmr.xml",
+              "description": "SNDR.SNPP.ATMS.L1A.nominal2.01.cmr.xml",
+              "roles": [
+                "metadata__cmr"
+              ]
+            }
+          },
+          "bbox": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "stac_extensions": [],
+          "collection": "SNDR_SNPP_ATMS_L1A___1"
+        },
+        {
+          "type": "Feature",
+          "stac_version": "1.0.0",
+          "id": "SNDR.SNPP.ATMS.L1A.nominal2.08",
+          "properties": {
+            "start_datetime": "2016-01-14T10:36:00Z",
+            "end_datetime": "2016-01-14T10:42:00Z",
+            "created": "2020-12-14T13:50:00Z",
+            "updated": "2022-08-15T06:26:26.078000Z",
+            "datetime": "2022-08-15T06:26:19.333000Z"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              0.0,
+              0.0
+            ]
+          },
+          "links": [
+            {
+              "rel": "collection",
+              "href": "."
+            }
+          ],
+          "assets": {
+            "SNDR.SNPP.ATMS.L1A.nominal2.08.nc": {
+              "href": "https://archive.podaac.earthdata.nasa.gov/podaac-ops-cumulus-protected/MUR-JPL-L4-GLOB-v4.1/20020604090000-JPL-L4_GHRSST-SSTfnd-MUR-GLOB-v02.0-fv04.1.nc",
+              "title": "SNDR.SNPP.ATMS.L1A.nominal2.08.nc",
+              "description": "SNDR.SNPP.ATMS.L1A.nominal2.08.nc",
+              "roles": [
+                "data"
+              ]
+            },
+            "SNDR.SNPP.ATMS.L1A.nominal2.08.nc.cas": {
+              "href": "s3://uds-test-cumulus-protected/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.08.nc.cas",
+              "title": "SNDR.SNPP.ATMS.L1A.nominal2.08.nc.cas",
+              "description": "SNDR.SNPP.ATMS.L1A.nominal2.08.nc.cas",
+              "roles": [
+                "metadata__data"
+              ]
+            },
+            "SNDR.SNPP.ATMS.L1A.nominal2.08.cmr.xml": {
+              "href": "s3://uds-test-cumulus-private/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.08.cmr.xml",
+              "title": "SNDR.SNPP.ATMS.L1A.nominal2.08.cmr.xml",
+              "description": "SNDR.SNPP.ATMS.L1A.nominal2.08.cmr.xml",
+              "roles": [
+                "metadata__cmr"
+              ]
+            }
+          },
+          "bbox": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "stac_extensions": [],
+          "collection": "SNDR_SNPP_ATMS_L1A___1"
+        },
+        {
+          "type": "Feature",
+          "stac_version": "1.0.0",
+          "id": "SNDR.SNPP.ATMS.L1A.nominal2.06",
+          "properties": {
+            "start_datetime": "2016-01-14T10:24:00Z",
+            "end_datetime": "2016-01-14T10:30:00Z",
+            "created": "2020-12-14T13:50:00Z",
+            "updated": "2022-08-15T06:26:26.068000Z",
+            "datetime": "2022-08-15T06:26:18.641000Z"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              0.0,
+              0.0
+            ]
+          },
+          "links": [
+            {
+              "rel": "collection",
+              "href": "."
+            }
+          ],
+          "assets": {
+            "SNDR.SNPP.ATMS.L1A.nominal2.06.nc": {
+              "href": "https://raw.githubusercontent.com/unity-sds/unity-data-services/develop/CODE_OF_CONDUCT.md",
+              "title": "SNDR.SNPP.ATMS.L1A.nominal2.06.nc",
+              "description": "SNDR.SNPP.ATMS.L1A.nominal2.06.nc",
+              "roles": [
+                "data"
+              ]
+            },
+            "SNDR.SNPP.ATMS.L1A.nominal2.06.nc.cas": {
+              "href": "s3://uds-test-cumulus-protected/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.06.nc.cas",
+              "title": "SNDR.SNPP.ATMS.L1A.nominal2.06.nc.cas",
+              "description": "SNDR.SNPP.ATMS.L1A.nominal2.06.nc.cas",
+              "roles": [
+                "metadata__data"
+              ]
+            },
+            "SNDR.SNPP.ATMS.L1A.nominal2.06.cmr.xml": {
+              "href": "s3://uds-test-cumulus-private/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.06.cmr.xml",
+              "title": "SNDR.SNPP.ATMS.L1A.nominal2.06.cmr.xml",
+              "description": "SNDR.SNPP.ATMS.L1A.nominal2.06.cmr.xml",
+              "roles": [
+                "metadata__cmr"
+              ]
+            }
+          },
+          "bbox": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "stac_extensions": [],
+          "collection": "SNDR_SNPP_ATMS_L1A___1"
+        },
+        {
+          "type": "Feature",
+          "stac_version": "1.0.0",
+          "id": "SNDR.SNPP.ATMS.L1A.nominal2.18",
+          "properties": {
+            "start_datetime": "2016-01-14T11:36:00Z",
+            "end_datetime": "2016-01-14T11:42:00Z",
+            "created": "2020-12-14T13:50:00Z",
+            "updated": "2022-08-15T06:26:26.060000Z",
+            "datetime": "2022-08-15T06:26:19.698000Z"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              0.0,
+              0.0
+            ]
+          },
+          "links": [
+            {
+              "rel": "collection",
+              "href": "."
+            }
+          ],
+          "assets": {
+            "SNDR.SNPP.ATMS.L1A.nominal2.18.nc": {
+              "href": "https://raw.githubusercontent.com/unity-sds/unity-data-services/develop/CONTRIBUTING.md",
+              "title": "SNDR.SNPP.ATMS.L1A.nominal2.18.nc",
+              "description": "SNDR.SNPP.ATMS.L1A.nominal2.18.nc",
+              "roles": [
+                "data"
+              ]
+            },
+            "SNDR.SNPP.ATMS.L1A.nominal2.18.nc.cas": {
+              "href": "s3://uds-test-cumulus-protected/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.18.nc.cas",
+              "title": "SNDR.SNPP.ATMS.L1A.nominal2.18.nc.cas",
+              "description": "SNDR.SNPP.ATMS.L1A.nominal2.18.nc.cas",
+              "roles": [
+                "metadata__data"
+              ]
+            },
+            "SNDR.SNPP.ATMS.L1A.nominal2.18.cmr.xml": {
+              "href": "s3://uds-test-cumulus-private/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.18.cmr.xml",
+              "title": "SNDR.SNPP.ATMS.L1A.nominal2.18.cmr.xml",
+              "description": "SNDR.SNPP.ATMS.L1A.nominal2.18.cmr.xml",
+              "roles": [
+                "metadata__cmr"
+              ]
+            }
+          },
+          "bbox": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "stac_extensions": [],
+          "collection": "SNDR_SNPP_ATMS_L1A___1"
+        },
+        {
+          "type": "Feature",
+          "stac_version": "1.0.0",
+          "id": "SNDR.SNPP.ATMS.L1A.nominal2.04",
+          "properties": {
+            "start_datetime": "2016-01-14T10:12:00Z",
+            "end_datetime": "2016-01-14T10:18:00Z",
+            "created": "2020-12-14T13:50:00Z",
+            "updated": "2022-08-15T06:26:26.050000Z",
+            "datetime": "2022-08-15T06:26:19.491000Z"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              0.0,
+              0.0
+            ]
+          },
+          "links": [
+            {
+              "rel": "collection",
+              "href": "."
+            }
+          ],
+          "assets": {
+            "SNDR.SNPP.ATMS.L1A.nominal2.04.nc": {
+              "href": "https://raw.githubusercontent.com/unity-sds/unity-data-services/develop/LICENSE",
+              "title": "SNDR.SNPP.ATMS.L1A.nominal2.04.nc",
+              "description": "SNDR.SNPP.ATMS.L1A.nominal2.04.nc",
+              "roles": [
+                "data"
+              ]
+            },
+            "SNDR.SNPP.ATMS.L1A.nominal2.04.nc.cas": {
+              "href": "s3://uds-test-cumulus-protected/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.04.nc.cas",
+              "title": "SNDR.SNPP.ATMS.L1A.nominal2.04.nc.cas",
+              "description": "SNDR.SNPP.ATMS.L1A.nominal2.04.nc.cas",
+              "roles": [
+                "metadata__data"
+              ]
+            },
+            "SNDR.SNPP.ATMS.L1A.nominal2.04.cmr.xml": {
+              "href": "s3://uds-test-cumulus-private/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.04.cmr.xml",
+              "title": "SNDR.SNPP.ATMS.L1A.nominal2.04.cmr.xml",
+              "description": "SNDR.SNPP.ATMS.L1A.nominal2.04.cmr.xml",
+              "roles": [
+                "metadata__cmr"
+              ]
+            }
+          },
+          "bbox": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "stac_extensions": [],
+          "collection": "SNDR_SNPP_ATMS_L1A___1"
+        }
+      ]
+    }'''
+        granule_json = json.loads(granule_json)
+        if len(argv) > 1:
+            argv.pop(-1)
+        argv.append('DOWNLOAD')
+        os.environ[Constants.EDL_USERNAME] = '/unity/uds/user/wphyo/edl_username'
+        os.environ[Constants.EDL_PASSWORD] = '/unity/uds/user/wphyo/edl_dwssap'
+        os.environ[Constants.EDL_PASSWORD_TYPE] = Constants.PARAM_STORE
+        os.environ[Constants.EDL_BASE_URL] = 'urs.earthdata.nasa.gov'
+        os.environ['PARALLEL_COUNT'] = '3'
+        with tempfile.TemporaryDirectory() as tmp_dir_name:
+            os.environ['OUTPUT_FILE'] = os.path.join(tmp_dir_name, 'some_output', 'output.json')
+            granule_json_file = os.path.join(tmp_dir_name, 'input_file.json')
+            downloading_dir = os.path.join(tmp_dir_name, 'downloading_dir')
+            FileUtils.mk_dir_p(downloading_dir)
+            FileUtils.write_json(granule_json_file, granule_json)
+            os.environ['STAC_JSON'] = granule_json_file
+            os.environ['DOWNLOAD_DIR'] = downloading_dir
+            os.environ['DOWNLOADING_ROLES'] = 'data'
+            download_result_str = DownloadGranulesFactory().get_class(os.getenv('GRANULES_DOWNLOAD_TYPE', DownloadGranulesFactory.AMALGAMATION)).download()
+            download_result = json.loads(download_result_str)
+            print(glob(os.path.join(downloading_dir, '*')))
             self.assertTrue('features' in download_result, f'missing features in download_result')
             self.assertEqual(len(download_result['features']) + 1 + len(granule_json['features']), len(glob(os.path.join(downloading_dir, '*'))),
                              f'downloaded file does not match: {download_result["features"]} v. {glob(os.path.join(downloading_dir, "*"))}')

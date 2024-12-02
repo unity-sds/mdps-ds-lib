@@ -1,4 +1,5 @@
 import logging
+import os
 
 from mdps_ds_lib.lib.earthdata_login.urs_token_retriever import URSTokenRetriever
 from mdps_ds_lib.stage_in_out.download_granules_abstract import DownloadGranulesAbstract
@@ -28,14 +29,19 @@ class DownloadGranulesAmalgamation(DownloadGranulesAbstract):
         return self
 
     def download_one_item(self, downloading_url: str):
-        LOGGER.debug(f'downloading: {downloading_url}')
+        LOGGER.error(f'downloading: {downloading_url}')
         upper_download_url = downloading_url.upper()
         if upper_download_url.startswith('S3://'):
-            return DownloadGranulesS3().download_one_item(downloading_url)
+            download_s3 = DownloadGranulesS3()
+            download_s3._download_dir = self._download_dir
+            return download_s3.download_one_item(downloading_url)
         if not upper_download_url.startswith('HTTPS://'):
             raise ValueError(f'unknown URL to download: {downloading_url}')
         if any([k in upper_download_url for k in DownloadGranulesDAAC.VALID_DOMAINS]):
             download_daac = DownloadGranulesDAAC()
             download_daac.edl_token = self.__edl_token
+            download_daac._download_dir = self._download_dir
             return download_daac.download_one_item(downloading_url)
-        return DownloadGranulesHttp().download_one_item(downloading_url)
+        download_http = DownloadGranulesHttp()
+        download_http._download_dir = self._download_dir
+        return download_http.download_one_item(downloading_url)
