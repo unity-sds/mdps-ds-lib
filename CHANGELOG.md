@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ===================================================================
 
+## [1.0.0.dev000004] - 2024-12-02
+### Fixed
+- [#63](https://github.com/unity-sds/mdps-ds-lib/pull/63) fix: stage in root url relative
+
 ## [1.0.0.dev000003] - 2024-11-26
 ### Fixed
 - [#61](https://github.com/unity-sds/mdps-ds-lib/pull/61) fix: add default version during stageout collection id transformation
