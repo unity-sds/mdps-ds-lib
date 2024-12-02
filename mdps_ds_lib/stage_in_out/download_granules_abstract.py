@@ -137,9 +137,7 @@ class DownloadGranulesAbstract(ABC):
         catalog = Catalog(
             id='NA',
             description='NA')
-        catalog.set_self_href(os.path.join(self._download_dir, 'catalog.json'))
-        # catalog.add_link(Link('item', failed_features_file, 'application/json'))
-
+        catalog.add_link(Link('root', f'catalog.json', 'application/json'))
         if len(self._granules_json.items) < 1:
             LOGGER.warning(f'cannot find any granules')
             granules_json_dict = self._granules_json.to_dict(False)
