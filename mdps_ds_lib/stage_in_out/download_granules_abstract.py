@@ -89,7 +89,7 @@ class DownloadGranulesAbstract(ABC):
         raise NotImplementedError(f'to be implemented in concrete classes')
 
     @abstractmethod
-    def _download_one_item(self, downloading_url):
+    def download_one_item(self, downloading_url):
         raise NotImplementedError(f'to be implemented in concrete classes')
 
     def _setup_download_dir(self):
@@ -137,9 +137,7 @@ class DownloadGranulesAbstract(ABC):
         catalog = Catalog(
             id='NA',
             description='NA')
-        catalog.set_self_href(os.path.join(self._download_dir, 'catalog.json'))
-        # catalog.add_link(Link('item', failed_features_file, 'application/json'))
-
+        catalog.add_link(Link('root', f'catalog.json', 'application/json'))
         if len(self._granules_json.items) < 1:
             LOGGER.warning(f'cannot find any granules')
             granules_json_dict = self._granules_json.to_dict(False)
@@ -156,7 +154,7 @@ class DownloadGranulesAbstract(ABC):
         # https://www.infoworld.com/article/3542595/6-python-libraries-for-parallel-processing.html
         multithread_processor_props = MultiThreadProcessorProps(self._parallel_count)
         multithread_processor_props.job_manager = JobManagerMemory(job_manager_props)
-        multithread_processor_props.job_executor = DownloadItemExecutor(self._downloading_keys,self._downloading_roles, self._download_one_item, local_items, error_list)
+        multithread_processor_props.job_executor = DownloadItemExecutor(self._downloading_keys, self._downloading_roles, self.download_one_item, local_items, error_list)
         multithread_processor = MultiThreadProcessor(multithread_processor_props)
         multithread_processor.start()
 
