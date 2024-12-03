@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ===================================================================
 
+## [1.1.0] - 2024-12-03
+
+- [#67](https://github.com/unity-sds/mdps-ds-lib/pull/67) release 1.1.0
+
+-----------------------------------------
 ## [1.0.0.dev000100] - 2024-12-03
 ### Changed
 - [#65](https://github.com/unity-sds/mdps-ds-lib/pull/65) feat: amalgamation download
