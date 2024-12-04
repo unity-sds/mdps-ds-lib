@@ -12,12 +12,26 @@ LOGGER = logging.getLogger(__name__)
 
 
 class DownloadGranulesDAAC(DownloadGranulesAbstract):
+    VALID_DOMAINS = ['EARTHDATA.NASA.GOV', 'EARTHDATACLOUD.NASA.GOV']
 
     def __init__(self) -> None:
         super().__init__()
         self.__edl_token = None
         self.__retry_wait_time_sec = int(os.environ.get('DOWNLOAD_RETRY_WAIT_TIME', '30'))
         self.__retry_times = int(os.environ.get('DOWNLOAD_RETRY_TIMES', '5'))
+
+    @property
+    def edl_token(self):
+        return self.__edl_token
+
+    @edl_token.setter
+    def edl_token(self, val: str):
+        """
+        :param val:
+        :return: None
+        """
+        self.__edl_token = val
+        return
 
     def _set_props_from_env(self):
         missing_keys = [k for k in [self.STAC_JSON, self.DOWNLOAD_DIR_KEY] if k not in os.environ]
@@ -28,9 +42,11 @@ class DownloadGranulesDAAC(DownloadGranulesAbstract):
         self.__edl_token = URSTokenRetriever().start()
         return self
 
-    def _download_one_item(self, downloading_url):
+    def download_one_item(self, downloading_url):
+        if self.edl_token is None:
+            raise ValueError(f'missing edl_token. Unable to download from DAAC')
         headers = {
-            'Authorization': f'Bearer {self.__edl_token}'
+            'Authorization': f'Bearer {self.edl_token}'
         }
         r = requests.get(downloading_url, headers=headers)
         download_count = 1

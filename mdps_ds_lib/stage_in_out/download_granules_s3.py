@@ -21,6 +21,6 @@ class DownloadGranulesS3(DownloadGranulesAbstract):
         self._setup_download_dir()
         return self
 
-    def _download_one_item(self, downloading_url):
+    def download_one_item(self, downloading_url):
         local_file_path = self.__s3.set_s3_url(downloading_url).download(self._download_dir)
         return local_file_path
