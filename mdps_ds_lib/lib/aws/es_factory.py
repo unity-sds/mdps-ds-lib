@@ -4,6 +4,7 @@ from mdps_ds_lib.lib.utils.factory_abstract import FactoryAbstract
 class ESFactory(FactoryAbstract):
     NO_AUTH = 'NO_AUTH'
     AWS = 'AWS'
+    AWS_OPENSEARCH = 'AWS_OS'
 
     def get_instance(self, class_type, **kwargs):
         ct = class_type.upper()
@@ -13,4 +14,8 @@ class ESFactory(FactoryAbstract):
         if ct == self.AWS:
             from mdps_ds_lib.lib.aws.es_middleware_aws import EsMiddlewareAws
             return EsMiddlewareAws(kwargs['index'], kwargs['base_url'], port=kwargs['port'])
+        if ct == self.AWS_OPENSEARCH:
+            from mdps_ds_lib.lib.aws.os_middleware_aws import OsMiddlewareAws
+            return OsMiddlewareAws(kwargs['index'], kwargs['base_url'], port=kwargs['port'])
+
         raise ModuleNotFoundError(f'cannot find ES class for {ct}')

@@ -25,9 +25,10 @@ fastjsonschema = "^2.19.1"
 requests-aws4auth="1.2.3"
 pystac="1.9.0"
 xmltodict="0.13.0"
-requests="2.31.0"
+requests="^2.31.0"
 tenacity="8.2.3"
 jsonschema = "^4.23.0"
+opensearch-py = "^2.8.0"
 
 
 [build-system]
