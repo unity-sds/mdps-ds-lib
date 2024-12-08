@@ -1535,8 +1535,100 @@ class TestDockerStageIn(TestCase):
         return
 
     def test_02_download__from_http(self):
-        granule_json = '{"numberMatched": 20, "numberReturned": 20, "stac_version": "1.0.0", "type": "FeatureCollection", "links": [{"rel": "self", "href": "https://58nbcawrvb.execute-api.us-west-2.amazonaws.com/test/am-uds-dapa/collections/SNDR_SNPP_ATMS_L1A___1/items?datetime=2016-01-14T08:00:00Z/2016-01-14T11:59:59Z&limit=100&offset=0"}, {"rel": "root", "href": "https://58nbcawrvb.execute-api.us-west-2.amazonaws.com"}, {"rel": "next", "href": "https://58nbcawrvb.execute-api.us-west-2.amazonaws.com/test/am-uds-dapa/collections/SNDR_SNPP_ATMS_L1A___1/items?datetime=2016-01-14T08:00:00Z/2016-01-14T11:59:59Z&limit=100&offset=100"}, {"rel": "prev", "href": "https://58nbcawrvb.execute-api.us-west-2.amazonaws.com/test/am-uds-dapa/collections/SNDR_SNPP_ATMS_L1A___1/items?datetime=2016-01-14T08:00:00Z/2016-01-14T11:59:59Z&limit=100&offset=0"}], "features": [{"type": "Feature", "stac_version": "1.0.0", "id": "SNDR.SNPP.ATMS.L1A.nominal2.01", "properties": {"start_datetime": "2016-01-14T09:54:00Z", "end_datetime": "2016-01-14T10:00:00Z", "created": "2020-12-14T13:50:00Z", "updated": "2022-08-15T06:26:39.830000Z", "datetime": "2022-08-15T06:26:37.029000Z"}, "geometry": {"type": "Point", "coordinates": [0.0, 0.0]}, "links": [{"rel": "collection", "href": "."}], "assets": {"data": {"href": "https://raw.githubusercontent.com/unity-sds/unity-data-services/develop/README.md", "title": "SNDR.SNPP.ATMS.L1A.nominal2.01.nc", "description": "SNDR.SNPP.ATMS.L1A.nominal2.01.nc"}, "metadata__data": {"href": "s3://uds-test-cumulus-protected/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.01.nc.cas", "title": "SNDR.SNPP.ATMS.L1A.nominal2.01.nc.cas", "description": "SNDR.SNPP.ATMS.L1A.nominal2.01.nc.cas"}, "metadata__cmr": {"href": "s3://uds-test-cumulus-private/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.01.cmr.xml", "title": "SNDR.SNPP.ATMS.L1A.nominal2.01.cmr.xml", "description": "SNDR.SNPP.ATMS.L1A.nominal2.01.cmr.xml"}}, "bbox": [0.0, 0.0, 0.0, 0.0], "stac_extensions": [], "collection": "SNDR_SNPP_ATMS_L1A___1"}, {"type": "Feature", "stac_version": "1.0.0", "id": "SNDR.SNPP.ATMS.L1A.nominal2.08", "properties": {"start_datetime": "2016-01-14T10:36:00Z", "end_datetime": "2016-01-14T10:42:00Z", "created": "2020-12-14T13:50:00Z", "updated": "2022-08-15T06:26:26.078000Z", "datetime": "2022-08-15T06:26:19.333000Z"}, "geometry": {"type": "Point", "coordinates": [0.0, 0.0]}, "links": [{"rel": "collection", "href": "."}], "assets": {"data": {"href": "https://raw.githubusercontent.com/unity-sds/unity-data-services/develop/CHANGELOG.md", "title": "SNDR.SNPP.ATMS.L1A.nominal2.08.nc", "description": "SNDR.SNPP.ATMS.L1A.nominal2.08.nc"}, "metadata__data": {"href": "s3://uds-test-cumulus-protected/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.08.nc.cas", "title": "SNDR.SNPP.ATMS.L1A.nominal2.08.nc.cas", "description": "SNDR.SNPP.ATMS.L1A.nominal2.08.nc.cas"}, "metadata__cmr": {"href": "s3://uds-test-cumulus-private/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.08.cmr.xml", "title": "SNDR.SNPP.ATMS.L1A.nominal2.08.cmr.xml", "description": "SNDR.SNPP.ATMS.L1A.nominal2.08.cmr.xml"}}, "bbox": [0.0, 0.0, 0.0, 0.0], "stac_extensions": [], "collection": "SNDR_SNPP_ATMS_L1A___1"}, {"type": "Feature", "stac_version": "1.0.0", "id": "SNDR.SNPP.ATMS.L1A.nominal2.06", "properties": {"start_datetime": "2016-01-14T10:24:00Z", "end_datetime": "2016-01-14T10:30:00Z", "created": "2020-12-14T13:50:00Z", "updated": "2022-08-15T06:26:26.068000Z", "datetime": "2022-08-15T06:26:18.641000Z"}, "geometry": {"type": "Point", "coordinates": [0.0, 0.0]}, "links": [{"rel": "collection", "href": "."}], "assets": {"data": {"href": "https://raw.githubusercontent.com/unity-sds/unity-data-services/develop/CODE_OF_CONDUCT.md", "title": "SNDR.SNPP.ATMS.L1A.nominal2.06.nc", "description": "SNDR.SNPP.ATMS.L1A.nominal2.06.nc"}, "metadata__data": {"href": "s3://uds-test-cumulus-protected/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.06.nc.cas", "title": "SNDR.SNPP.ATMS.L1A.nominal2.06.nc.cas", "description": "SNDR.SNPP.ATMS.L1A.nominal2.06.nc.cas"}, "metadata__cmr": {"href": "s3://uds-test-cumulus-private/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.06.cmr.xml", "title": "SNDR.SNPP.ATMS.L1A.nominal2.06.cmr.xml", "description": "SNDR.SNPP.ATMS.L1A.nominal2.06.cmr.xml"}}, "bbox": [0.0, 0.0, 0.0, 0.0], "stac_extensions": [], "collection": "SNDR_SNPP_ATMS_L1A___1"}, {"type": "Feature", "stac_version": "1.0.0", "id": "SNDR.SNPP.ATMS.L1A.nominal2.18", "properties": {"start_datetime": "2016-01-14T11:36:00Z", "end_datetime": "2016-01-14T11:42:00Z", "created": "2020-12-14T13:50:00Z", "updated": "2022-08-15T06:26:26.060000Z", "datetime": "2022-08-15T06:26:19.698000Z"}, "geometry": {"type": "Point", "coordinates": [0.0, 0.0]}, "links": [{"rel": "collection", "href": "."}], "assets": {"data": {"href": "https://raw.githubusercontent.com/unity-sds/unity-data-services/develop/CONTRIBUTING.md", "title": "SNDR.SNPP.ATMS.L1A.nominal2.18.nc", "description": "SNDR.SNPP.ATMS.L1A.nominal2.18.nc"}, "metadata__data": {"href": "s3://uds-test-cumulus-protected/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.18.nc.cas", "title": "SNDR.SNPP.ATMS.L1A.nominal2.18.nc.cas", "description": "SNDR.SNPP.ATMS.L1A.nominal2.18.nc.cas"}, "metadata__cmr": {"href": "s3://uds-test-cumulus-private/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.18.cmr.xml", "title": "SNDR.SNPP.ATMS.L1A.nominal2.18.cmr.xml", "description": "SNDR.SNPP.ATMS.L1A.nominal2.18.cmr.xml"}}, "bbox": [0.0, 0.0, 0.0, 0.0], "stac_extensions": [], "collection": "SNDR_SNPP_ATMS_L1A___1"}, {"type": "Feature", "stac_version": "1.0.0", "id": "SNDR.SNPP.ATMS.L1A.nominal2.04", "properties": {"start_datetime": "2016-01-14T10:12:00Z", "end_datetime": "2016-01-14T10:18:00Z", "created": "2020-12-14T13:50:00Z", "updated": "2022-08-15T06:26:26.050000Z", "datetime": "2022-08-15T06:26:19.491000Z"}, "geometry": {"type": "Point", "coordinates": [0.0, 0.0]}, "links": [{"rel": "collection", "href": "."}], "assets": {"data": {"href": "https://raw.githubusercontent.com/unity-sds/unity-data-services/develop/LICENSE", "title": "SNDR.SNPP.ATMS.L1A.nominal2.04.nc", "description": "SNDR.SNPP.ATMS.L1A.nominal2.04.nc"}, "metadata__data": {"href": "s3://uds-test-cumulus-protected/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.04.nc.cas", "title": "SNDR.SNPP.ATMS.L1A.nominal2.04.nc.cas", "description": "SNDR.SNPP.ATMS.L1A.nominal2.04.nc.cas"}, "metadata__cmr": {"href": "s3://uds-test-cumulus-private/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.04.cmr.xml", "title": "SNDR.SNPP.ATMS.L1A.nominal2.04.cmr.xml", "description": "SNDR.SNPP.ATMS.L1A.nominal2.04.cmr.xml"}}, "bbox": [0.0, 0.0, 0.0, 0.0], "stac_extensions": [], "collection": "SNDR_SNPP_ATMS_L1A___1"}]}'
-        granule_json = json.loads(granule_json)
+        granule_json = {'numberMatched': 20, 'numberReturned': 20, 'stac_version': '1.0.0', 'type': 'FeatureCollection',
+                        'links': [{'rel': 'self',
+                                   'href': 'https://58nbcawrvb.execute-api.us-west-2.amazonaws.com/test/am-uds-dapa/collections/SNDR_SNPP_ATMS_L1A___1/items?datetime=2016-01-14T08:00:00Z/2016-01-14T11:59:59Z&limit=100&offset=0'},
+                                  {'rel': 'root', 'href': 'https://58nbcawrvb.execute-api.us-west-2.amazonaws.com'},
+                                  {'rel': 'next',
+                                   'href': 'https://58nbcawrvb.execute-api.us-west-2.amazonaws.com/test/am-uds-dapa/collections/SNDR_SNPP_ATMS_L1A___1/items?datetime=2016-01-14T08:00:00Z/2016-01-14T11:59:59Z&limit=100&offset=100'},
+                                  {'rel': 'prev',
+                                   'href': 'https://58nbcawrvb.execute-api.us-west-2.amazonaws.com/test/am-uds-dapa/collections/SNDR_SNPP_ATMS_L1A___1/items?datetime=2016-01-14T08:00:00Z/2016-01-14T11:59:59Z&limit=100&offset=0'}],
+                        'features': [
+                            {'type': 'Feature', 'stac_version': '1.0.0', 'id': 'urn:nasa:unity:unity:dev:SNDR.SNPP.ATMS.L1A.nominal2.01',
+                             'properties': {'start_datetime': '2016-01-14T09:54:00Z',
+                                            'end_datetime': '2016-01-14T10:00:00Z', 'created': '2020-12-14T13:50:00Z',
+                                            'updated': '2022-08-15T06:26:39.830000Z',
+                                            'datetime': '2022-08-15T06:26:37.029000Z'},
+                             'geometry': {'type': 'Point', 'coordinates': [0.0, 0.0]},
+                             'links': [{'rel': 'collection', 'href': '.'}], 'assets': {'data': {
+                                'href': 'https://raw.githubusercontent.com/unity-sds/unity-data-services/develop/README.md',
+                                'title': 'SNDR.SNPP.ATMS.L1A.nominal2.01.nc',
+                                'description': 'SNDR.SNPP.ATMS.L1A.nominal2.01.nc'}, 'metadata__data': {
+                                'href': 's3://uds-test-cumulus-protected/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.01.nc.cas',
+                                'title': 'SNDR.SNPP.ATMS.L1A.nominal2.01.nc.cas',
+                                'description': 'SNDR.SNPP.ATMS.L1A.nominal2.01.nc.cas'}, 'metadata__cmr': {
+                                'href': 's3://uds-test-cumulus-private/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.01.cmr.xml',
+                                'title': 'SNDR.SNPP.ATMS.L1A.nominal2.01.cmr.xml',
+                                'description': 'SNDR.SNPP.ATMS.L1A.nominal2.01.cmr.xml'}}, 'bbox': [0.0, 0.0, 0.0, 0.0],
+                             'stac_extensions': [], 'collection': 'SNDR_SNPP_ATMS_L1A___1'},
+                            {'type': 'Feature', 'stac_version': '1.0.0', 'id': 'urn:nasa:unity:unity:dev:SNDR.SNPP.ATMS.L1A.nominal2.08',
+                             'properties': {'start_datetime': '2016-01-14T10:36:00Z',
+                                            'end_datetime': '2016-01-14T10:42:00Z', 'created': '2020-12-14T13:50:00Z',
+                                            'updated': '2022-08-15T06:26:26.078000Z',
+                                            'datetime': '2022-08-15T06:26:19.333000Z'},
+                             'geometry': {'type': 'Point', 'coordinates': [0.0, 0.0]},
+                             'links': [{'rel': 'collection', 'href': '.'}], 'assets': {'data': {
+                                'href': 'https://raw.githubusercontent.com/unity-sds/unity-data-services/develop/CHANGELOG.md',
+                                'title': 'SNDR.SNPP.ATMS.L1A.nominal2.08.nc',
+                                'description': 'SNDR.SNPP.ATMS.L1A.nominal2.08.nc'}, 'metadata__data': {
+                                'href': 's3://uds-test-cumulus-protected/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.08.nc.cas',
+                                'title': 'SNDR.SNPP.ATMS.L1A.nominal2.08.nc.cas',
+                                'description': 'SNDR.SNPP.ATMS.L1A.nominal2.08.nc.cas'}, 'metadata__cmr': {
+                                'href': 's3://uds-test-cumulus-private/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.08.cmr.xml',
+                                'title': 'SNDR.SNPP.ATMS.L1A.nominal2.08.cmr.xml',
+                                'description': 'SNDR.SNPP.ATMS.L1A.nominal2.08.cmr.xml'}}, 'bbox': [0.0, 0.0, 0.0, 0.0],
+                             'stac_extensions': [], 'collection': 'SNDR_SNPP_ATMS_L1A___1'},
+                            {'type': 'Feature', 'stac_version': '1.0.0', 'id': 'urn:nasa:unity:unity:dev:SNDR.SNPP.ATMS.L1A.nominal2.06',
+                             'properties': {'start_datetime': '2016-01-14T10:24:00Z',
+                                            'end_datetime': '2016-01-14T10:30:00Z', 'created': '2020-12-14T13:50:00Z',
+                                            'updated': '2022-08-15T06:26:26.068000Z',
+                                            'datetime': '2022-08-15T06:26:18.641000Z'},
+                             'geometry': {'type': 'Point', 'coordinates': [0.0, 0.0]},
+                             'links': [{'rel': 'collection', 'href': '.'}], 'assets': {'data': {
+                                'href': 'https://raw.githubusercontent.com/unity-sds/unity-data-services/develop/CODE_OF_CONDUCT.md',
+                                'title': 'SNDR.SNPP.ATMS.L1A.nominal2.06.nc',
+                                'description': 'SNDR.SNPP.ATMS.L1A.nominal2.06.nc'}, 'metadata__data': {
+                                'href': 's3://uds-test-cumulus-protected/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.06.nc.cas',
+                                'title': 'SNDR.SNPP.ATMS.L1A.nominal2.06.nc.cas',
+                                'description': 'SNDR.SNPP.ATMS.L1A.nominal2.06.nc.cas'}, 'metadata__cmr': {
+                                'href': 's3://uds-test-cumulus-private/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.06.cmr.xml',
+                                'title': 'SNDR.SNPP.ATMS.L1A.nominal2.06.cmr.xml',
+                                'description': 'SNDR.SNPP.ATMS.L1A.nominal2.06.cmr.xml'}}, 'bbox': [0.0, 0.0, 0.0, 0.0],
+                             'stac_extensions': [], 'collection': 'SNDR_SNPP_ATMS_L1A___1'},
+                            {'type': 'Feature', 'stac_version': '1.0.0', 'id': 'urn:nasa:unity:unity:dev:SNDR.SNPP.ATMS.L1A.nominal2.18',
+                             'properties': {'start_datetime': '2016-01-14T11:36:00Z',
+                                            'end_datetime': '2016-01-14T11:42:00Z', 'created': '2020-12-14T13:50:00Z',
+                                            'updated': '2022-08-15T06:26:26.060000Z',
+                                            'datetime': '2022-08-15T06:26:19.698000Z'},
+                             'geometry': {'type': 'Point', 'coordinates': [0.0, 0.0]},
+                             'links': [{'rel': 'collection', 'href': '.'}], 'assets': {'data': {
+                                'href': 'https://raw.githubusercontent.com/unity-sds/unity-data-services/develop/CONTRIBUTING.md',
+                                'title': 'SNDR.SNPP.ATMS.L1A.nominal2.18.nc',
+                                'description': 'SNDR.SNPP.ATMS.L1A.nominal2.18.nc'}, 'metadata__data': {
+                                'href': 's3://uds-test-cumulus-protected/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.18.nc.cas',
+                                'title': 'SNDR.SNPP.ATMS.L1A.nominal2.18.nc.cas',
+                                'description': 'SNDR.SNPP.ATMS.L1A.nominal2.18.nc.cas'}, 'metadata__cmr': {
+                                'href': 's3://uds-test-cumulus-private/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.18.cmr.xml',
+                                'title': 'SNDR.SNPP.ATMS.L1A.nominal2.18.cmr.xml',
+                                'description': 'SNDR.SNPP.ATMS.L1A.nominal2.18.cmr.xml'}}, 'bbox': [0.0, 0.0, 0.0, 0.0],
+                             'stac_extensions': [], 'collection': 'SNDR_SNPP_ATMS_L1A___1'},
+                            {'type': 'Feature', 'stac_version': '1.0.0', 'id': 'urn:nasa:unity:unity:dev:SNDR.SNPP.ATMS.L1A.nominal2.04',
+                             'properties': {'start_datetime': '2016-01-14T10:12:00Z',
+                                            'end_datetime': '2016-01-14T10:18:00Z', 'created': '2020-12-14T13:50:00Z',
+                                            'updated': '2022-08-15T06:26:26.050000Z',
+                                            'datetime': '2022-08-15T06:26:19.491000Z'},
+                             'geometry': {'type': 'Point', 'coordinates': [0.0, 0.0]},
+                             'links': [{'rel': 'collection', 'href': '.'}], 'assets': {'data': {
+                                'href': 'https://raw.githubusercontent.com/unity-sds/unity-data-services/develop/LICENSE',
+                                'title': 'SNDR.SNPP.ATMS.L1A.nominal2.04.nc',
+                                'description': 'SNDR.SNPP.ATMS.L1A.nominal2.04.nc'}, 'metadata__data': {
+                                'href': 's3://uds-test-cumulus-protected/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.04.nc.cas',
+                                'title': 'SNDR.SNPP.ATMS.L1A.nominal2.04.nc.cas',
+                                'description': 'SNDR.SNPP.ATMS.L1A.nominal2.04.nc.cas'}, 'metadata__cmr': {
+                                'href': 's3://uds-test-cumulus-private/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.04.cmr.xml',
+                                'title': 'SNDR.SNPP.ATMS.L1A.nominal2.04.cmr.xml',
+                                'description': 'SNDR.SNPP.ATMS.L1A.nominal2.04.cmr.xml'}}, 'bbox': [0.0, 0.0, 0.0, 0.0],
+                             'stac_extensions': [], 'collection': 'SNDR_SNPP_ATMS_L1A___1'}]}
         if len(argv) > 1:
             argv.pop(-1)
         argv.append('DOWNLOAD')
@@ -1553,8 +1645,9 @@ class TestDockerStageIn(TestCase):
             os.environ['DOWNLOADING_KEYS'] = 'data'
             download_result_str = DownloadGranulesFactory().get_class(os.getenv('GRANULES_DOWNLOAD_TYPE', DownloadGranulesFactory.AMALGAMATION)).download()
             download_result = json.loads(download_result_str)
+            print(json.dumps(download_result, indent=2))
             self.assertTrue('features' in download_result, f'missing features in download_result')
-            self.assertEqual(len(download_result['features']) + 1, len(glob(os.path.join(downloading_dir, '*'))),
+            self.assertEqual(len(download_result['features']) + 1 + len(granule_json['features']), len(glob(os.path.join(downloading_dir, '*'))),
                              f'downloaded file does not match: {download_result["features"]} v. {glob(os.path.join(downloading_dir, "*"))}')
             error_file = os.path.join(tmp_dir_name, 'error.log')
             if FileUtils.file_exist(error_file):
@@ -1564,10 +1657,18 @@ class TestDockerStageIn(TestCase):
             downloaded_file_hrefs = set([k['assets']['data']['href'] for k in download_result])
             for each_granule in zip(granule_json['features'], download_result):
                 remote_filename = os.path.basename(each_granule[0]['assets']['data']['href'])
-                self.assertTrue(os.path.join('.', remote_filename) in downloaded_file_hrefs,
+                self.assertTrue(remote_filename in downloaded_file_hrefs,
                                 f'mismatched: {remote_filename}')
                 self.assertTrue(FileUtils.get_size(os.path.join(downloading_dir, remote_filename)) > 0, f'empty file: {remote_filename}')
-            self.assertTrue(FileUtils.file_exist(os.environ['OUTPUT_FILE']), f'missing output file')
+            catalog_result = FileUtils.read_json(f'{downloading_dir}/catalog.json')
+            print(catalog_result)
+            catalog_result = Catalog.from_dict(catalog_result)
+            self.assertEqual(catalog_result.links[0].href, 'catalog.json', f'wrong root: {catalog_result.links[0]}')
+            for each in catalog_result.links[1:]:
+                self.assertTrue(':' not in each.href, f'":" in {each.href}')
+                self.assertTrue(FileUtils.file_exist(f'{downloading_dir}/{each.href}'))
+                print(FileUtils.read_json(f'{downloading_dir}/{each.href}'))
+
         return
 
     def test_02_download__from_http_with_role(self):
