@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ===================================================================
 
+## [1.1.0.dev000004] - 2024-12-09
+### Fixed
+- [#76](https://github.com/unity-sds/mdps-ds-lib/pull/76) chore: update jupyter notebok
+
 ## [1.1.0.dev000003] - 2024-12-09
 ### Fixed
 - [#72](https://github.com/unity-sds/mdps-ds-lib/pull/72) fix: remove duplicated collection id prefix
