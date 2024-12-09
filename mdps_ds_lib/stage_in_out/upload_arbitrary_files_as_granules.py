@@ -42,8 +42,10 @@ class UploadItemExecutor(JobExecutorAbstract):
         file_checksum = FileUtils.get_checksum(filepath, True)
         # https://github.com/stac-extensions/file
         # https://github.com/stac-extensions/file/blob/main/examples/item.json
+        granule_id = os.path.splitext(filename)[0]
+        granule_id = granule_id if granule_id.startswith(self.__collection_id) else f'{self.__collection_id}:{granule_id}'
         sample_stac_item = Item(
-                         id=f'{self.__collection_id}:{os.path.splitext(filename)[0]}',
+                         id=granule_id,
                          stac_extensions=["https://stac-extensions.github.io/file/v2.1.0/schema.json"],
                          geometry={
                              "type": "Point",
@@ -78,7 +80,8 @@ class UploadItemExecutor(JobExecutorAbstract):
         updating_assets = {}
         try:
             LOGGER.audit(f'uploading auxiliary file: {job_obj}')
-            s3_url = self.__s3.upload(job_obj, self.__staging_bucket, f'{self.__collection_id}/{self.__collection_id}:{sample_stac_item.id}', self.__delete_files)
+            # NOTE: sample_stac_item.id is guaranteed to start with colleciton id.
+            s3_url = self.__s3.upload(job_obj, self.__staging_bucket, f'{self.__collection_id}/{sample_stac_item.id}', self.__delete_files)
             updating_assets[os.path.basename(s3_url)] = s3_url
             uploading_current_granule_stac = f'{s3_url}.stac.json'
             self.__s3.set_s3_url(uploading_current_granule_stac)

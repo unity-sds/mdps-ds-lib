@@ -168,9 +168,10 @@ class DownloadGranulesAbstract(ABC):
             error_list_list.append(error_list.get())
 
         for each_local_stac_item in local_items_list:
-            FileUtils.write_json(os.path.join(self._download_dir, f'{each_local_stac_item.id}.stac.json'),
+            local_stac_item_id_updated = each_local_stac_item.id.replace(':', '-').replace('/', '-').replace('\\', '-')
+            FileUtils.write_json(os.path.join(self._download_dir, f'{local_stac_item_id_updated}.stac.json'),
                                  each_local_stac_item.to_dict(False, False), overwrite=False, prettify=True)
-            catalog.add_link(Link('item', f'{each_local_stac_item.id}.stac.json', 'application/json'))
+            catalog.add_link(Link('item', f'{local_stac_item_id_updated}.stac.json', 'application/json'))
         self._granules_json.items = local_items_list
         LOGGER.debug(f'writing features collection json to downloading directory')
         granules_json_dict = self._granules_json.to_dict(transform_hrefs=False)

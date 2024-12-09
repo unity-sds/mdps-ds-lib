@@ -1343,10 +1343,10 @@ class TestDockerStageOut(TestCase):
             result_key_prefix = result_key.split('.')[0]
             self.assertTrue(f'{result_key_prefix}.nc.cas' in upload_result['assets'], f'missing assets#metadata asset: {result_key_prefix}.nc.cas')
             self.assertTrue('href' in upload_result['assets'][f'{result_key_prefix}.nc.cas'], 'missing assets#metadata__cas#href')
-            self.assertTrue(upload_result['assets'][f'{result_key_prefix}.nc.cas']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/URN:NASA:UNITY:{os.environ["PROJECT"]}:{os.environ["VENUE"]}:NA/'))
+            self.assertTrue(upload_result['assets'][f'{result_key_prefix}.nc.cas']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/URN:NASA:UNITY:{os.environ["PROJECT"]}:{os.environ["VENUE"]}:NA'))
             self.assertTrue(f'{result_key_prefix}.nc' in upload_result['assets'], f'missing assets#data: {result_key_prefix}.nc')
             self.assertTrue('href' in upload_result['assets'][f'{result_key_prefix}.nc'], 'missing assets#data#href')
-            self.assertTrue(upload_result['assets'][f'{result_key_prefix}.nc']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/URN:NASA:UNITY:{os.environ["PROJECT"]}:{os.environ["VENUE"]}:NA/'))
+            self.assertTrue(upload_result['assets'][f'{result_key_prefix}.nc']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/URN:NASA:UNITY:{os.environ["PROJECT"]}:{os.environ["VENUE"]}:NA'))
             """
             Example output: 
             {
@@ -1381,6 +1381,73 @@ class TestDockerStageOut(TestCase):
             successful_feature_collection = ItemCollection.from_dict(FileUtils.read_json(local_file))
             successful_feature_collection = list(successful_feature_collection.items)
             self.assertEqual(len(successful_feature_collection), total_files, f'wrong length: {successful_feature_collection}')
+        return
+
+    def test_03_02_upload_complete_catalog_missing_real_files(self):
+        os.environ['VERIFY_SSL'] = 'FALSE'
+        os.environ['PROJECT'] = 'LOCAL'
+        os.environ['VENUE'] = 'UNIT_TEST'
+        os.environ['STAGING_BUCKET'] = 'uds-sbx-cumulus-staging'
+
+        os.environ['GRANULES_SEARCH_DOMAIN'] = 'UNITY'
+        # os.environ['GRANULES_UPLOAD_TYPE'] = 'UPLOAD_S3_BY_STAC_CATALOG'
+        # defaulted to this value
+
+        if len(argv) > 1:
+            argv.pop(-1)
+        argv.append('UPLOAD')
+
+        starting_time = datetime.utcnow().strftime('%Y-%m-%dT%H:%M')
+        with tempfile.TemporaryDirectory() as tmp_dir_name:
+            os.environ['OUTPUT_FILE'] = os.path.join(tmp_dir_name, 'some_output', 'output.json')
+            os.environ['UPLOAD_DIR'] = ''  # not needed
+            os.environ['OUTPUT_DIRECTORY'] = os.path.join(tmp_dir_name, 'output_dir')
+            FileUtils.mk_dir_p(os.environ.get('OUTPUT_DIRECTORY'))
+            os.environ['CATALOG_FILE'] = os.path.join(tmp_dir_name, 'catalog.json')
+            total_files = 10
+            # os.environ['PARALLEL_COUNT'] = str(total_files)
+            granules_dir = os.path.join(tmp_dir_name, 'some_granules')
+            FileUtils.mk_dir_p(granules_dir)
+            catalog = Catalog(
+                id='NA',
+                description='NA')
+            catalog.set_self_href(os.environ['CATALOG_FILE'])
+
+            for i in range(1, total_files+1):
+                filename = f'test_file{i:02d}'
+                catalog.add_link(Link('item', os.path.join('some_granules', f'{filename}.nc.stac.json'), 'application/json'))
+            print(json.dumps(catalog.to_dict(False, False)))
+            with open(os.environ['CATALOG_FILE'], 'w') as ff:
+                ff.write(json.dumps(catalog.to_dict(False, False)))
+
+            upload_result_str = UploadGranulesFactory().get_class(os.getenv('GRANULES_UPLOAD_TYPE', UploadGranulesFactory.UPLOAD_S3_BY_STAC_CATALOG)).upload()
+            upload_result = json.loads(upload_result_str)
+            print(upload_result)
+            """
+            {'type': 'Catalog', 'id': 'NA', 'stac_version': '1.0.0', 'description': 'NA', 'links': [{'rel': 'root', 'href': '/var/folders/33/xhq97d6s0dq78wg4h2smw23m0000gq/T/tmprew515jo/catalog.json', 'type': 'application/json'}, {'rel': 'item', 'href': '/var/folders/33/xhq97d6s0dq78wg4h2smw23m0000gq/T/tmprew515jo/successful_features.json', 'type': 'application/json'}, {'rel': 'item', 'href': '/var/folders/33/xhq97d6s0dq78wg4h2smw23m0000gq/T/tmprew515jo/failed_features.json', 'type': 'application/json'}]}
+            """
+            self.assertTrue('type' in upload_result, 'missing type')
+            self.assertEqual(upload_result['type'], 'Catalog', 'missing type')
+            upload_result = Catalog.from_dict(upload_result)
+            child_links = [k.href for k in upload_result.get_links(rel='item')]
+            self.assertEqual(len(child_links), 2, f'wrong length: {child_links}')
+            self.assertTrue(FileUtils.file_exist(child_links[0]), f'missing file: {child_links[0]}')
+            successful_feature_collection = ItemCollection.from_dict(FileUtils.read_json(child_links[0]))
+            successful_feature_collection = list(successful_feature_collection.items)
+            self.assertEqual(len(successful_feature_collection), 0, f'wrong length: {successful_feature_collection}')
+
+            self.assertTrue(FileUtils.file_exist(child_links[1]), f'missing file: {child_links[1]}')
+            failed_feature_collection = ItemCollection.from_dict(FileUtils.read_json(child_links[1]))
+            failed_feature_collection = list(failed_feature_collection.items)
+            self.assertEqual(len(failed_feature_collection), 10, f'wrong length: {failed_feature_collection}')
+
+            s3 = AwsS3()
+            s3_keys = [k for k in s3.get_child_s3_files(os.environ['STAGING_BUCKET'],
+                                  f"{UploadGranulesByCompleteCatalogS3.DEFAULT_RESULT_PATH_PREFIX}/successful_features_{starting_time}",
+                                  )]
+            s3_keys = sorted(s3_keys)
+            print(f's3_keys: {s3_keys}')
+            self.assertTrue(len(s3_keys)< 1, f'NO empty files in S3: {s3_keys}')
         return
 
     def test_03_03_upload_auxiliary_files(self):
@@ -1454,7 +1521,7 @@ class TestDockerStageOut(TestCase):
             self.assertTrue(result_key.startswith('test_file'), f'worng asset key: {result_key}')
             self.assertTrue(f'{result_key}.stac.json' in upload_result['assets'], f'missing assets#metadata asset: test_file_0.json')
             self.assertTrue('href' in upload_result['assets'][f'{result_key}.stac.json'], 'missing assets#metadata__cas#href')
-            self.assertTrue(upload_result['assets'][f'{result_key}.stac.json']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/{os.environ["COLLECTION_ID"]}/'), f"wrong HREF (no S3?): upload_result['assets'][f'{result_key}.stac.json']['href']")
+            self.assertTrue(upload_result['assets'][f'{result_key}.stac.json']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/{os.environ["COLLECTION_ID"]}/{os.environ["COLLECTION_ID"]}:test_file_'), f"wrong HREF (no S3?): upload_result['assets'][f'{result_key}.stac.json']['href']")
             """
             Example output: 
             {
@@ -1479,9 +1546,7 @@ class TestDockerStageOut(TestCase):
                     'collection': 'NEW_COLLECTION_EXAMPLE_L1B___9'}]}
             """
             s3 = AwsS3()
-            s3_keys = [k for k in s3.get_child_s3_files(os.environ['STAGING_BUCKET'],
-                                  f"stage_out/successful_features_{starting_time}",
-                                  )]
+            s3_keys = [k for k in s3.get_child_s3_files(os.environ['STAGING_BUCKET'], f"stage_out/successful_features_{starting_time}")]
             s3_keys = sorted(s3_keys)
             print(f's3_keys: {s3_keys}')
             self.assertTrue(len(s3_keys) > 0, f'empty files in S3')
