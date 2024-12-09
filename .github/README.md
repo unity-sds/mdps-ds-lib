@@ -1,4 +1,7 @@
-Artifact generation steps
+#### PyPI Location
+- https://pypi.org/project/mdps-ds-lib/
+
+#### Artifact generation steps
 
 - Do Nothing in when creating a PR.
 - When merging a PR (if title is breaking / feat / bug)
