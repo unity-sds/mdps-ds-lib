@@ -18,3 +18,26 @@ class AwsCognito(AwsCred):
             return []
         belonged_groups = [k['GroupName'] for k in response['Groups']]
         return belonged_groups
+
+    def add_user_to_group(self, username: str, group_name: str):
+        # https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/cognito-idp/client/admin_add_user_to_group.html
+
+        response = self.__cognito.admin_add_user_to_group(
+            UserPoolId=self.__user_pool_id,
+            Username=username,
+            GroupName=group_name,
+        )
+        if response['ResponseMetadata']['HTTPStatusCode'] != 200:
+            raise RuntimeError(response)
+        return response
+
+    def remove_user_from_group(self, username: str, group_name: str):
+        # https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/cognito-idp/client/admin_remove_user_from_group.html
+        response = self.__cognito.admin_remove_user_from_group(
+            UserPoolId=self.__user_pool_id,
+            Username=username,
+            GroupName=group_name,
+        )
+        if response['ResponseMetadata']['HTTPStatusCode'] != 200:
+            raise RuntimeError(response)
+        return response
