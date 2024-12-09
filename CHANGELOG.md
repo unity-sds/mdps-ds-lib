@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ===================================================================
 
+## [1.1.0.dev000002] - 2024-12-09
+### Fixed
+- [#71](https://github.com/unity-sds/mdps-ds-lib/pull/71) fix: no stage out file to s3 if empty
+
 ## [1.1.0.dev000001] - 2024-12-09
 ### Fixed
 - [#70](https://github.com/unity-sds/mdps-ds-lib/pull/70) fix: catalog links should not have colon
