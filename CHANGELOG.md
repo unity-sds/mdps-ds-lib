@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ===================================================================
 
+## [1.1.0.dev000005] - 2024-12-09
+### Fixed
+- [#79](https://github.com/unity-sds/mdps-ds-lib/pull/79) chore: dummy commit
+
 ## [1.1.0.dev000004] - 2024-12-09
 ### Fixed
 - [#76](https://github.com/unity-sds/mdps-ds-lib/pull/76) chore: update jupyter notebok
