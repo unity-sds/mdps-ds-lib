@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ===================================================================
 
+## [1.1.1] - 2024-12-09
+
+- [#81](https://github.com/unity-sds/mdps-ds-lib/pull/81) release attempt 2
+
+-----------------------------------------
 ## [1.1.0.dev000005] - 2024-12-09
 ### Fixed
 - [#79](https://github.com/unity-sds/mdps-ds-lib/pull/79) chore: dummy commit
