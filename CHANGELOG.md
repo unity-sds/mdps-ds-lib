@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ===================================================================
 
+## [1.1.0.dev000003] - 2024-12-09
+### Fixed
+- [#72](https://github.com/unity-sds/mdps-ds-lib/pull/72) fix: remove duplicated collection id prefix
+
 ## [1.1.0.dev000002] - 2024-12-09
 ### Fixed
 - [#71](https://github.com/unity-sds/mdps-ds-lib/pull/71) fix: no stage out file to s3 if empty
