@@ -50,8 +50,22 @@ class UploadItemExecutor(JobExecutorAbstract):
     #     return
 
     def __exec_actual_job(self, each_child, lock) -> bool:
-        current_granule_stac: Item = self.__gc.get_granules_item(each_child)
-        current_collection_id = current_granule_stac.collection_id.strip()
+        try:
+            current_granule_stac: Item = self.__gc.get_granules_item(each_child)
+            current_collection_id = current_granule_stac.collection_id.strip()
+        except Exception as e:
+            LOGGER.exception(f'error while processing: {each_child}')
+            error_item = Item(id='unknown',
+                              properties={'message': 'unknown error', 'granule': each_child, 'details': str(e)},
+                              geometry={
+                                  "type": "Point",
+                                  "coordinates": [0.0, 0.0]
+                              },
+                              bbox=[0.0, 0.0, 0.0, 0.0],
+                              datetime=TimeUtils().parse_from_unix(0, True).get_datetime_obj(),
+                              collection='unknown')
+            self.__error_list.put(error_item.to_dict(False, False))
+            return True
         try:
             current_collection_id = GranulesCatalog.get_unity_formatted_collection_id(current_collection_id, self.__project_venue_set)
             LOGGER.debug(f'reformatted current_collection_id: {current_collection_id}')
@@ -211,14 +225,19 @@ class UploadGranulesByCompleteCatalogS3(UploadGranulesAbstract):
         FileUtils.write_json(failed_features_file, failed_item_collections.to_dict(False))
         if len(failed_item_collections.items) > 0:
             LOGGER.fatal(f'One or more Failures: {failed_item_collections.to_dict(False)}')
+
+        LOGGER.debug(f'creating response catalog')
+        catalog_json = GranulesCatalog().update_catalog(catalog_file_path, [successful_features_file, failed_features_file])
+        LOGGER.debug(f'catalog_json: {catalog_json}')
+        if len(successful_item_collections) < 1:  # TODO check this.
+            LOGGER.debug(f'No successful items in Upload: Not uploading successful_features_ to s3://{self._staging_bucket}/{self._result_path_prefix}')
+            return json.dumps(catalog_json)
+
         s3_url = self.__s3.upload(successful_features_file, self._staging_bucket,
                                   self._result_path_prefix,
                                   s3_name=f'successful_features_{TimeUtils.get_current_time()}.json',
                                   delete_files=self._delete_files)
         LOGGER.debug(f'uploaded successful features to S3: {s3_url}')
-        LOGGER.debug(f'creating response catalog')
-        catalog_json = GranulesCatalog().update_catalog(catalog_file_path, [successful_features_file, failed_features_file])
-        LOGGER.debug(f'catalog_json: {catalog_json}')
         return json.dumps(catalog_json)
 
     def __exec_dry_run(self):
