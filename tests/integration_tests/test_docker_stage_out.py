@@ -1454,7 +1454,7 @@ class TestDockerStageOut(TestCase):
             self.assertTrue(result_key.startswith('test_file'), f'worng asset key: {result_key}')
             self.assertTrue(f'{result_key}.stac.json' in upload_result['assets'], f'missing assets#metadata asset: test_file_0.json')
             self.assertTrue('href' in upload_result['assets'][f'{result_key}.stac.json'], 'missing assets#metadata__cas#href')
-            self.assertTrue(upload_result['assets'][f'{result_key}.stac.json']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/{os.environ["COLLECTION_ID"]}/'), f"wrong HREF (no S3?): upload_result['assets'][f'{result_key}.stac.json']['href']")
+            self.assertTrue(upload_result['assets'][f'{result_key}.stac.json']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/{os.environ["COLLECTION_ID"]}/{os.environ["COLLECTION_ID"]}:test_file_'), f"wrong HREF (no S3?): upload_result['assets'][f'{result_key}.stac.json']['href']")
             """
             Example output: 
             {
@@ -1479,9 +1479,7 @@ class TestDockerStageOut(TestCase):
                     'collection': 'NEW_COLLECTION_EXAMPLE_L1B___9'}]}
             """
             s3 = AwsS3()
-            s3_keys = [k for k in s3.get_child_s3_files(os.environ['STAGING_BUCKET'],
-                                  f"stage_out/successful_features_{starting_time}",
-                                  )]
+            s3_keys = [k for k in s3.get_child_s3_files(os.environ['STAGING_BUCKET'], f"stage_out/successful_features_{starting_time}")]
             s3_keys = sorted(s3_keys)
             print(f's3_keys: {s3_keys}')
             self.assertTrue(len(s3_keys) > 0, f'empty files in S3')
