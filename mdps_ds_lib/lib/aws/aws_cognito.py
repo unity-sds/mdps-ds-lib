@@ -41,3 +41,27 @@ class AwsCognito(AwsCred):
         if response['ResponseMetadata']['HTTPStatusCode'] != 200:
             raise RuntimeError(response)
         return response
+
+    def add_group(self, group_name: str):
+        # https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/cognito-idp/client/create_group.html
+        response = self.__cognito.create_group(
+            GroupName=group_name,
+            UserPoolId=self.__user_pool_id,
+            # Description='NA',
+            # RoleArn='string',
+        )
+        if response['ResponseMetadata']['HTTPStatusCode'] != 200:
+            raise RuntimeError(response)
+        return response
+
+    def delete_group(self, group_name: str):
+        # https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/cognito-idp/client/delete_group.html
+        response = self.__cognito.delete_group(
+            GroupName=group_name,
+            UserPoolId=self.__user_pool_id,
+            # Description='NA',
+            # RoleArn='string',
+        )
+        if response['ResponseMetadata']['HTTPStatusCode'] != 200:
+            raise RuntimeError(response)
+        return response
