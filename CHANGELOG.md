@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ===================================================================
 
+## [1.1.1.dev000200] - 2024-12-16
+### Changed
+- [#86](https://github.com/unity-sds/mdps-ds-lib/pull/86) feat: s3 delete
+
 ## [1.1.1.dev000100] - 2024-12-09
 ### Changed
 - [#84](https://github.com/unity-sds/mdps-ds-lib/pull/84) feat: coginto class update
