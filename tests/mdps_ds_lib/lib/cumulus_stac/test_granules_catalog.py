@@ -4,6 +4,7 @@ import tempfile
 from unittest import TestCase
 
 import pystac
+from pystac import Item
 
 from mdps_ds_lib.lib.cumulus_stac.granules_catalog import GranulesCatalog
 from mdps_ds_lib.lib.utils.file_utils import FileUtils
@@ -134,8 +135,8 @@ class TestGranulesCatalog(TestCase):
           "bbox": [
             0.0,
             0.0,
-            0.0,
-            0.0
+            10.0,
+            10.0
           ],
           "stac_extensions": [],
           "collection": "SNDR_SNPP_ATMS_L1A___1"
@@ -145,6 +146,100 @@ class TestGranulesCatalog(TestCase):
             FileUtils.write_json(granules_catalog_path, sample_granules)
             pystac_catalog = GranulesCatalog().get_granules_item(granules_catalog_path)
             self.assertEqual(pystac_catalog.id, 'SNDR.SNPP.ATMS.L1A.nominal2.12')
+        sample_granules['bbox'] = [10, 10, 0, 0]
+        with tempfile.TemporaryDirectory() as tmp_dir_name:
+            granules_catalog_path = os.path.join(tmp_dir_name, 'sample_granules.json')
+            FileUtils.write_json(granules_catalog_path, sample_granules)
+            pystac_catalog = GranulesCatalog().get_granules_item(granules_catalog_path)
+            self.assertEqual(pystac_catalog.id, 'SNDR.SNPP.ATMS.L1A.nominal2.12')
+        sample_granules['bbox'] = [0, 10, 10, 0]
+        with tempfile.TemporaryDirectory() as tmp_dir_name:
+            granules_catalog_path = os.path.join(tmp_dir_name, 'sample_granules.json')
+            FileUtils.write_json(granules_catalog_path, sample_granules)
+            pystac_catalog = GranulesCatalog().get_granules_item(granules_catalog_path)
+            self.assertEqual(pystac_catalog.id, 'SNDR.SNPP.ATMS.L1A.nominal2.12')
+        return
+
+    def test_get_granules_item_invalid_bbox(self):
+        sample_granules = {
+          "type": "Feature",
+          "stac_version": "1.0.0",
+          "id": "SNDR.SNPP.ATMS.L1A.nominal2.12",
+          "properties": {
+            "start_datetime": "2016-01-14T11:00:00Z",
+            "end_datetime": "2016-01-14T11:06:00Z",
+            "created": "2020-12-14T13:50:00Z",
+            "updated": "2022-08-15T06:26:25.344000Z",
+            "datetime": "2022-08-15T06:26:17.938000Z"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              0.0,
+              0.0
+            ]
+          },
+          "links": [
+            {
+              "rel": "collection",
+              "href": "."
+            }
+          ],
+          "assets": {
+              "SNDR.SNPP.ATMS.L1A.nominal2.12.nc": {
+                  "href": "s3://uds-test-cumulus-protected/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.nc",
+                  "title": "SNDR.SNPP.ATMS.L1A.nominal2.12.nc",
+                  "description": "SNDR.SNPP.ATMS.L1A.nominal2.12.nc",
+                  "roles": ["data"],
+              },
+              "SNDR.SNPP.ATMS.L1A.nominal2.12.1.nc": {
+                  "href": "s3://uds-test-cumulus-protected/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.1.nc",
+                  "title": "SNDR.SNPP.ATMS.L1A.nominal2.12.1.nc",
+                  "description": "SNDR.SNPP.ATMS.L1A.nominal2.12.1.nc",
+                  "roles": ["data"],
+              },
+              "SNDR.SNPP.ATMS.L1A.nominal2.12.nc.cas": {
+                  "href": "s3://uds-test-cumulus-protected/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.nc.cas",
+                  "title": "SNDR.SNPP.ATMS.L1A.nominal2.12.nc.cas",
+                  "description": "SNDR.SNPP.ATMS.L1A.nominal2.12.nc.cas",
+                  "roles": ["metadata__data"],
+              },
+              "SNDR.SNPP.ATMS.L1A.nominal2.12.cmr.xml": {
+                  "href": "s3://uds-test-cumulus-private/SNDR_SNPP_ATMS_L1A___1/SNDR.SNPP.ATMS.L1A.nominal2.12.cmr.xml",
+                  "title": "SNDR.SNPP.ATMS.L1A.nominal2.12.cmr.xml",
+                  "description": "SNDR.SNPP.ATMS.L1A.nominal2.12.cmr.xml",
+                  "roles": ["metadata__cmr"],
+              }
+          },
+          "bbox": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "stac_extensions": [],
+          "collection": "SNDR_SNPP_ATMS_L1A___1"
+        }
+        with tempfile.TemporaryDirectory() as tmp_dir_name:
+            granules_catalog_path = os.path.join(tmp_dir_name, 'sample_granules.json')
+            FileUtils.write_json(granules_catalog_path, sample_granules)
+            with self.assertRaises(ValueError) as context:
+                GranulesCatalog().get_granules_item(granules_catalog_path)
+            self.assertTrue(str(context.exception).startswith('invalid BBOX. It may be a point or a line'))
+        sample_granules['bbox'] = [0, 1, 0, 1]
+        with tempfile.TemporaryDirectory() as tmp_dir_name:
+            granules_catalog_path = os.path.join(tmp_dir_name, 'sample_granules.json')
+            FileUtils.write_json(granules_catalog_path, sample_granules)
+            with self.assertRaises(ValueError) as context:
+                GranulesCatalog().get_granules_item(granules_catalog_path)
+            self.assertTrue(str(context.exception).startswith('invalid BBOX. It may be a point or a line'))
+        sample_granules['bbox'] = [1, 0, 1, 0]
+        with tempfile.TemporaryDirectory() as tmp_dir_name:
+            granules_catalog_path = os.path.join(tmp_dir_name, 'sample_granules.json')
+            FileUtils.write_json(granules_catalog_path, sample_granules)
+            with self.assertRaises(ValueError) as context:
+                GranulesCatalog().get_granules_item(granules_catalog_path)
+            self.assertTrue(str(context.exception).startswith('invalid BBOX. It may be a point or a line'))
         return
 
     def test_extract_assets_href(self):
@@ -195,8 +290,8 @@ class TestGranulesCatalog(TestCase):
           "bbox": [
             0.0,
             0.0,
-            0.0,
-            0.0
+            10.0,
+            10.0
           ],
           "stac_extensions": [],
           "collection": "SNDR_SNPP_ATMS_L1A___1"
@@ -263,8 +358,8 @@ class TestGranulesCatalog(TestCase):
           "bbox": [
             0.0,
             0.0,
-            0.0,
-            0.0
+            10.0,
+            10.0
           ],
           "stac_extensions": [],
           "collection": "SNDR_SNPP_ATMS_L1A___1"
@@ -337,8 +432,8 @@ class TestGranulesCatalog(TestCase):
           "bbox": [
             0.0,
             0.0,
-            0.0,
-            0.0
+            10.0,
+            10.0
           ],
           "stac_extensions": [],
           "collection": "SNDR_SNPP_ATMS_L1A___1"
@@ -416,8 +511,8 @@ class TestGranulesCatalog(TestCase):
           "bbox": [
             0.0,
             0.0,
-            0.0,
-            0.0
+            10.0,
+            10.0
           ],
           "stac_extensions": [],
           "collection": "SNDR_SNPP_ATMS_L1A___1"
@@ -485,8 +580,8 @@ class TestGranulesCatalog(TestCase):
           "bbox": [
             0.0,
             0.0,
-            0.0,
-            0.0
+            10.0,
+            10.0
           ],
           "stac_extensions": [],
           "collection": "SNDR_SNPP_ATMS_L1A___1"
@@ -570,8 +665,8 @@ class TestGranulesCatalog(TestCase):
           "bbox": [
             0.0,
             0.0,
-            0.0,
-            0.0
+            10.0,
+            10.0
           ],
           "stac_extensions": [],
           "collection": "SNDR_SNPP_ATMS_L1A___1"
@@ -721,6 +816,8 @@ class TestGranulesCatalog(TestCase):
             "collection": "URN:NASA:UNITY:UDS_BLACK:DEV:UDS_UNIT_COLLECTION___2410010608"
         }'''
         raw_json = json.loads(raw_json)
+        granules_stac = Item.from_dict(raw_json)
+        print(granules_stac.bbox)
         schema1 = {
             "$schema": "http://json-schema.org/draft-07/schema#",
             "$id": "https://stac-extensions.github.io/file/v2.1.0/schema.json#",

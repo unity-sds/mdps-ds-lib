@@ -52,11 +52,22 @@ class GranulesCatalog:
             new_child_links.append(os.path.join(catalog_dir, each_link))
         return new_child_links
 
+    @staticmethod
+    def is_bbox_valid(bbox_array):
+        if len(bbox_array) != 4:
+            return False
+        lon_a, lat_a, lon_b, lat_b = bbox_array
+        if lon_a == lon_b or lat_a == lat_b:
+            return False
+        return True
+
     def get_granules_item(self, granule_stac_json) -> Item:
         if not FileUtils.file_exist(granule_stac_json):
             raise ValueError(f'missing file: {granule_stac_json}')
         granules_stac = FileUtils.read_json(granule_stac_json)
         granules_stac = Item.from_dict(granules_stac)
+        if granules_stac.bbox is not None and not self.is_bbox_valid(granules_stac.bbox):
+            raise ValueError(f'invalid BBOX. It may be a point or a line: {granules_stac.bbox}')
         return granules_stac
 
     def extract_assets_href(self, granules_stac: Item, dir_name: str = '') -> dict:

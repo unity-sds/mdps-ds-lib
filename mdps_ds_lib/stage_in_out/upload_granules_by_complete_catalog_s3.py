@@ -61,7 +61,7 @@ class UploadItemExecutor(JobExecutorAbstract):
                                   "type": "Point",
                                   "coordinates": [0.0, 0.0]
                               },
-                              bbox=[0.0, 0.0, 0.0, 0.0],
+                              bbox=[-180, -90, 180, 90],
                               datetime=TimeUtils().parse_from_unix(0, True).get_datetime_obj(),
                               collection='unknown')
             self.__error_list.put(error_item.to_dict(False, False))
