@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ===================================================================
 
+## [1.1.1.dev000201] - 2025-01-08
+### Fixed
+- [#88](https://github.com/unity-sds/mdps-ds-lib/pull/88) fix: check bbox in granules stac
+
 ## [1.1.1.dev000200] - 2024-12-16
 ### Changed
 - [#86](https://github.com/unity-sds/mdps-ds-lib/pull/86) feat: s3 delete
