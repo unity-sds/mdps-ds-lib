@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ===================================================================
 
+## [1.1.1.dev000202] - 2025-01-09
+### Fixed
+- [#90](https://github.com/unity-sds/mdps-ds-lib/pull/90) fix: poetry error requires project.name
+
 ## [1.1.1.dev000201] - 2025-01-08
 ### Fixed
 - [#88](https://github.com/unity-sds/mdps-ds-lib/pull/88) fix: check bbox in granules stac
