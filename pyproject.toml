@@ -29,6 +29,9 @@ requests="2.31.0"
 tenacity="8.2.3"
 jsonschema = "^4.23.0"
 
+[project]
+name = "mdps-ds-lib"
+
 
 [build-system]
 requires = ["poetry-core"]
