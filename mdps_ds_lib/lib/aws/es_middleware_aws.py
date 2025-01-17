@@ -11,8 +11,8 @@ LOGGER = logging.getLogger(__name__)
 
 class EsMiddlewareAws(ESMiddleware):
 
-    def __init__(self, index, base_url, port=443) -> None:
-        super().__init__(index, base_url, port)
+    def __init__(self, index, base_url, port=443, use_ssl=True) -> None:
+        super().__init__(index, base_url, port, use_ssl)
         base_url = base_url.replace('https://', '')  # hide https
         self._index = index
         aws_cred = AwsCred()
