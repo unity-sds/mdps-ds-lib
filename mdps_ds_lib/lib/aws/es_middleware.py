@@ -10,13 +10,13 @@ LOGGER = logging.getLogger(__name__)
 
 class ESMiddleware(ESAbstract):
 
-    def __init__(self, index, base_url, port=443) -> None:
+    def __init__(self, index, base_url, port=443, use_ssl=True) -> None:
         if any([k is None for k in [index, base_url]]):
             raise ValueError(f'index or base_url is None')
         self.__index = index
         base_url = base_url.replace('https://', '')  # hide https
         # https://elasticsearch-py.readthedocs.io/en/v7.13.4/api.html#elasticsearch.Elasticsearch
-        self._engine = Elasticsearch(hosts=[{'host': base_url, 'port': port, 'use_ssl': True}])
+        self._engine = Elasticsearch(hosts=[{'host': base_url, 'port': port, 'use_ssl': use_ssl}])
 
     def __validate_index(self, index):
         if index is not None:
