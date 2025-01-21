@@ -28,6 +28,7 @@ xmltodict="0.13.0"
 requests="2.31.0"
 tenacity="8.2.3"
 jsonschema = "^4.23.0"
+python-dotenv = "^1.0.1"
 
 [project]
 name = "mdps-ds-lib"
