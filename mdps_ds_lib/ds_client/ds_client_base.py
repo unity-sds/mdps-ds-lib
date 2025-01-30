@@ -19,6 +19,10 @@ class DsClient:
         self.__urn, self.__org, self.__project = 'URN', 'NASA', 'UNITY'
         self.__tenant, self.__tenant_venue, self.__collection, self.__collection_venue = None, None, None, None
         self.__granule = None
+        self.__default_collection_venue = '001'
+
+    def get_complete_collection(self):
+        return f'{self.collection}{self.__default_collection_venue}' if self.collection_venue is None else f'{self.collection}___{self.collection_venue}'
 
     @property
     def granule(self):

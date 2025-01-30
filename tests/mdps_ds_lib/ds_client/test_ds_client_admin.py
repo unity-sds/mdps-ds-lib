@@ -189,3 +189,46 @@ class TestDsClientAdmin(TestCase):
         print(result)
 
         return
+
+
+    def test_query_granules(self):
+        encoded_token = self.__get_dummy_token()
+        os.environ['TOKEN_FACTORY'] = 'DUMMY'
+        os.environ['DS_TOKEN'] = encoded_token
+        # os.environ['DS_URL'] = encoded_token
+        # os.environ['DS_STAGE'] = encoded_token
+        token_retriever: TokenAbstract = TokenFactory().get_instance(os.getenv('TOKEN_FACTORY'))
+        client = DsClientUser(token_retriever, 'http://localhost:8005', 'data')
+        # client = DsClientAdmin(token_retriever, 'http://localhost:8005', 'data')
+
+        client.urn = 'URN'
+        client.org = 'NASA'
+        client.project = 'GEMX'
+        client.tenant = 'AVIRIS'
+        client.tenant_venue = 'OPS'
+        client.collection = 'GEMX_2024'
+        client.collection_venue = '001'
+        result = client.query_granules(bbox='-114,32.5,-113,33.5')
+        print(result)
+        print(client.query_granules_next())
+        return
+
+    def test_query_granules_across_collections(self):
+        encoded_token = self.__get_dummy_token()
+        os.environ['TOKEN_FACTORY'] = 'DUMMY'
+        os.environ['DS_TOKEN'] = encoded_token
+        # os.environ['DS_URL'] = encoded_token
+        # os.environ['DS_STAGE'] = encoded_token
+        token_retriever: TokenAbstract = TokenFactory().get_instance(os.getenv('TOKEN_FACTORY'))
+        client = DsClientUser(token_retriever, 'http://localhost:8005', 'data')
+        # client = DsClientAdmin(token_retriever, 'http://localhost:8005', 'data')
+
+        client.urn = 'URN'
+        client.org = 'NASA'
+        client.project = 'GEMX'
+        client.tenant = 'AVIRIS'
+        client.tenant_venue = 'OPS'
+        result = client.query_granules_across_collections(bbox='-114.314407,32.5,-114.3144078,33.5')
+        print(result)
+        print(client.query_granules_next())
+        return

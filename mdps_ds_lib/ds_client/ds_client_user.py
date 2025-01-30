@@ -16,6 +16,7 @@ class DsClientUser(DsClient):
 
     def __init__(self, token_retriever: TokenAbstract, ds_url: str, ds_stage: str):
         super().__init__(token_retriever, ds_url, ds_stage)
+        self.__granule_query_next_page = None
 
     def create_new_collection(self, is_actual_execution=False):
         request_url = f'{self._uds_url}collections/'
@@ -23,9 +24,8 @@ class DsClientUser(DsClient):
             request_url = f'{request_url}actual'
         s = requests.session()
         s.trust_env = self._trust_env
-        temp_collection_id = f"{self.collection}___001" if self.collection_venue is None else f"{self.collection}___{self.collection_venue}"
         temp_collection_id = [
-            self.urn, self.org, self.project, self.tenant, self.tenant_venue, temp_collection_id
+            self.urn, self.org, self.project, self.tenant, self.tenant_venue, self.get_complete_collection()
         ]
         temp_collection_id = ':'.join(temp_collection_id)
         dapa_collection = UnityCollectionStac() \
@@ -54,7 +54,7 @@ class DsClientUser(DsClient):
     def query_collections(self):
         return
 
-    def query_single_collection(self):
+    def query_single_collection(self, limit= 10, offset= None, datetime = None, filter = None):
         return
 
     def create_new_granule(self, granule_stac: Item):
@@ -80,7 +80,75 @@ class DsClientUser(DsClient):
         response.raise_for_status()
         return response.text
 
-    def query_granules(self):
+
+    def query_granules_across_collections(self, limit= 10, datetime = None, filter = None, bbox= None):
+        if self.tenant is None or self.tenant_venue is None:
+            raise ValueError(f'require to set tenant & tenant_venue')
+        collection_id_for_granules = ':'.join([self.urn, self.org, self.project, self.tenant, self.tenant_venue, '*'])
+        query_params = {
+            'datetime': datetime,
+            'limit': limit,
+            'filter': filter,
+            'bbox': bbox,
+        }
+        query_params = {k: v for k, v in query_params.items() if v is not None}
+
+        request_url = f'{self._uds_url}collections/'
+        query_params = '&'.join([f'{k}={v}' for k, v in query_params.items()])
+        request_url = f'{request_url}{collection_id_for_granules}/items/?{query_params}'
+        s = requests.session()
+        s.trust_env = self._trust_env
+        response = s.get(url=request_url, headers={
+            'Authorization': f'Bearer {self._token_retriever.get_token()}',
+        }, verify=self._trust_env)
+        response.raise_for_status()
+        response = json.loads(response.text)
+        
+        self.__granule_query_next_page = [k['href'] for k in response['links'] if k['rel'] == 'next']
+        self.__granule_query_next_page = None if len(self.__granule_query_next_page) < 1 else self.__granule_query_next_page[0]
+        return response
+
+    def query_granules_next(self):
+        if self.__granule_query_next_page is None:
+            return None
+        s = requests.session()
+        s.trust_env = self._trust_env
+        response = s.get(url=self.__granule_query_next_page, headers={
+            'Authorization': f'Bearer {self._token_retriever.get_token()}',
+        }, verify=self._trust_env)
+        response.raise_for_status()
+        response = json.loads(response.text)
+        self.__granule_query_next_page = [k['href'] for k in response['links'] if k['rel'] == 'next']
+        self.__granule_query_next_page = None if len(self.__granule_query_next_page) < 1 else self.__granule_query_next_page[0]
+        return response
+
+    def query_granules(self, limit= 10, datetime = None, filter = None, bbox= None):
+        if self.tenant is None or self.tenant_venue is None or self.collection is None:
+            raise ValueError(f'require to set tenant & tenant_venue & collection')
+        collection_id_for_granules = ':'.join([self.urn, self.org, self.project, self.tenant, self.tenant_venue, self.get_complete_collection()])
+        query_params = {
+            'datetime': datetime,
+            'limit': limit,
+            'filter': filter,
+            'bbox': bbox,
+        }
+        query_params = {k: v for k, v in query_params.items() if v is not None}
+
+        request_url = f'{self._uds_url}collections/'
+        query_params = '&'.join([f'{k}={v}' for k, v in query_params.items()])
+        request_url = f'{request_url}{collection_id_for_granules}/items/?{query_params}'
+        s = requests.session()
+        s.trust_env = self._trust_env
+        response = s.get(url=request_url, headers={
+            'Authorization': f'Bearer {self._token_retriever.get_token()}',
+        }, verify=self._trust_env)
+        response.raise_for_status()
+        response = json.loads(response.text)
+
+        self.__granule_query_next_page = [k['href'] for k in response['links'] if k['rel'] == 'next']
+        self.__granule_query_next_page = None if len(self.__granule_query_next_page) < 1 else \
+        self.__granule_query_next_page[0]
+        return response
         return
 
     def query_single_granule(self):
