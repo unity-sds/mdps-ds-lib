@@ -190,7 +190,6 @@ class TestDsClientAdmin(TestCase):
 
         return
 
-
     def test_query_granules(self):
         encoded_token = self.__get_dummy_token()
         os.environ['TOKEN_FACTORY'] = 'DUMMY'

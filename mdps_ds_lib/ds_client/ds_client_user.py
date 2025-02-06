@@ -81,7 +81,7 @@ class DsClientUser(DsClient):
         return response.text
 
 
-    def query_granules_across_collections(self, limit= 10, datetime = None, filter = None, bbox= None):
+    def query_granules_across_collections(self, limit= 10, datetime = None, filter = None, bbox= None, sort_keys=None):
         if self.tenant is None or self.tenant_venue is None:
             raise ValueError(f'require to set tenant & tenant_venue')
         collection_id_for_granules = ':'.join([self.urn, self.org, self.project, self.tenant, self.tenant_venue, '*'])
@@ -90,6 +90,7 @@ class DsClientUser(DsClient):
             'limit': limit,
             'filter': filter,
             'bbox': bbox,
+            'sortby': sort_keys,
         }
         query_params = {k: v for k, v in query_params.items() if v is not None}
 
@@ -122,7 +123,7 @@ class DsClientUser(DsClient):
         self.__granule_query_next_page = None if len(self.__granule_query_next_page) < 1 else self.__granule_query_next_page[0]
         return response
 
-    def query_granules(self, limit= 10, datetime = None, filter = None, bbox= None):
+    def query_granules(self, limit= 10, datetime = None, filter = None, bbox= None, sort_keys=None):
         if self.tenant is None or self.tenant_venue is None or self.collection is None:
             raise ValueError(f'require to set tenant & tenant_venue & collection')
         collection_id_for_granules = ':'.join([self.urn, self.org, self.project, self.tenant, self.tenant_venue, self.get_complete_collection()])
@@ -131,6 +132,7 @@ class DsClientUser(DsClient):
             'limit': limit,
             'filter': filter,
             'bbox': bbox,
+            'sortby': sort_keys,
         }
         query_params = {k: v for k, v in query_params.items() if v is not None}
 
