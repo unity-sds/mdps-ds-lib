@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ===================================================================
 
+## [1.1.1.dev000400] - 2025-02-10
+### Changed
+- [#94](https://github.com/unity-sds/mdps-ds-lib/pull/94) feat: ds client library
+
 ## [1.1.1.dev000300] - 2025-01-17
 ### Changed
 - [#92](https://github.com/unity-sds/mdps-ds-lib/pull/92) feat: allow es connection with no ssl for demo purposes only
