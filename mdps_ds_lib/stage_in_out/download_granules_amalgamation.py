@@ -29,7 +29,7 @@ class DownloadGranulesAmalgamation(DownloadGranulesAbstract):
         return self
 
     def download_one_item(self, downloading_url: str):
-        LOGGER.error(f'downloading: {downloading_url}')
+        LOGGER.debug(f'downloading: {downloading_url}')
         upper_download_url = downloading_url.upper()
         if upper_download_url.startswith('S3://'):
             download_s3 = DownloadGranulesS3()
