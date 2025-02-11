@@ -1,3 +1,4 @@
+import json
 import os
 from unittest import TestCase
 
@@ -24,9 +25,13 @@ class TestDsClientAdmin(TestCase):
         client.project = 'UNITY'
         client.tenant = 'UDS_LOCAL_TEST_3'
         client.tenant_venue = 'DEV'
-        result = client.query_granules_across_collections(sort_keys='+properties.datetime,-id')
-        print(result)
-        print(client.query_granules_next())
+        result = client.query_granules_across_collections(sort_keys='+properties.datetime,-id', limit=3)
+        print(json.dumps(result, indent=4))
+        print('--------------------------')
+        print(json.dumps([{'id': k['id'], 'datetime': k['properties']['datetime']} for k in result['features']], indent=4))
+        print('--------------------------')
+        print(json.dumps(client.query_granules_next(), indent=4))
+        print('=================================================')
         return
 
     def test_query_granules(self):
@@ -49,7 +54,11 @@ class TestDsClientAdmin(TestCase):
         client.tenant_venue = 'DEV'
         client.collection = 'DDD-01'
         client.collection_venue = '001'
-        result = client.query_granules(sort_keys='+properties.datetime,-id')  # bbox='-114,32.5,-113,33.5'
-        print(result)
-        print(client.query_granules_next())
+        result = client.query_granules(sort_keys='+properties.datetime,-id', limit=3)  # bbox='-114,32.5,-113,33.5'
+        print(json.dumps(result, indent=4))
+        print(json.dumps(client.query_granules_next(), indent=4))
+        print('=================================================')
+        result = client.query_granules(sort_keys='+id,-properties.datetime', limit=3)
+        print(json.dumps(result, indent=4))
+        print(json.dumps(client.query_granules_next(), indent=4))
         return
