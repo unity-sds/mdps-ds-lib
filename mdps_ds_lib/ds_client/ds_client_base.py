@@ -22,7 +22,8 @@ class DsClient:
         self.__default_collection_venue = '001'
 
     def get_complete_collection(self):
-        return f'{self.collection}{self.__default_collection_venue}' if self.collection_venue is None else f'{self.collection}___{self.collection_venue}'
+        collection_venue = self.__default_collection_venue if self.collection_venue is None else self.collection_venue
+        return f'{self.collection}___{collection_venue}'
 
     @property
     def granule(self):
