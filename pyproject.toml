@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mdps-ds-lib"
-version="1.1.1.dev000300"
+version="1.1.1.dev000400"
 description = "Mission Data System - MDPS (Unity) Data Service Core library"
 authors = ["Wai Phyo <wai.phyo@jpl.nasa.gov>"]
 license = "Apache 2.0"
@@ -19,7 +19,7 @@ Issues = "https://github.com/unity-sds/sampleproject/issues"
 
 [tool.poetry.dependencies]
 python = "^3.9"
-boto3 = "^1.26.51"
+boto3 = "^1.36.11"
 elasticsearch = "7.13.4"
 fastjsonschema = "^2.19.1"
 requests-aws4auth="1.2.3"
@@ -28,6 +28,7 @@ xmltodict="0.13.0"
 requests="2.31.0"
 tenacity="8.2.3"
 jsonschema = "^4.23.0"
+python-dotenv = "^1.0.1"
 
 [project]
 name = "mdps-ds-lib"
