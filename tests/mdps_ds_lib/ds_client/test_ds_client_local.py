@@ -1,5 +1,6 @@
 import base64
 import json
+import math
 import os
 from unittest import TestCase
 
@@ -9,6 +10,7 @@ from mdps_ds_lib.ds_client.auth_token.token_abstract import TokenAbstract
 from mdps_ds_lib.ds_client.auth_token.token_factory import TokenFactory
 from mdps_ds_lib.ds_client.ds_client_admin import DsClientAdmin
 from mdps_ds_lib.ds_client.ds_client_user import DsClientUser
+from mdps_ds_lib.lib.utils.file_utils import FileUtils
 
 
 class TestDsClientAdmin(TestCase):
@@ -176,6 +178,41 @@ class TestDsClientAdmin(TestCase):
         print(result)
         return
 
+    def test_03_user_add_many_granules(self):
+        encoded_token = self.__get_dummy_token()
+        os.environ['TOKEN_FACTORY'] = 'DUMMY'
+        os.environ['DS_TOKEN'] = encoded_token
+        # os.environ['DS_URL'] = encoded_token
+        # os.environ['DS_STAGE'] = encoded_token
+        token_retriever: TokenAbstract = TokenFactory().get_instance(os.getenv('TOKEN_FACTORY'))
+        client = DsClientUser(token_retriever, 'http://localhost:8005', 'data')
+        # client = DsClientAdmin(token_retriever, 'http://localhost:8005', 'data')
+
+        client.urn = 'URN'
+        client.org = 'NASA'
+        client.project = 'GEMX'
+        client.tenant = 'DEMO'
+        client.tenant_venue = 'DEV'
+        client.collection = 'MASTER'
+        result = FileUtils.read_json('master_stac.json.corrected.json')
+        # client.collection = 'AVIRIS'
+        # result = FileUtils.read_json('aviris_2023.stac.json.corrected.json')
+        # result = FileUtils.read_json('aviris_2024.stac.json.corrected.json')
+
+        for temp_granule in result:
+            temp_granule = Item.from_dict(temp_granule)
+            if math.isnan(temp_granule.bbox[0]):
+                print(temp_granule)
+                continue
+            client.granule = temp_granule.id
+            try:
+                result = client.create_new_granule(temp_granule)
+            except Exception as e:
+                print(client.granule)
+                raise e
+            print(result)
+        return
+
     def test_query_granules(self):
         encoded_token = self.__get_dummy_token()
         os.environ['TOKEN_FACTORY'] = 'DUMMY'
@@ -193,6 +230,7 @@ class TestDsClientAdmin(TestCase):
         client.tenant_venue = 'OPS'
         client.collection = 'GEMX_2024'
         client.collection_venue = '001'
+        # result = client.query_granules(bbox='-114,32.5,-113,33.5')
         result = client.query_granules(bbox='-114,32.5,-113,33.5')
         print(result)
         print(client.query_granules_next())
@@ -211,9 +249,12 @@ class TestDsClientAdmin(TestCase):
         client.urn = 'URN'
         client.org = 'NASA'
         client.project = 'GEMX'
-        client.tenant = 'AVIRIS'
-        client.tenant_venue = 'OPS'
-        result = client.query_granules_across_collections(bbox='-114.314407,32.5,-114.3144078,33.5')
+        client.tenant = 'DEMO'
+        client.tenant_venue = 'DEV'
+        # result = client.query_granules_across_collections(bbox='-114.314407,32.5,-114.3144078,32.55')
+        result = client.query_granules_across_collections(sort_keys='-collection')
         print(result)
-        print(client.query_granules_next())
+        while len(result['features']) > 0:
+            result = client.query_granules_next()
+            print(result)
         return

@@ -65,8 +65,7 @@ class DsClientUser(DsClient):
         temp_granule_id = ':'.join(temp_granule_id)
 
         granule_stac.id = temp_granule_id
-        granule_stac.collection = temp_collection_id
-
+        granule_stac.collection_id = temp_collection_id
         request_url = f'{request_url}{temp_collection_id}/items/{temp_granule_id}'
         s = requests.session()
         s.trust_env = self._trust_env
