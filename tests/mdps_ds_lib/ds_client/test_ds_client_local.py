@@ -1,5 +1,6 @@
 import base64
 import json
+import math
 import os
 from unittest import TestCase
 
@@ -9,6 +10,7 @@ from mdps_ds_lib.ds_client.auth_token.token_abstract import TokenAbstract
 from mdps_ds_lib.ds_client.auth_token.token_factory import TokenFactory
 from mdps_ds_lib.ds_client.ds_client_admin import DsClientAdmin
 from mdps_ds_lib.ds_client.ds_client_user import DsClientUser
+from mdps_ds_lib.lib.utils.file_utils import FileUtils
 
 
 class TestDsClientAdmin(TestCase):
@@ -42,12 +44,10 @@ class TestDsClientAdmin(TestCase):
         client.urn = 'URN'
         client.org = 'NASA'
         client.project = 'GEMX'
-        client.tenant = 'AVIRIS'
-        client.tenant_venue = 'OPS'
+        client.tenant = 'DEMO'
+        client.tenant_venue = 'DEV'
 
         client.add_admin_group(['CREATE', 'READ', 'DELETE'], 'Test_User')
-
-
         gemx_custom_properties = {
             "acquisition_date_l1b": {"type": "date",
                                      "format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd'T'HH:mm:ssZ||yyyy-MM-dd'T'HH:mm:ss'Z'||yyyy-MM-dd'T'HH:mm:ss.SSSSSSZ||yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'||yyyy-MM-dd||epoch_millis"},
@@ -68,14 +68,6 @@ class TestDsClientAdmin(TestCase):
             "scan_lines": {"type": "long"},
         }
         client.add_tenant_database_index(gemx_custom_properties)
-        # client.collection = ''
-
-        client.urn = 'URN'
-        client.org = 'NASA'
-        client.project = 'GEMX'
-        client.tenant = 'MASTERS'
-        client.tenant_venue = 'OPS'
-        client.add_admin_group(['CREATE', 'READ', 'DELETE'], 'Test_User')
         return
 
     def test_02_user_add_collection(self):
@@ -91,20 +83,15 @@ class TestDsClientAdmin(TestCase):
         client.urn = 'URN'
         client.org = 'NASA'
         client.project = 'GEMX'
-        client.tenant = 'AVIRIS'
-        client.tenant_venue = 'OPS'
-        client.collection = 'GEMX_2024'
-        client.collection_venue = '001'
+        client.tenant = 'DEMO'
+        client.tenant_venue = 'DEV'
+        client.collection = 'AVIRIS'
         result = client.create_new_collection(True)
         print(result)
-        client.tenant = 'MASTERS'
-        client.tenant_venue = 'OPS'
-        client.collection = '2024'
-        client.collection_venue = '001'
+        client.collection = 'MASTER'
 
         result = client.create_new_collection(True)
         print(result)
-
         return
 
     def test_03_user_add_granule(self):
@@ -120,65 +107,67 @@ class TestDsClientAdmin(TestCase):
         client.urn = 'URN'
         client.org = 'NASA'
         client.project = 'GEMX'
-        client.tenant = 'AVIRIS'
-        client.tenant_venue = 'OPS'
-        client.collection = 'GEMX_2024'
+        client.tenant = 'DEMO'
+        client.tenant_venue = 'DEV'
+        client.collection = 'GEMX'
         client.collection_venue = '001'
-        client.granule = 'f240424t01_p00_r10'
+        # client.granule = 'f240424t01_p00_r10'
+        temp_granule =    {
+        "type": "Feature",
+        "stac_version": "1.0.0",
+        "id": "f230331t01-p00_r09",
+        "properties": {
+            "start_datetime": "2023-03-31T18:52:00.000000Z",
+            "end_datetime": "2023-03-31T19:07:00.000000Z",
+            "site_name": "Yosemite-NEON Box 4 (YN38)(orthocorrected)",
+            "nasa_log": "232017",
+            "investigator": "Robert Green",
+            "comments": "s-)nclr",
+            "site_info": "WDTS - Yosemite",
+            "datetime": "1970-01-01T00:00:00Z"
+        },
+        "geometry": {
+            "type": "Point",
+            "coordinates": [
+                0.0,
+                0.0
+            ]
+        },
+        "links": [],
+        "assets": {
+            "l1b": {
+                "href": "https://popo.jpl.nasa.gov/gemx/data_products/l1b/f230331t01p00r09rdn_g.tar.gz",
+                "title": "f230331t01p00r09rdn_g.tar.gz",
+                "description": "2024-11-05 09:22",
+                "file:size": 3435973836.8
+            },
+            "l2": {
+                "href": "https://popo.jpl.nasa.gov/gemx/data_products/l2/f230331t01p00r09rfl.tar.gz",
+                "title": "f230331t01p00r09rfl.tar.gz",
+                "description": "2024-11-05 09:09",
+                "file:size": 6442450944.0
+            },
+            "quicklook": {
+                "href": "http://aviris.jpl.nasa.gov/ql/23qlook/f230331t01p00r09_geo.jpeg",
+                "title": "f230331t01p00r09_geo.jpeg",
+                "description": "Quicklook Link"
+            }
+        },
+        "bbox": [
+            -119.2020323,
+            36.6539295,
+            -119.1875901,
+            38.1015035
+        ],
+        "stac_extensions": [
+            "https://stac-extensions.github.io/file/v2.1.0/schema.json"
+        ],
+        "collection": "MASTER"
+    }
 
-        temp_granule = {
-            "type": "Feature",
-            "stac_version": "1.0.0",
-            "id": "URN:NASA:AVIRIS:f240424t01:p00_r10",
-            "properties": {
-                "start_datetime": "2024-04-24T20:37:00.000000Z",
-                "end_datetime": "2024-04-24T20:50:00.000000Z",
-                "site_name": "x001(orthocorrected)",
-                "nasa_log": 232016.0,
-                "investigator": "Raymond Kokaly",
-                "comments": "x001 s-)n; LN2 refill 2042",
-                "site_info": "GEMx - RFLY02",
-                "datetime": "1970-01-01T00:00:00Z"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    0.0,
-                    0.0
-                ]
-            },
-            "links": [],
-            "assets": {
-                "l1b": {
-                    "href": "https://popo.jpl.nasa.gov/gemx/data_products/l1b/f240424t01p00r10rdn_g.tar.gz",
-                    "title": "f240424t01p00r10rdn_g.tar.gz",
-                    "description": "2024-10-08 15:16",
-                    "file:size": 2362232012.8
-                },
-                "l2": {
-                    "href": "https://popo.jpl.nasa.gov/gemx/data_products/l2/f240424t01p00r10rfl.tar.gz",
-                    "title": "f240424t01p00r10rfl.tar.gz",
-                    "description": "2024-10-18 08:22",
-                    "file:size": 4187593113.6
-                },
-                "quicklook": {
-                    "href": "http://aviris.jpl.nasa.gov/ql/24qlook/f240424t01p00r10_geo.jpeg",
-                    "title": "f240424t01p00r10_geo.jpeg",
-                    "description": "Quicklook Link"
-                }
-            },
-            "bbox": [
-                -114.3144070,
-                32.5,
-                -114.3144078,
-                33.5,
-            ],
-            "stac_extensions": [
-                "https://stac-extensions.github.io/file/v2.1.0/schema.json"
-            ],
-            "collection": "URN:NASA:AVIRIS:f240424t01"
-        }
+
         temp_granule = Item.from_dict(temp_granule)
+        client.granule = temp_granule.id
         result = client.create_new_granule(temp_granule)
         print(result)
         client.tenant = 'MASTERS'
@@ -187,7 +176,41 @@ class TestDsClientAdmin(TestCase):
         client.collection_venue = '001'
         # result = client.create_new_granule()
         print(result)
+        return
 
+    def test_03_user_add_many_granules(self):
+        encoded_token = self.__get_dummy_token()
+        os.environ['TOKEN_FACTORY'] = 'DUMMY'
+        os.environ['DS_TOKEN'] = encoded_token
+        # os.environ['DS_URL'] = encoded_token
+        # os.environ['DS_STAGE'] = encoded_token
+        token_retriever: TokenAbstract = TokenFactory().get_instance(os.getenv('TOKEN_FACTORY'))
+        client = DsClientUser(token_retriever, 'http://localhost:8005', 'data')
+        # client = DsClientAdmin(token_retriever, 'http://localhost:8005', 'data')
+
+        client.urn = 'URN'
+        client.org = 'NASA'
+        client.project = 'GEMX'
+        client.tenant = 'DEMO'
+        client.tenant_venue = 'DEV'
+        client.collection = 'MASTER'
+        result = FileUtils.read_json('master_stac.json.corrected.json')
+        # client.collection = 'AVIRIS'
+        # result = FileUtils.read_json('aviris_2023.stac.json.corrected.json')
+        # result = FileUtils.read_json('aviris_2024.stac.json.corrected.json')
+
+        for temp_granule in result:
+            temp_granule = Item.from_dict(temp_granule)
+            if math.isnan(temp_granule.bbox[0]):
+                print(temp_granule)
+                continue
+            client.granule = temp_granule.id
+            try:
+                result = client.create_new_granule(temp_granule)
+            except Exception as e:
+                print(client.granule)
+                raise e
+            print(result)
         return
 
     def test_query_granules(self):
@@ -207,6 +230,7 @@ class TestDsClientAdmin(TestCase):
         client.tenant_venue = 'OPS'
         client.collection = 'GEMX_2024'
         client.collection_venue = '001'
+        # result = client.query_granules(bbox='-114,32.5,-113,33.5')
         result = client.query_granules(bbox='-114,32.5,-113,33.5')
         print(result)
         print(client.query_granules_next())
@@ -225,9 +249,12 @@ class TestDsClientAdmin(TestCase):
         client.urn = 'URN'
         client.org = 'NASA'
         client.project = 'GEMX'
-        client.tenant = 'AVIRIS'
-        client.tenant_venue = 'OPS'
-        result = client.query_granules_across_collections(bbox='-114.314407,32.5,-114.3144078,33.5')
+        client.tenant = 'DEMO'
+        client.tenant_venue = 'DEV'
+        # result = client.query_granules_across_collections(bbox='-114.314407,32.5,-114.3144078,32.55')
+        result = client.query_granules_across_collections(sort_keys='-collection')
         print(result)
-        print(client.query_granules_next())
+        while len(result['features']) > 0:
+            result = client.query_granules_next()
+            print(result)
         return
