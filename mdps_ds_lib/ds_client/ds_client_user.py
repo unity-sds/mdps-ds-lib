@@ -59,17 +59,13 @@ class DsClientUser(DsClient):
 
     def create_new_granule(self, granule_stac: Item):
         request_url = f'{self._uds_url}collections/'
-        temp_collection_id = f"{self.collection}___001" if self.collection_venue is None else f"{self.collection}___{self.collection_venue}"
-        temp_collection_id = [
-            self.urn, self.org, self.project, self.tenant, self.tenant_venue, temp_collection_id
-        ]
+        temp_collection_id = [self.urn, self.org, self.project, self.tenant, self.tenant_venue, self.get_complete_collection()]
         temp_granule_id = temp_collection_id + [self.granule]
         temp_collection_id = ':'.join(temp_collection_id)
         temp_granule_id = ':'.join(temp_granule_id)
 
         granule_stac.id = temp_granule_id
-        granule_stac.collection = temp_collection_id
-
+        granule_stac.collection_id = temp_collection_id
         request_url = f'{request_url}{temp_collection_id}/items/{temp_granule_id}'
         s = requests.session()
         s.trust_env = self._trust_env
