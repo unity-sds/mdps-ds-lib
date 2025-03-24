@@ -17,6 +17,7 @@ class DsClientUser(DsClient):
     def __init__(self, token_retriever: TokenAbstract, ds_url: str, ds_stage: str):
         super().__init__(token_retriever, ds_url, ds_stage)
         self.__granule_query_next_page = None
+        self.__collection_query_next_page = None
 
     def create_new_collection(self, is_actual_execution=False):
         request_url = f'{self._uds_url}collections/'
@@ -51,11 +52,75 @@ class DsClientUser(DsClient):
         response.raise_for_status()
         return response.text
 
-    def query_collections(self):
-        return
+    def query_custom_properties(self):
+        if self.tenant is None or self.tenant_venue is None or self.collection is None:
+            raise ValueError(f'require to set tenant & tenant_venue & collection & granule')
+        collection_id_for_granules = ':'.join([self.urn, self.org, self.project, self.tenant, self.tenant_venue, self.get_complete_collection()])
+        request_url = f'{self._uds_url}collections/'
+        request_url = f'{request_url}{collection_id_for_granules}/variables'
+        print(request_url)
+        s = requests.session()
+        s.trust_env = self._trust_env
+        response = s.get(url=request_url, headers={
+            'Authorization': f'Bearer {self._token_retriever.get_token()}',
+        }, verify=self._trust_env)
+        response.raise_for_status()
+        response = json.loads(response.text)
+        return response
 
-    def query_single_collection(self, limit= 10, offset= None, datetime = None, filter = None):
-        return
+    def query_collections(self, limit=10):
+        query_params = {
+            # 'datetime': datetime,
+            'limit': limit,
+            # 'filter': filter,
+            # 'bbox': bbox,
+            # 'sortby': sort_keys,
+        }
+        query_params = {k: v for k, v in query_params.items() if v is not None}
+        request_url = f'{self._uds_url}collections/'
+        query_params = '&'.join([f'{k}={v}' for k, v in query_params.items()])
+        request_url = f'{request_url}?{query_params}'
+        s = requests.session()
+        s.trust_env = self._trust_env
+        response = s.get(url=request_url, headers={
+            'Authorization': f'Bearer {self._token_retriever.get_token()}',
+        }, verify=self._trust_env)
+        response.raise_for_status()
+        response = json.loads(response.text)
+        self.__collection_query_next_page = [k['href'] for k in response['links'] if k['rel'] == 'next']
+        self.__collection_query_next_page = None if len(self.__collection_query_next_page) < 1 else \
+        self.__collection_query_next_page[0]
+
+        return response
+
+    def query_collections_next(self):
+        if self.__collection_query_next_page is None:
+            return None
+        s = requests.session()
+        s.trust_env = self._trust_env
+        response = s.get(url=self.__collection_query_next_page, headers={
+            'Authorization': f'Bearer {self._token_retriever.get_token()}',
+        }, verify=self._trust_env)
+        response.raise_for_status()
+        response = json.loads(response.text)
+        self.__collection_query_next_page = [k['href'] for k in response['links'] if k['rel'] == 'next']
+        self.__collection_query_next_page = None if len(self.__collection_query_next_page) < 1 else self.__collection_query_next_page[0]
+        return response
+
+    def query_single_collection(self):
+        if self.tenant is None or self.tenant_venue is None or self.collection is None:
+            raise ValueError(f'require to set tenant & tenant_venue & collection')
+        collection_id_for_granules = ':'.join([self.urn, self.org, self.project, self.tenant, self.tenant_venue, self.get_complete_collection()])
+        request_url = f'{self._uds_url}collections/'
+        request_url = f'{request_url}{collection_id_for_granules}/'
+        s = requests.session()
+        s.trust_env = self._trust_env
+        response = s.get(url=request_url, headers={
+            'Authorization': f'Bearer {self._token_retriever.get_token()}',
+        }, verify=self._trust_env)
+        response.raise_for_status()
+        response = json.loads(response.text)
+        return response
 
     def create_new_granule(self, granule_stac: Item):
         request_url = f'{self._uds_url}collections/'
@@ -75,7 +140,6 @@ class DsClientUser(DsClient):
         }, verify=self._trust_env, data=json.dumps(granule_stac.to_dict(False, False)))
         response.raise_for_status()
         return response.text
-
 
     def query_granules_across_collections(self, limit= 10, datetime = None, filter = None, bbox= None, sort_keys=None):
         if self.tenant is None or self.tenant_venue is None:
@@ -147,37 +211,37 @@ class DsClientUser(DsClient):
         self.__granule_query_next_page = None if len(self.__granule_query_next_page) < 1 else \
         self.__granule_query_next_page[0]
         return response
-        return
 
     def query_single_granule(self):
-        return
-
-    def delete_single_granule(self):
-        return
-
-    def add_admin_group(self, crud_actions: list, group_name: str):
-        request_url = f'{self._uds_url}admin/auth'
-        LOGGER.debug(f'request_url: {request_url}')
-        collection_complete_name = '.*' if self.collection is None else \
-            f'{self.collection}.*' if self.collection_venue is None else f'{self.collection}___{self.collection_venue}'
-        resources = [self.urn, self.org, self.project,
-                     self.tenant if self.tenant is not None else '*',
-                     self.tenant_venue if self.tenant_venue is not None else '*',
-                     collection_complete_name
-                     ]
-        admin_add_body = {
-            "actions": [k.upper() for k in crud_actions],
-            "resources": [','.join(resources)],
-            "tenant": self.tenant,
-            "venue": self.tenant_venue,
-            "group_name": group_name
-        }
-        LOGGER.debug(f"admin_add_body: {admin_add_body}")
+        if self.tenant is None or self.tenant_venue is None or self.collection is None or self.granule is None:
+            raise ValueError(f'require to set tenant & tenant_venue & collection & granule')
+        collection_id_for_granules = ':'.join([self.urn, self.org, self.project, self.tenant, self.tenant_venue, self.get_complete_collection()])
+        granule_id_complete = ':'.join([collection_id_for_granules, self.granule])
+        request_url = f'{self._uds_url}collections/'
+        request_url = f'{request_url}{collection_id_for_granules}/items/{granule_id_complete}'
+        print(request_url)
         s = requests.session()
         s.trust_env = self._trust_env
-        response = s.put(url=request_url, headers={
+        response = s.get(url=request_url, headers={
             'Authorization': f'Bearer {self._token_retriever.get_token()}',
-            'Content-Type': 'application/json',
-        }, verify=self._trust_env, data=json.dumps(admin_add_body))
+        }, verify=self._trust_env)
         response.raise_for_status()
-        return response.text
+        response = json.loads(response.text)
+        return response
+
+    def delete_single_granule(self):
+        if self.tenant is None or self.tenant_venue is None or self.collection is None or self.granule is None:
+            raise ValueError(f'require to set tenant & tenant_venue & collection & granule')
+        collection_id_for_granules = ':'.join([self.urn, self.org, self.project, self.tenant, self.tenant_venue, self.get_complete_collection()])
+        granule_id_complete = ':'.join([collection_id_for_granules, self.granule])
+        request_url = f'{self._uds_url}collections/'
+        request_url = f'{request_url}{collection_id_for_granules}/items/{granule_id_complete}'
+        print(request_url)
+        s = requests.session()
+        s.trust_env = self._trust_env
+        response = s.delete(url=request_url, headers={
+            'Authorization': f'Bearer {self._token_retriever.get_token()}',
+        }, verify=self._trust_env)
+        response.raise_for_status()
+        response = json.loads(response.text)
+        return response
