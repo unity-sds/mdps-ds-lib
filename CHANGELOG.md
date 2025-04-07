@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ===================================================================
 
+## [1.1.1.dev000600] - 2025-04-07
+### Changed
+- [#102](https://github.com/unity-sds/mdps-ds-lib/pull/102) feat: item transfomer
+
 ## [1.1.1.dev000500] - 2025-03-24
 ### Changed
 - [#100](https://github.com/unity-sds/mdps-ds-lib/pull/100) feat: new client cli methods
