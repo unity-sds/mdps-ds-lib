@@ -360,7 +360,7 @@ class ItemTransformer(StacTransformerAbstract):
         )
         return asset
 
-    def to_stac(self, source: dict) -> dict:
+    def to_stac(self, source: dict, source_stac: Item=None) -> dict:
         """
         Sample: Cumulus granule
         {
@@ -478,25 +478,32 @@ class ItemTransformer(StacTransformerAbstract):
         }
         stac_item = Item(
             id=source['granuleId'],
-            stac_extensions=["https://stac-extensions.github.io/file/v2.1.0/schema.json"],
-            bbox=[-180.0, -90.0, 180.0, 90.0],
-            properties={
-                **custom_metadata,
-                **cumulus_properties,
-                # "datetime": f"{TimeUtils.decode_datetime(source['createdAt'], False)}Z",
-                # "start_datetime": datetime_to_str(self.get_time_obj(source['beginningDateTime'])),
-                # "end_datetime": datetime_to_str(self.get_time_obj(source['endingDateTime'])),
-                # "created": datetime_to_str(self.get_time_obj(source['productionDateTime'])),
-                # "updated": datetime_to_str(TimeUtils().parse_from_unix(source['updatedAt'], True).get_datetime_obj()),
-            },
-            collection=source['collectionId'],
-            assets={self.__get_asset_name(k): self.__get_asset_obj(k) for k in validated_files},
             geometry={
                 "type": "Point",
                 "coordinates": [0.0, 0.0]
             },
+            bbox=[-180.0, -90.0, 180.0, 90.0],
             datetime=TimeUtils().parse_from_unix(source['createdAt'], True).get_datetime_obj(),
-        )
+            properties={}
+        )if source_stac is None else source_stac
+
+        stac_item.collection_id = source['collectionId']
+        stac_item.id = source['granuleId']
+        stac_item.datetime = TimeUtils().parse_from_unix(source['createdAt'], True).get_datetime_obj()
+        existing_stac_extensions = stac_item.stac_extensions
+        stac_item.stac_extensions = list(set(existing_stac_extensions + ["https://stac-extensions.github.io/file/v2.1.0/schema.json"]))
+        stac_item.assets = {self.__get_asset_name(k): self.__get_asset_obj(k) for k in validated_files}
+        stac_item.properties = {
+            **stac_item.properties,
+            **custom_metadata,
+            **cumulus_properties,
+
+            # "datetime": f"{TimeUtils.decode_datetime(source['createdAt'], False)}Z",
+            # "start_datetime": datetime_to_str(self.get_time_obj(source['beginningDateTime'])),
+            # "end_datetime": datetime_to_str(self.get_time_obj(source['endingDateTime'])),
+            # "created": datetime_to_str(self.get_time_obj(source['productionDateTime'])),
+            # "updated": datetime_to_str(TimeUtils().parse_from_unix(source['updatedAt'], True).get_datetime_obj()),
+        }
         stac_item.links = [
             Link(rel='collection', target='.')
         ]
