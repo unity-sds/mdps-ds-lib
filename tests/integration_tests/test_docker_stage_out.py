@@ -1546,7 +1546,20 @@ class TestDockerStageOut(TestCase):
                     'collection': 'NEW_COLLECTION_EXAMPLE_L1B___9'}]}
             """
             s3 = AwsS3()
+            s3.set_s3_url(upload_result['assets'][f'{result_key}.stac.json']['href'])
+            local_path = s3.download(tmp_dir_name, 's3_metadata_file.json')
+            upload_result = FileUtils.read_json(local_path)
+            self.assertEqual(upload_result['bbox'], [-180, -90, 180, 90], f'wrong bbox')
+            self.assertTrue('assets' in upload_result, 'missing assets')
+            result_key = [k for k in upload_result['assets'].keys()][0]
+            self.assertTrue(result_key.startswith('test_file'), f'worng asset key: {result_key}')
+            self.assertTrue(f'{result_key}.stac.json' in upload_result['assets'], f'missing assets#metadata asset: test_file_0.json')
+            self.assertTrue('href' in upload_result['assets'][f'{result_key}.stac.json'], 'missing assets#metadata__cas#href')
+            self.assertTrue(upload_result['assets'][f'{result_key}.stac.json']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/{os.environ["COLLECTION_ID"]}/{os.environ["COLLECTION_ID"]}:test_file_'), f"wrong HREF (no S3?): upload_result['assets'][f'{result_key}.stac.json']['href']")
+
+
             s3_keys = [k for k in s3.get_child_s3_files(os.environ['STAGING_BUCKET'], f"stage_out/successful_features_{starting_time}")]
+
             s3_keys = sorted(s3_keys)
             print(f's3_keys: {s3_keys}')
             self.assertTrue(len(s3_keys) > 0, f'empty files in S3')
