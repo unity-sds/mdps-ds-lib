@@ -117,6 +117,7 @@ class UploadArbitraryFilesAsGranules(UploadGranulesAbstract):
         self._set_props_from_env()
         if self._collection_id is None:
             raise ValueError(f'missing COLLECTION ID in ENV')
+        self._collection_id = GranulesCatalog.standardize_stage_out_collection_id_format(self._collection_id)
         output_dir = os.environ.get(self.OUTPUT_DIRECTORY)
         if not FileUtils.dir_exist(output_dir):
             raise ValueError(f'OUTPUT_DIRECTORY: {output_dir} does not exist')
