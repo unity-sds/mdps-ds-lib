@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ===================================================================
 
+## [1.1.1.dev000701] - 2025-04-24
+### Fixed
+- [#106](https://github.com/unity-sds/mdps-ds-lib/pull/106) fix: case insensitivity
+
 ## [1.1.1.dev000700] - 2025-04-09
 ### Changed
 - [#104](https://github.com/unity-sds/mdps-ds-lib/pull/104) feat: using single collection endpoint to retrieve the collection details
