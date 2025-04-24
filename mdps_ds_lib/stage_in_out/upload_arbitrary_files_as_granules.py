@@ -51,7 +51,7 @@ class UploadItemExecutor(JobExecutorAbstract):
                              "type": "Point",
                              "coordinates": [0.0, 0.0]
                          },
-                         bbox=[0.0, 0.0, 0.0, 0.0],
+                         bbox=[-180, -90, 180, 90],
                          datetime=TimeUtils().parse_from_unix(0, True).get_datetime_obj(),
                          properties={
                              "start_datetime": TimeUtils.get_current_time(),
@@ -84,10 +84,11 @@ class UploadItemExecutor(JobExecutorAbstract):
             s3_url = self.__s3.upload(job_obj, self.__staging_bucket, f'{self.__collection_id}/{sample_stac_item.id}', self.__delete_files)
             updating_assets[os.path.basename(s3_url)] = s3_url
             uploading_current_granule_stac = f'{s3_url}.stac.json'
-            self.__s3.set_s3_url(uploading_current_granule_stac)
-            self.__s3.upload_bytes(json.dumps(sample_stac_item.to_dict(False, False),indent=4).encode())
             updating_assets[os.path.basename(uploading_current_granule_stac)] = uploading_current_granule_stac
             self.__gc.update_assets_href(sample_stac_item, updating_assets)
+
+            self.__s3.set_s3_url(uploading_current_granule_stac)
+            self.__s3.upload_bytes(json.dumps(sample_stac_item.to_dict(False, False),indent=4).encode())
             self.__result_list.put(sample_stac_item.to_dict(False, False))
         except Exception as e:
             sample_stac_item.properties['upload_error'] = str(e)
@@ -116,6 +117,7 @@ class UploadArbitraryFilesAsGranules(UploadGranulesAbstract):
         self._set_props_from_env()
         if self._collection_id is None:
             raise ValueError(f'missing COLLECTION ID in ENV')
+        self._collection_id = GranulesCatalog.standardize_stage_out_collection_id_format(self._collection_id)
         output_dir = os.environ.get(self.OUTPUT_DIRECTORY)
         if not FileUtils.dir_exist(output_dir):
             raise ValueError(f'OUTPUT_DIRECTORY: {output_dir} does not exist')

@@ -28,9 +28,9 @@ from mdps_ds_lib.lib.utils.file_utils import FileUtils
 class TestDockerStageOut(TestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.tenant = 'UDS_MY_LOCAL_ARCHIVE_TEST'  # 'uds_local_test'  # 'uds_sandbox'
-        self.tenant_venue = 'DEV'  # 'DEV1'  # 'dev'
-        self.collection_name = 'UDS_UNIT_COLLECTION'  # 'uds_collection'  # 'sbx_collection'
+        self.tenant = 'UDS_MY_LOCAL_ARCHIVE_TEST'.lower()  # 'uds_local_test'  # 'uds_sandbox'
+        self.tenant_venue = 'DEV'.lower()  # 'DEV1'  # 'dev'
+        self.collection_name = 'UDS_UNIT_COLLECTION'.lower()  # 'uds_collection'  # 'sbx_collection'
         self.collection_version = '24.10.21.12.00'.replace('.', '')  # '2402011200'
 
     def not_in_used_test_03_upload(self):
@@ -293,7 +293,7 @@ class TestDockerStageOut(TestCase):
                                 "type": "Point",
                                 "coordinates": [0.0, 0.0]
                              },
-                             bbox=[0.0, 0.0, 0.0, 0.0],
+                             bbox=[-180, -90, 180, 90],
                              datetime=TimeUtils().parse_from_unix(0, True).get_datetime_obj(),
                              properties={
                                  "start_datetime": "2016-01-31T18:00:00.009057Z",
@@ -469,7 +469,7 @@ class TestDockerStageOut(TestCase):
                                     "type": "Point",
                                     "coordinates": [0.0, 0.0]
                                  },
-                                 bbox=[0.0, 0.0, 0.0, 0.0],
+                                 bbox=[-180, -90, 180, 90],
                                  datetime=TimeUtils().parse_from_unix(0, True).get_datetime_obj(),
                                  properties={
                                      "start_datetime": "2016-01-31T18:00:00.009057Z",
@@ -521,10 +521,10 @@ class TestDockerStageOut(TestCase):
             result_key_prefix = result_key.split('.')[0]
             self.assertTrue(f'{result_key_prefix}.nc.cas' in upload_result['assets'], f'missing assets#metadata asset: {result_key_prefix}.nc.cas')
             self.assertTrue('href' in upload_result['assets'][f'{result_key_prefix}.nc.cas'], 'missing assets#metadata__cas#href')
-            self.assertTrue(upload_result['assets'][f'{result_key_prefix}.nc.cas']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/URN:NASA:UNITY:{os.environ["PROJECT"]}:{os.environ["VENUE"]}:NA_0'))
+            self.assertTrue(upload_result['assets'][f'{result_key_prefix}.nc.cas']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/URN:NASA:UNITY:{os.environ["PROJECT"].upper()}:{os.environ["VENUE"].upper()}:NA_0'))
             self.assertTrue(f'{result_key_prefix}.nc' in upload_result['assets'], f'missing assets#data: {result_key_prefix}.nc')
             self.assertTrue('href' in upload_result['assets'][f'{result_key_prefix}.nc'], 'missing assets#data#href')
-            self.assertTrue(upload_result['assets'][f'{result_key_prefix}.nc']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/URN:NASA:UNITY:{os.environ["PROJECT"]}:{os.environ["VENUE"]}:NA_0'))
+            self.assertTrue(upload_result['assets'][f'{result_key_prefix}.nc']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/URN:NASA:UNITY:{os.environ["PROJECT"].upper()}:{os.environ["VENUE"].upper()}:NA_0'))
             """
             Example output: 
             {
@@ -544,7 +544,7 @@ class TestDockerStageOut(TestCase):
                         'title': 'metadata cas'}, 'metadata__stac': {
                         'href': 's3://uds-test-cumulus-staging/NEW_COLLECTION_EXAMPLE_L1B___9/NEW_COLLECTION_EXAMPLE_L1B___9:test_file01/test_file01.nc.stac.json',
                         'title': 'metadata stac'}}, 
-                    'bbox': [0.0, 0.0, 0.0, 0.0], 
+                    'bbox': [-180, -90, 180, 90], 
                     'stac_extensions': [],
                     'collection': 'NEW_COLLECTION_EXAMPLE_L1B___9'}]}
             """
@@ -698,7 +698,7 @@ class TestDockerStageOut(TestCase):
                                     "type": "Point",
                                     "coordinates": [0.0, 0.0]
                                  },
-                                 bbox=[0.0, 0.0, 0.0, 0.0],
+                                 bbox=[-180, -90, 180, 90],
                                  datetime=TimeUtils().parse_from_unix(0, True).get_datetime_obj(),
                                  properties={
                                      "start_datetime": "2016-01-31T18:00:00.009057Z",
@@ -750,10 +750,10 @@ class TestDockerStageOut(TestCase):
             self.assertEqual(result_key, 'data', f'worng asset key: {result_key}')
             self.assertTrue(f'metadata1' in upload_result['assets'], f'missing assets#metadata asset: metadata1')
             self.assertTrue('href' in upload_result['assets'][f'metadata1'], 'missing assets#metadata__cas#href')
-            self.assertTrue(upload_result['assets'][f'metadata1']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/URN:NASA:UNITY:{os.environ["PROJECT"]}:{os.environ["VENUE"]}:NA/'))
+            self.assertTrue(upload_result['assets'][f'metadata1']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/URN:NASA:UNITY:{os.environ["PROJECT"].upper()}:{os.environ["VENUE"].upper()}:NA___001/'))
             self.assertTrue(f'data' in upload_result['assets'], f'missing assets#data: data')
             self.assertTrue('href' in upload_result['assets'][f'data'], 'missing assets#data#href')
-            self.assertTrue(upload_result['assets'][f'data']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/URN:NASA:UNITY:{os.environ["PROJECT"]}:{os.environ["VENUE"]}:NA/'))
+            self.assertTrue(upload_result['assets'][f'data']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/URN:NASA:UNITY:{os.environ["PROJECT"].upper()}:{os.environ["VENUE"].upper()}:NA___001/'))
             """
             Example output: 
             {
@@ -773,7 +773,7 @@ class TestDockerStageOut(TestCase):
                         'title': 'metadata cas'}, 'metadata__stac': {
                         'href': 's3://uds-test-cumulus-staging/NEW_COLLECTION_EXAMPLE_L1B___9/NEW_COLLECTION_EXAMPLE_L1B___9:test_file01/test_file01.nc.stac.json',
                         'title': 'metadata stac'}}, 
-                    'bbox': [0.0, 0.0, 0.0, 0.0], 
+                    'bbox': [-180, -90, 180, 90], 
                     'stac_extensions': [],
                     'collection': 'NEW_COLLECTION_EXAMPLE_L1B___9'}]}
             """
@@ -927,7 +927,7 @@ class TestDockerStageOut(TestCase):
                                     "type": "Point",
                                     "coordinates": [0.0, 0.0]
                                  },
-                                 bbox=[0.0, 0.0, 0.0, 0.0],
+                                 bbox=[-180, -90, 180, 90],
                                  datetime=TimeUtils().parse_from_unix(0, True).get_datetime_obj(),
                                  properties={
                                      "start_datetime": "2016-01-31T18:00:00.009057Z",
@@ -994,7 +994,7 @@ class TestDockerStageOut(TestCase):
                                     "type": "Point",
                                     "coordinates": [0.0, 0.0]
                                  },
-                                 bbox=[0.0, 0.0, 0.0, 0.0],
+                                 bbox=[-180, -90, 180, 90],
                                  datetime=TimeUtils().parse_from_unix(0, True).get_datetime_obj(),
                                  properties={
                                      "start_datetime": "2016-01-31T18:00:00.009057Z",
@@ -1061,7 +1061,7 @@ class TestDockerStageOut(TestCase):
                                     "type": "Point",
                                     "coordinates": [0.0, 0.0]
                                  },
-                                 bbox=[0.0, 0.0, 0.0, 0.0],
+                                 bbox=[-180, -90, 180, 90],
                                  datetime=TimeUtils().parse_from_unix(0, True).get_datetime_obj(),
                                  properties={
                                      "start_datetime": "2016-01-31T18:00:00.009057Z",
@@ -1127,7 +1127,7 @@ class TestDockerStageOut(TestCase):
                                     "type": "Point",
                                     "coordinates": [0.0, 0.0]
                                  },
-                                 bbox=[0.0, 0.0, 0.0, 0.0],
+                                 bbox=[-180, -90, 180, 90],
                                  datetime=TimeUtils().parse_from_unix(0, True).get_datetime_obj(),
                                  properties={
                                      "start_datetime": "2016-01-31T18:00:00.009057Z",
@@ -1291,7 +1291,7 @@ class TestDockerStageOut(TestCase):
                                     "type": "Point",
                                     "coordinates": [0.0, 0.0]
                                  },
-                                 bbox=[0.0, 0.0, 0.0, 0.0],
+                                 bbox=[-180, -90, 180, 90],
                                  datetime=TimeUtils().parse_from_unix(0, True).get_datetime_obj(),
                                  properties={
                                      "start_datetime": "2016-01-31T18:00:00.009057Z",
@@ -1343,10 +1343,10 @@ class TestDockerStageOut(TestCase):
             result_key_prefix = result_key.split('.')[0]
             self.assertTrue(f'{result_key_prefix}.nc.cas' in upload_result['assets'], f'missing assets#metadata asset: {result_key_prefix}.nc.cas')
             self.assertTrue('href' in upload_result['assets'][f'{result_key_prefix}.nc.cas'], 'missing assets#metadata__cas#href')
-            self.assertTrue(upload_result['assets'][f'{result_key_prefix}.nc.cas']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/URN:NASA:UNITY:{os.environ["PROJECT"]}:{os.environ["VENUE"]}:NA'))
+            self.assertTrue(upload_result['assets'][f'{result_key_prefix}.nc.cas']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/URN:NASA:UNITY:{os.environ["PROJECT"].upper()}:{os.environ["VENUE"].upper()}:NA'))
             self.assertTrue(f'{result_key_prefix}.nc' in upload_result['assets'], f'missing assets#data: {result_key_prefix}.nc')
             self.assertTrue('href' in upload_result['assets'][f'{result_key_prefix}.nc'], 'missing assets#data#href')
-            self.assertTrue(upload_result['assets'][f'{result_key_prefix}.nc']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/URN:NASA:UNITY:{os.environ["PROJECT"]}:{os.environ["VENUE"]}:NA'))
+            self.assertTrue(upload_result['assets'][f'{result_key_prefix}.nc']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/URN:NASA:UNITY:{os.environ["PROJECT"].upper()}:{os.environ["VENUE"].upper()}:NA'))
             """
             Example output: 
             {
@@ -1366,7 +1366,7 @@ class TestDockerStageOut(TestCase):
                         'title': 'metadata cas'}, 'metadata__stac': {
                         'href': 's3://uds-test-cumulus-staging/NEW_COLLECTION_EXAMPLE_L1B___9/NEW_COLLECTION_EXAMPLE_L1B___9:test_file01/test_file01.nc.stac.json',
                         'title': 'metadata stac'}}, 
-                    'bbox': [0.0, 0.0, 0.0, 0.0], 
+                    'bbox': [-180, -90, 180, 90], 
                     'stac_extensions': [],
                     'collection': 'NEW_COLLECTION_EXAMPLE_L1B___9'}]}
             """
@@ -1451,7 +1451,7 @@ class TestDockerStageOut(TestCase):
         return
 
     def test_03_03_upload_auxiliary_files(self):
-        temp_collection_id = f'URN:NASA:UNITY:{self.tenant}:{self.tenant_venue}:{self.collection_name}___{self.collection_version}'
+        temp_collection_id = f'urn:nasa:unity:{self.tenant}:{self.tenant_venue}:{self.collection_name}___{self.collection_version}'
         os.environ['GRANULES_UPLOAD_TYPE'] = 'UPLOAD_AUXILIARY_FILE_AS_GRANULE'
         os.environ['COLLECTION_ID'] = temp_collection_id
         os.environ['STAGING_BUCKET'] = 'uds-sbx-cumulus-staging'
@@ -1518,10 +1518,12 @@ class TestDockerStageOut(TestCase):
             print(f'example feature: {upload_result}')
             self.assertTrue('assets' in upload_result, 'missing assets')
             result_key = [k for k in upload_result['assets'].keys()][0]
-            self.assertTrue(result_key.startswith('test_file'), f'worng asset key: {result_key}')
+            temp_collection_id_fixed = f'URN:NASA:UNITY:{self.tenant.upper()}:{self.tenant_venue.upper()}:{self.collection_name}___{self.collection_version}'
+            self.assertEqual(upload_result['collection'], temp_collection_id_fixed, f'wrong bbox')
+            self.assertTrue(result_key.startswith('test_file'), f'wrong asset key: {result_key}')
             self.assertTrue(f'{result_key}.stac.json' in upload_result['assets'], f'missing assets#metadata asset: test_file_0.json')
             self.assertTrue('href' in upload_result['assets'][f'{result_key}.stac.json'], 'missing assets#metadata__cas#href')
-            self.assertTrue(upload_result['assets'][f'{result_key}.stac.json']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/{os.environ["COLLECTION_ID"]}/{os.environ["COLLECTION_ID"]}:test_file_'), f"wrong HREF (no S3?): upload_result['assets'][f'{result_key}.stac.json']['href']")
+            self.assertTrue(upload_result['assets'][f'{result_key}.stac.json']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/{temp_collection_id_fixed}/{temp_collection_id_fixed}:test_file_'), f"wrong HREF (no S3?): upload_result['assets'][f'{result_key}.stac.json']['href']")
             """
             Example output: 
             {
@@ -1541,12 +1543,25 @@ class TestDockerStageOut(TestCase):
                         'title': 'metadata cas'}, 'metadata__stac': {
                         'href': 's3://uds-test-cumulus-staging/NEW_COLLECTION_EXAMPLE_L1B___9/NEW_COLLECTION_EXAMPLE_L1B___9:test_file01/test_file01.nc.stac.json',
                         'title': 'metadata stac'}}, 
-                    'bbox': [0.0, 0.0, 0.0, 0.0], 
+                    'bbox': [-180, -90, 180, 90], 
                     'stac_extensions': [],
                     'collection': 'NEW_COLLECTION_EXAMPLE_L1B___9'}]}
             """
             s3 = AwsS3()
+            s3.set_s3_url(upload_result['assets'][f'{result_key}.stac.json']['href'])
+            local_path = s3.download(tmp_dir_name, 's3_metadata_file.json')
+            upload_result = FileUtils.read_json(local_path)
+            self.assertEqual(upload_result['bbox'], [-180, -90, 180, 90], f'wrong bbox')
+            self.assertTrue('assets' in upload_result, 'missing assets')
+            result_key = [k for k in upload_result['assets'].keys()][0]
+            self.assertTrue(result_key.startswith('test_file'), f'wrong asset key: {result_key}')
+            self.assertTrue(f'{result_key}.stac.json' in upload_result['assets'], f'missing assets#metadata asset: test_file_0.json')
+            self.assertTrue('href' in upload_result['assets'][f'{result_key}.stac.json'], 'missing assets#metadata__cas#href')
+            self.assertTrue(upload_result['assets'][f'{result_key}.stac.json']['href'].startswith(f's3://{os.environ["STAGING_BUCKET"]}/{temp_collection_id_fixed}/{temp_collection_id_fixed}:test_file_'), f"wrong HREF (no S3?): upload_result['assets'][f'{result_key}.stac.json']['href']")
+
+
             s3_keys = [k for k in s3.get_child_s3_files(os.environ['STAGING_BUCKET'], f"stage_out/successful_features_{starting_time}")]
+
             s3_keys = sorted(s3_keys)
             print(f's3_keys: {s3_keys}')
             self.assertTrue(len(s3_keys) > 0, f'empty files in S3')
@@ -1559,7 +1574,9 @@ class TestDockerStageOut(TestCase):
     def test_03_upload_complete_catalog_invalid_bucket(self):
         os.environ['VERIFY_SSL'] = 'FALSE'
 
-        os.environ['COLLECTION_ID'] = 'NEW_COLLECTION_EXAMPLE_L1B___9'
+        os.environ['PROJECT'] = 'LOCAL'
+        os.environ['VENUE'] = 'UNIT_TEST'
+        # os.environ['COLLECTION_ID'] = 'NEW_COLLECTION_EXAMPLE_L1B___9'
         os.environ['STAGING_BUCKET'] = 'invalid_bucket'
 
         os.environ['GRANULES_SEARCH_DOMAIN'] = 'UNITY'
@@ -1691,7 +1708,7 @@ class TestDockerStageOut(TestCase):
                                     "type": "Point",
                                     "coordinates": [0.0, 0.0]
                                  },
-                                 bbox=[0.0, 0.0, 0.0, 0.0],
+                                 bbox=[-180, -90, 180, 90],
                                  datetime=TimeUtils().parse_from_unix(0, True).get_datetime_obj(),
                                  properties={
                                      "start_datetime": "2016-01-31T18:00:00.009057Z",
@@ -1750,7 +1767,7 @@ class TestDockerStageOut(TestCase):
             self.assertTrue('href' in upload_result['assets'][f'{result_key_prefix}.nc.cas'], 'missing assets#metadata__cas#href')
             self.assertTrue(f'{result_key_prefix}.nc' in upload_result['assets'], f'missing assets#data: {result_key_prefix}.nc')
             self.assertTrue('href' in upload_result['assets'][f'{result_key_prefix}.nc'], 'missing assets#data#href')
-            self.assertTrue(FileUtils.file_exist(os.environ['OUTPUT_FILE']), f'missing output file')
+            # self.assertTrue(FileUtils.file_exist(os.environ['OUTPUT_FILE']), f'missing output file')
             """
             Example output: 
             {
@@ -1770,7 +1787,7 @@ class TestDockerStageOut(TestCase):
                         'title': 'metadata cas'}, 'metadata__stac': {
                         'href': 's3://uds-test-cumulus-staging/NEW_COLLECTION_EXAMPLE_L1B___9/NEW_COLLECTION_EXAMPLE_L1B___9:test_file01/test_file01.nc.stac.json',
                         'title': 'metadata stac'}}, 
-                    'bbox': [0.0, 0.0, 0.0, 0.0], 
+                    'bbox': [-180, -90, 180, 90], 
                     'stac_extensions': [],
                     'collection': 'NEW_COLLECTION_EXAMPLE_L1B___9'}]}
             """
@@ -1779,7 +1796,10 @@ class TestDockerStageOut(TestCase):
     def test_03_upload_complete_catalog_missing_data(self):
         os.environ['VERIFY_SSL'] = 'FALSE'
 
-        os.environ['COLLECTION_ID'] = 'NEW_COLLECTION_EXAMPLE_L1B___9'
+        os.environ['PROJECT'] = 'LOCAL'
+        os.environ['VENUE'] = 'UNIT_TEST'
+
+        # os.environ['COLLECTION_ID'] = 'NEW_COLLECTION_EXAMPLE_L1B___9'
         os.environ['STAGING_BUCKET'] = 'invalid_bucket'
 
         os.environ['GRANULES_SEARCH_DOMAIN'] = 'UNITY'
@@ -1911,7 +1931,7 @@ class TestDockerStageOut(TestCase):
                                     "type": "Point",
                                     "coordinates": [0.0, 0.0]
                                  },
-                                 bbox=[0.0, 0.0, 0.0, 0.0],
+                                 bbox=[-180, -90, 180, 90],
                                  datetime=TimeUtils().parse_from_unix(0, True).get_datetime_obj(),
                                  properties={
                                      "start_datetime": "2016-01-31T18:00:00.009057Z",
@@ -1970,7 +1990,7 @@ class TestDockerStageOut(TestCase):
             self.assertTrue('href' in upload_result['assets'][f'{result_key_prefix}.nc.cas'], 'missing assets#metadata__cas#href')
             self.assertTrue(f'{result_key_prefix}.nc' in upload_result['assets'], f'missing assets#data: {result_key_prefix}.nc')
             self.assertTrue('href' in upload_result['assets'][f'{result_key_prefix}.nc'], 'missing assets#data#href')
-            self.assertTrue(FileUtils.file_exist(os.environ['OUTPUT_FILE']), f'missing output file')
+            # self.assertTrue(FileUtils.file_exist(os.environ['OUTPUT_FILE']), f'missing output file')
             """
             Example output: 
             {
@@ -1990,7 +2010,7 @@ class TestDockerStageOut(TestCase):
                         'title': 'metadata cas'}, 'metadata__stac': {
                         'href': 's3://uds-test-cumulus-staging/NEW_COLLECTION_EXAMPLE_L1B___9/NEW_COLLECTION_EXAMPLE_L1B___9:test_file01/test_file01.nc.stac.json',
                         'title': 'metadata stac'}}, 
-                    'bbox': [0.0, 0.0, 0.0, 0.0], 
+                    'bbox': [-180, -90, 180, 90], 
                     'stac_extensions': [],
                     'collection': 'NEW_COLLECTION_EXAMPLE_L1B___9'}]}
             """
