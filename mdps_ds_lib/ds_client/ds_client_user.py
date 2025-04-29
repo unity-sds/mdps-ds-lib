@@ -93,6 +93,17 @@ class DsClientUser(DsClient):
 
         return response
 
+    def query_catalog(self):
+        request_url = f'{self._uds_url}catalog/'
+        s = requests.session()
+        s.trust_env = self._trust_env
+        response = s.get(url=request_url, headers={
+            'Authorization': f'Bearer {self._token_retriever.get_token()}',
+        }, verify=self._trust_env)
+        response.raise_for_status()
+        response = json.loads(response.text)
+        return response
+
     def query_collections_next(self):
         if self.__collection_query_next_page is None:
             return None

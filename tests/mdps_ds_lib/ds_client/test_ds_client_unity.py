@@ -9,6 +9,28 @@ from mdps_ds_lib.ds_client.ds_client_user import DsClientUser
 
 
 class TestDsClientAdmin(TestCase):
+    def test_01_admin(self):
+        os.environ['TRUST_ENV'] = 'TRUE'
+        os.environ['PASSWORD_TYPE'] = 'PARAM_STORE'
+        os.environ['USERNAME'] = '/unity/uds/user/wphyo/username'
+        os.environ['PASSWORD'] = '/unity/uds/user/wphyo/dwssap'
+        os.environ['CLIENT_ID'] = '71g0c73jl77gsqhtlfg2ht388c'
+        os.environ['COGNITO_URL'] = 'https://cognito-idp.us-west-2.amazonaws.com'
+
+        os.environ['TOKEN_FACTORY'] = 'COGNITO'
+        token_retriever: TokenAbstract = TokenFactory().get_instance(os.getenv('TOKEN_FACTORY'))
+        client = DsClientAdmin(token_retriever, 'https://d3vc8w9zcq658.cloudfront.net', 'data-sbx')
+        # client.setup_database()
+
+        client.urn = 'urn'
+        client.org = 'nasa'
+        client.project = 'unity'
+        client.tenant = 'UDS_LOCAL_TEST'
+        client.tenant_venue = 'DEV'
+
+        client.add_admin_group(['CREATE', 'READ', 'DELETE'], 'Unity_Viewer')
+        return
+
     def test_query_granules_across_collections(self):
         os.environ['TRUST_ENV'] = 'TRUE'
         os.environ['PASSWORD_TYPE'] = 'PARAM_STORE'
@@ -224,4 +246,18 @@ class TestDsClientAdmin(TestCase):
         client.granule = 'test_file10'
         # urn:nasa:unity:uds_local_test:DEV1:CHRP_16_DAY_REBIN___10:SNDR.SS1330.CHIRP.20230101T0000.m06.g001.L1_J1.std.v02_48.G.200101070318_REBIN
         print(client.delete_single_granule())
+        return
+
+    def test_query_catalog(self):
+        os.environ['TRUST_ENV'] = 'TRUE'
+        os.environ['PASSWORD_TYPE'] = 'PARAM_STORE'
+        os.environ['USERNAME'] = '/unity/uds/user/wphyo/username'
+        os.environ['PASSWORD'] = '/unity/uds/user/wphyo/dwssap'
+        os.environ['CLIENT_ID'] = '71g0c73jl77gsqhtlfg2ht388c'
+        os.environ['COGNITO_URL'] = 'https://cognito-idp.us-west-2.amazonaws.com'
+
+        os.environ['TOKEN_FACTORY'] = 'COGNITO'
+        token_retriever: TokenAbstract = TokenFactory().get_instance(os.getenv('TOKEN_FACTORY'))
+        client = DsClientUser(token_retriever, 'https://d3vc8w9zcq658.cloudfront.net', 'data-sbx')  # data-sbx'
+        print(json.dumps(client.query_catalog(), indent=4))
         return

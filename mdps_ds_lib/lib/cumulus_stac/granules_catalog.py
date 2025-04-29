@@ -9,6 +9,19 @@ LOGGER = logging.getLogger(__name__)
 
 
 class GranulesCatalog:
+
+    @staticmethod
+    def standardize_stage_out_collection_id_format(current_collection_id: str):
+        collection_identifier_parts = current_collection_id.split(':')
+        if len(collection_identifier_parts) < 6:
+            raise ValueError(
+                f'invalid collection ID. Need to be in <URN>:<ORG>:<Project>:<Tenant>:<Venue>:<Collection ID> but it is {current_collection_id}')
+        for i in range(5):
+            collection_identifier_parts[i] = collection_identifier_parts[i].upper()
+        current_collection_id = ':'.join(collection_identifier_parts)
+        current_collection_id = f'{current_collection_id}___001' if '___' not in current_collection_id else current_collection_id
+        return current_collection_id
+
     @staticmethod
     def get_unity_formatted_collection_id(current_collection_id: str, project_venue_set: tuple):
         if current_collection_id == '' or current_collection_id is None:
@@ -16,13 +29,11 @@ class GranulesCatalog:
         collection_identifier_parts = current_collection_id.split(':')
         if len(collection_identifier_parts) >= 6:
             LOGGER.debug(f'current_collection_id is assumed to be in UNITY format: {current_collection_id}')
-            current_collection_id = f'{current_collection_id}___001' if '___' not in current_collection_id else current_collection_id
-            return current_collection_id
-
+            return GranulesCatalog.standardize_stage_out_collection_id_format(current_collection_id)
         LOGGER.info(f'current_collection_id is not UNITY formatted ID: {current_collection_id}')
         if project_venue_set[0] is None or project_venue_set[1] is None:
             raise ValueError(f'missing project or venue in ENV which is needed due to current_collection_id not UNITY format: {project_venue_set}')
-        new_collection = f'URN:NASA:UNITY:{project_venue_set[0]}:{project_venue_set[1]}:{current_collection_id}'
+        new_collection = f'URN:NASA:UNITY:{project_venue_set[0].upper()}:{project_venue_set[1].upper()}:{current_collection_id}'
         new_collection = f'{new_collection}___001' if '___' not in new_collection else new_collection
         LOGGER.info(f'UNITY formatted ID: {new_collection}')
         return new_collection
