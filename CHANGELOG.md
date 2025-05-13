@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ===================================================================
 
+## [1.1.1.dev000702] - 2025-05-13
+### Fixed
+- [#108](https://github.com/unity-sds/mdps-ds-lib/pull/108) fix: stage out error
+
 ## [1.1.1.dev000701] - 2025-04-24
 ### Fixed
 - [#106](https://github.com/unity-sds/mdps-ds-lib/pull/106) fix: case insensitivity
