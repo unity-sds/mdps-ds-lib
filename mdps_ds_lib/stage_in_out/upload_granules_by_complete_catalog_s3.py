@@ -94,7 +94,6 @@ class UploadItemExecutor(JobExecutorAbstract):
             current_granule_stac.id = current_granule_id
             current_granule_stac.collection_id = current_collection_id
             if uploading_current_granule_stac is not None:  # upload metadata file again
-                FileUtils.write_json(os.path.join(os.path.dirname()))
                 self.__s3.set_s3_url(uploading_current_granule_stac)
                 self.__s3.upload_bytes(json.dumps(current_granule_stac.to_dict(False, False)).encode())
             current_granule_stac.id = f'{current_collection_id}:{current_granule_id}'
