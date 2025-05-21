@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ===================================================================
 
+## [1.1.1.dev000800] - 2025-05-21
+### Changed
+- [#110](https://github.com/unity-sds/mdps-ds-lib/pull/110) feat: allow sns to set external roles to publish messages
+
 ## [1.1.1.dev000702] - 2025-05-13
 ### Fixed
 - [#108](https://github.com/unity-sds/mdps-ds-lib/pull/108) fix: stage out error
