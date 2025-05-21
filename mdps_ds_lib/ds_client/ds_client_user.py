@@ -256,3 +256,21 @@ class DsClientUser(DsClient):
         response.raise_for_status()
         response = json.loads(response.text)
         return response
+
+    def archive_granule(self):
+        if self.tenant is None or self.tenant_venue is None or self.collection is None or self.granule is None:
+            raise ValueError(f'require to set tenant & tenant_venue & collection & granule')
+        collection_id_for_granules = ':'.join([self.urn, self.org, self.project, self.tenant, self.tenant_venue, self.get_complete_collection()])
+        granule_id_complete = ':'.join([collection_id_for_granules, self.granule])
+        request_url = f'{self._uds_url}collections/'
+        request_url = f'{request_url}{collection_id_for_granules}/archive/{granule_id_complete}/'
+        print(request_url)
+        s = requests.session()
+        s.trust_env = self._trust_env
+        response = s.put(url=request_url, headers={
+            'Authorization': f'Bearer {self._token_retriever.get_token()}',
+        }, verify=self._trust_env)
+        response.raise_for_status()
+        response = json.loads(response.text)
+        return response
+
