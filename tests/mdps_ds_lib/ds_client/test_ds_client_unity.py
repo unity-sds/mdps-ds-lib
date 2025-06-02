@@ -2,6 +2,8 @@ import json
 import os
 from unittest import TestCase
 
+from dotenv import load_dotenv
+
 from mdps_ds_lib.ds_client.auth_token.token_abstract import TokenAbstract
 from mdps_ds_lib.ds_client.auth_token.token_factory import TokenFactory
 from mdps_ds_lib.ds_client.ds_client_admin import DsClientAdmin
@@ -9,6 +11,9 @@ from mdps_ds_lib.ds_client.ds_client_user import DsClientUser
 
 
 class TestDsClientAdmin(TestCase):
+    def setUp(self) -> None:
+        super().setUp()
+        load_dotenv()
     def test_01_admin(self):
         os.environ['TRUST_ENV'] = 'TRUE'
         os.environ['PASSWORD_TYPE'] = 'PARAM_STORE'
@@ -33,12 +38,6 @@ class TestDsClientAdmin(TestCase):
 
     def test_query_granules_across_collections(self):
         os.environ['TRUST_ENV'] = 'TRUE'
-        os.environ['PASSWORD_TYPE'] = 'PARAM_STORE'
-        os.environ['USERNAME'] = '/unity/uds/user/wphyo/username'
-        os.environ['PASSWORD'] = '/unity/uds/user/wphyo/dwssap'
-        os.environ['CLIENT_ID'] = '71g0c73jl77gsqhtlfg2ht388c'
-        os.environ['COGNITO_URL'] = 'https://cognito-idp.us-west-2.amazonaws.com'
-
         os.environ['TOKEN_FACTORY'] = 'COGNITO'
         token_retriever: TokenAbstract = TokenFactory().get_instance(os.getenv('TOKEN_FACTORY'))
         client = DsClientUser(token_retriever, 'https://d3vc8w9zcq658.cloudfront.net', 'data-sbx')
@@ -55,12 +54,6 @@ class TestDsClientAdmin(TestCase):
 
     def test_query_collections(self):
         os.environ['TRUST_ENV'] = 'TRUE'
-        os.environ['PASSWORD_TYPE'] = 'PARAM_STORE'
-        os.environ['USERNAME'] = '/unity/uds/user/wphyo/username'
-        os.environ['PASSWORD'] = '/unity/uds/user/wphyo/dwssap'
-        os.environ['CLIENT_ID'] = '71g0c73jl77gsqhtlfg2ht388c'
-        os.environ['COGNITO_URL'] = 'https://cognito-idp.us-west-2.amazonaws.com'
-
         os.environ['TOKEN_FACTORY'] = 'COGNITO'
         token_retriever: TokenAbstract = TokenFactory().get_instance(os.getenv('TOKEN_FACTORY'))
         client = DsClientUser(token_retriever, 'https://d3vc8w9zcq658.cloudfront.net', 'data-sbx')
@@ -70,12 +63,6 @@ class TestDsClientAdmin(TestCase):
 
     def test_query_single_collection(self):
         os.environ['TRUST_ENV'] = 'TRUE'
-        os.environ['PASSWORD_TYPE'] = 'PARAM_STORE'
-        os.environ['USERNAME'] = '/unity/uds/user/wphyo/username'
-        os.environ['PASSWORD'] = '/unity/uds/user/wphyo/dwssap'
-        os.environ['CLIENT_ID'] = '71g0c73jl77gsqhtlfg2ht388c'
-        os.environ['COGNITO_URL'] = 'https://cognito-idp.us-west-2.amazonaws.com'
-
         os.environ['TOKEN_FACTORY'] = 'COGNITO'
         token_retriever: TokenAbstract = TokenFactory().get_instance(os.getenv('TOKEN_FACTORY'))
         client = DsClientUser(token_retriever, 'https://d3vc8w9zcq658.cloudfront.net', 'data-sbx')
@@ -92,12 +79,6 @@ class TestDsClientAdmin(TestCase):
 
     def test_query_granules(self):
         os.environ['TRUST_ENV'] = 'TRUE'
-        os.environ['PASSWORD_TYPE'] = 'PARAM_STORE'
-        os.environ['USERNAME'] = '/unity/uds/user/wphyo/username'
-        os.environ['PASSWORD'] = '/unity/uds/user/wphyo/dwssap'
-        os.environ['CLIENT_ID'] = '71g0c73jl77gsqhtlfg2ht388c'
-        os.environ['COGNITO_URL'] = 'https://cognito-idp.us-west-2.amazonaws.com'
-
         os.environ['TOKEN_FACTORY'] = 'COGNITO'
         token_retriever: TokenAbstract = TokenFactory().get_instance(os.getenv('TOKEN_FACTORY'))
         client = DsClientUser(token_retriever, 'https://d3vc8w9zcq658.cloudfront.net', 'data-sbx')
@@ -117,12 +98,6 @@ class TestDsClientAdmin(TestCase):
 
     def test_query_granules02(self):
         os.environ['TRUST_ENV'] = 'TRUE'
-        os.environ['PASSWORD_TYPE'] = 'PARAM_STORE'
-        os.environ['USERNAME'] = '/unity/uds/user/wphyo/username'
-        os.environ['PASSWORD'] = '/unity/uds/user/wphyo/dwssap'
-        os.environ['CLIENT_ID'] = '71g0c73jl77gsqhtlfg2ht388c'
-        os.environ['COGNITO_URL'] = 'https://cognito-idp.us-west-2.amazonaws.com'
-
         os.environ['TOKEN_FACTORY'] = 'COGNITO'
         token_retriever: TokenAbstract = TokenFactory().get_instance(os.getenv('TOKEN_FACTORY'))
         client = DsClientUser(token_retriever, 'https://d3vc8w9zcq658.cloudfront.net', 'am-uds-dapa')
@@ -151,12 +126,6 @@ class TestDsClientAdmin(TestCase):
 
     def test_query_custom_properties(self):
         os.environ['TRUST_ENV'] = 'TRUE'
-        os.environ['PASSWORD_TYPE'] = 'PARAM_STORE'
-        os.environ['USERNAME'] = '/unity/uds/user/wphyo/username'
-        os.environ['PASSWORD'] = '/unity/uds/user/wphyo/dwssap'
-        os.environ['CLIENT_ID'] = '71g0c73jl77gsqhtlfg2ht388c'
-        os.environ['COGNITO_URL'] = 'https://cognito-idp.us-west-2.amazonaws.com'
-
         os.environ['TOKEN_FACTORY'] = 'COGNITO'
         token_retriever: TokenAbstract = TokenFactory().get_instance(os.getenv('TOKEN_FACTORY'))
         client = DsClientUser(token_retriever, 'https://d3vc8w9zcq658.cloudfront.net', 'am-uds-dapa')
@@ -178,12 +147,6 @@ class TestDsClientAdmin(TestCase):
 
     def test_query_single_granule(self):
         os.environ['TRUST_ENV'] = 'TRUE'
-        os.environ['PASSWORD_TYPE'] = 'PARAM_STORE'
-        os.environ['USERNAME'] = '/unity/uds/user/wphyo/username'
-        os.environ['PASSWORD'] = '/unity/uds/user/wphyo/dwssap'
-        os.environ['CLIENT_ID'] = '71g0c73jl77gsqhtlfg2ht388c'
-        os.environ['COGNITO_URL'] = 'https://cognito-idp.us-west-2.amazonaws.com'
-
         os.environ['TOKEN_FACTORY'] = 'COGNITO'
         token_retriever: TokenAbstract = TokenFactory().get_instance(os.getenv('TOKEN_FACTORY'))
         client = DsClientUser(token_retriever, 'https://d3vc8w9zcq658.cloudfront.net', 'am-uds-dapa')
@@ -202,12 +165,6 @@ class TestDsClientAdmin(TestCase):
 
     def test_update_admin(self):
         os.environ['TRUST_ENV'] = 'TRUE'
-        os.environ['PASSWORD_TYPE'] = 'PARAM_STORE'
-        os.environ['USERNAME'] = '/unity/uds/user/wphyo/username'
-        os.environ['PASSWORD'] = '/unity/uds/user/wphyo/dwssap'
-        os.environ['CLIENT_ID'] = '71g0c73jl77gsqhtlfg2ht388c'
-        os.environ['COGNITO_URL'] = 'https://cognito-idp.us-west-2.amazonaws.com'
-
         os.environ['TOKEN_FACTORY'] = 'COGNITO'
         token_retriever: TokenAbstract = TokenFactory().get_instance(os.getenv('TOKEN_FACTORY'))
         client = DsClientAdmin(token_retriever, 'https://d3vc8w9zcq658.cloudfront.net', 'data-sbx')
@@ -225,12 +182,6 @@ class TestDsClientAdmin(TestCase):
 
     def test_delete_single_granule(self):
         os.environ['TRUST_ENV'] = 'TRUE'
-        os.environ['PASSWORD_TYPE'] = 'PARAM_STORE'
-        os.environ['USERNAME'] = '/unity/uds/user/wphyo/username'
-        os.environ['PASSWORD'] = '/unity/uds/user/wphyo/dwssap'
-        os.environ['CLIENT_ID'] = '71g0c73jl77gsqhtlfg2ht388c'
-        os.environ['COGNITO_URL'] = 'https://cognito-idp.us-west-2.amazonaws.com'
-
         os.environ['TOKEN_FACTORY'] = 'COGNITO'
         token_retriever: TokenAbstract = TokenFactory().get_instance(os.getenv('TOKEN_FACTORY'))
         client = DsClientUser(token_retriever, 'https://d3vc8w9zcq658.cloudfront.net', 'data-sbx')
@@ -243,21 +194,53 @@ class TestDsClientAdmin(TestCase):
         client.tenant_venue = 'DEV'
         client.collection = 'DDD-01'
         client.collection_venue = '001'
-        client.granule = 'test_file10'
         # urn:nasa:unity:uds_local_test:DEV1:CHRP_16_DAY_REBIN___10:SNDR.SS1330.CHIRP.20230101T0000.m06.g001.L1_J1.std.v02_48.G.200101070318_REBIN
         print(client.delete_single_granule())
         return
 
     def test_query_catalog(self):
         os.environ['TRUST_ENV'] = 'TRUE'
-        os.environ['PASSWORD_TYPE'] = 'PARAM_STORE'
-        os.environ['USERNAME'] = '/unity/uds/user/wphyo/username'
-        os.environ['PASSWORD'] = '/unity/uds/user/wphyo/dwssap'
-        os.environ['CLIENT_ID'] = '71g0c73jl77gsqhtlfg2ht388c'
-        os.environ['COGNITO_URL'] = 'https://cognito-idp.us-west-2.amazonaws.com'
-
         os.environ['TOKEN_FACTORY'] = 'COGNITO'
         token_retriever: TokenAbstract = TokenFactory().get_instance(os.getenv('TOKEN_FACTORY'))
         client = DsClientUser(token_retriever, 'https://d3vc8w9zcq658.cloudfront.net', 'data-sbx')  # data-sbx'
         print(json.dumps(client.query_catalog(), indent=4))
+        return
+
+    def test_query_granules01(self):
+        os.environ['TRUST_ENV'] = 'TRUE'
+        # https://api.test.mdps.mcp.nasa.gov/am-uds-dapa/collections/URN:NASA:UNITY:unity:test:TRPSDL2ALLCRS1MGLOS___2/items
+        os.environ['TOKEN_FACTORY'] = 'COGNITO'
+        token_retriever: TokenAbstract = TokenFactory().get_instance(os.getenv('TOKEN_FACTORY'))
+        client = DsClientUser(token_retriever, 'https://api.test.mdps.mcp.nasa.gov', 'am-uds-dapa')
+        # client = DsClientAdmin(token_retriever, 'http://localhost:8005', 'data')
+
+        client.urn = 'URN'
+        client.org = 'NASA'
+        client.project = 'UNITY'
+        client.tenant = 'unity'
+        client.tenant_venue = 'test'
+        client.collection = 'TRPSDL2ALLCRS1MGLOS'
+        client.collection_venue = '2'
+        result = client.query_granules(sort_keys='+properties.datetime,-id')  # bbox='-114,32.5,-113,33.5'
+        print(json.dumps(result, indent=4))
+        return
+
+    def test_archive_one(self):
+        os.environ['TRUST_ENV'] = 'TRUE'
+        # https://api.test.mdps.mcp.nasa.gov/am-uds-dapa/collections/URN:NASA:UNITY:unity:test:TRPSDL2ALLCRS1MGLOS___2/items
+        os.environ['TOKEN_FACTORY'] = 'COGNITO'
+        token_retriever: TokenAbstract = TokenFactory().get_instance(os.getenv('TOKEN_FACTORY'))
+        client = DsClientUser(token_retriever, 'https://api.test.mdps.mcp.nasa.gov', 'am-uds-dapa')
+        # client = DsClientAdmin(token_retriever, 'http://localhost:8005', 'data')
+
+        client.urn = 'URN'
+        client.org = 'NASA'
+        client.project = 'UNITY'
+        client.tenant = 'unity'
+        client.tenant_venue = 'test'
+        client.collection = 'TRPSDL2ALLCRS1MGLOS'
+        client.collection_venue = '2'
+        client.granule = 'TROPESS_CrIS-JPSS1_L2_Standard_NH3_20250108_MUSES_R1p23_megacity_los_angeles_MGLOS_F2p5_J0'
+
+        print(client.archive_granule())
         return

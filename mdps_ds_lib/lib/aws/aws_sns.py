@@ -5,16 +5,38 @@ class AwsSns(AwsCred):
     def __init__(self):
         super().__init__()
         self.__sns_client = self.get_client('sns')
+        self.__special_sns_client = None
         self.__topic_arn = ''
 
     def set_topic_arn(self, topic_arn):
         self.__topic_arn = topic_arn
         return self
 
-    def publish_message(self, msg_str: str):
+    def set_external_role(self, external_role_arn: str, external_role_session_name: str, external_role_duration: int =900):
+        sts_client = self.get_client('sts')
+        assumed_role = sts_client.assume_role(
+            RoleArn=external_role_arn,
+            RoleSessionName=external_role_session_name,
+            DurationSeconds=external_role_duration  # 12 hours max
+        )
+
+        credentials = assumed_role['Credentials']
+
+        self.__special_sns_client = self.get_session().client(
+            "sns",
+            aws_access_key_id=credentials['AccessKeyId'],
+            aws_secret_access_key=credentials['SecretAccessKey'],
+            aws_session_token=credentials['SessionToken'],
+        )
+        return self
+
+    def publish_message(self, msg_str: str, is_with_daac_role: bool=False):
         if self.__topic_arn == '':
             raise ValueError('missing topic arn to publish message')
-        response = self.__sns_client.publish(
+        if is_with_daac_role and self.__special_sns_client is None:
+            raise ValueError('sns client with external role NOT set')
+        my_sns = self.__special_sns_client if is_with_daac_role else self.__sns_client
+        response = my_sns.publish(
             TopicArn=self.__topic_arn,
             # TargetArn='string',  # not needed coz of we are using topic arn
             # PhoneNumber='string',  # not needed coz of we are using topic arn
