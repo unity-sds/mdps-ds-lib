@@ -5,6 +5,7 @@ from time import sleep
 from unittest import TestCase
 
 from dotenv import load_dotenv
+from pystac import Collection, Extent, SpatialExtent, TemporalExtent, Provider, Summaries
 from requests import HTTPError
 
 from mdps_ds_lib.ds_client.auth_token.token_abstract import TokenAbstract
@@ -35,7 +36,58 @@ class TestDsClientAdmin(TestCase):
         client.add_admin_group(['CREATE', 'READ', 'DELETE'], 'Unity_Viewer')
         return
 
-    def test_1002_temp(self):
+    def test_stac_get_single_collection_01(self):
+        my_session = 'e5f96453-d146-41e3-aba9-00e8a21fb826'
+        sfa_client = SFAClientFactory().get_instance(SFAClientFactory.COOKIE_AUTH, auth_key='mod_auth_openidc_session', auth_value=my_session, ds_url='https://www.dev.mdps.mcp.nasa.gov:4443', ds_stage='stac_fast_api')
+        my_collection = 'URN:NASA:UNITY:UDS_LOCAL_TEST_3:DEV:DDD-01___001'
+        result = sfa_client.get_collection(my_collection)
+        print(json.dumps(result, indent=4))
+        # self.assertTrue('type' in result, f'missing type in result')
+        # self.assertEqual('FeatureCollection', result['type'], 'wrong FeatureCollection')
+        # self.assertTrue('features' in result, f'missing features in result')
+        return
+
+    def test_stac_get_single_collection_02(self):
+        my_session = '3618762f-283e-4841-a48a-26f77e453edf'
+        sfa_client = SFAClientFactory().get_instance(SFAClientFactory.COOKIE_AUTH, auth_key='mod_auth_openidc_session',
+                                                     auth_value=my_session, ds_url='https://www.dev.mdps.mcp.nasa.gov:4443',
+                                                     ds_stage='stac_fast_api')
+        my_collection = 'Invalid-Collection'
+        try:
+            result = sfa_client.get_collection(my_collection)
+            print(json.dumps(result, indent=4))
+            self.assertTrue(False, 'needs to fail')
+        except Exception as e:
+            self.assertTrue('NotFoundError' in str(e))
+        # self.assertTrue('type' in result, f'missing type in result')
+        # self.assertEqual('FeatureCollection', result['type'], 'wrong FeatureCollection')
+        # self.assertTrue('features' in result, f'missing features in result')
+        return
+
+    def test_stac_create_collection_01(self):
+        my_session = '1b384b78-e2de-4363-a462-da90b1b18c86'
+        sfa_client = SFAClientFactory().get_instance(SFAClientFactory.COOKIE_AUTH, auth_key='mod_auth_openidc_session',
+                                                     auth_value=my_session, ds_url='https://www.dev.mdps.mcp.nasa.gov:4443',
+                                                     ds_stage='stac_fast_api')
+        my_collection = 'URN:NASA:UNITY:UDS_LOCAL_TEST_3:DEV:DDD-02___001'
+        new_collection = Collection(id=my_collection,
+                                    description='TODO',
+                                    extent=Extent(SpatialExtent([[-180, -90, 180, 90]]),
+                                                  TemporalExtent([[datetime.utcnow(), datetime.utcnow()]])),
+                                    title=my_collection,
+                                    providers=[Provider('NA')],
+                                    summaries=Summaries({
+                                    }),
+                                    )
+        collection_result = new_collection.to_dict(False, False)
+        result = sfa_client.create_collection(collection_result)
+        debug = 1
+        # self.assertTrue('type' in result, f'missing type in result')
+        # self.assertEqual('FeatureCollection', result['type'], 'wrong FeatureCollection')
+        # self.assertTrue('features' in result, f'missing features in result')
+        return
+
+    def test_stac_fast_get_granules_01(self):
         my_session = 'd55aa6dd-c6af-49fb-9984-88ee8653102f'
         sfa_client = SFAClientFactory().get_instance(SFAClientFactory.COOKIE_AUTH, auth_key='mod_auth_openidc_session', auth_value=my_session, ds_url='https://www.dev.mdps.mcp.nasa.gov:4443', ds_stage='stac_fast_api')
         my_collection = 'URN:NASA:UNITY:UDS_LOCAL_TEST_3:DEV:DDD-01___001'
@@ -46,7 +98,7 @@ class TestDsClientAdmin(TestCase):
         self.assertTrue('features' in result, f'missing features in result')
         return
 
-    def test_1001_temp(self):
+    def test_stac_fast_add_granules_01(self):
         """
         curl -v -L -X POST 'https://www.dev.mdps.mcp.nasa.gov:4443/stac_fast_api/collections' \
   -H 'Content-Type:application/json' \
@@ -60,25 +112,6 @@ class TestDsClientAdmin(TestCase):
         granules = FileUtils.read_json(f'/Users/wphyo/Downloads/stac.fast.api.example.3.json')
         result = sfa_client.create_item(my_collection, granules)
         print(json.dumps(result, indent=4))
-        # self.assertTrue('type' in result, f'missing type in result')
-        # self.assertEqual('FeatureCollection', result['type'], 'wrong FeatureCollection')
-        # self.assertTrue('features' in result, f'missing features in result')
-
-        # import requests
-        # from mdps_ds_lib.lib.utils.file_utils import FileUtils
-        # my_collection = 'URN:NASA:UNITY:UDS_LOCAL_TEST_3:DEV:DDD-01___001'
-        # my_session = '527e3020-fb16-4967-9047-cc5fd1587152'
-        #
-        # s = requests.session()
-        # s.trust_env = True
-        # response = s.post(url=f'https://www.dev.mdps.mcp.nasa.gov:4443/stac_fast_api/collections/{my_collection}/items',
-        #                   headers={
-        #                       'cookie': f'mod_auth_openidc_session={my_session}',
-        #                       'Content-Type': 'application/json',
-        #                   }, verify=True, data=json.dumps(granules))
-        # tempt1 = response.status_code != 404
-        # print(f'{response.status_code} : {response.text}')
-
         return
 
 

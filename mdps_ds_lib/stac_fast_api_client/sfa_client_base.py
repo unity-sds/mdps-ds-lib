@@ -42,9 +42,15 @@ class SFAClientBase(ABC):
         response = self.create_session().get(url, params=params)
         return self._handle_response(response)
 
+    def get_collection(self, collection_id, **params) -> dict:  # Return a COllection STAC JSON
+        url = f"{self._base_url}/collections/{collection_id}"
+        response = self.create_session().get(url, params=params)
+        return self._handle_response(response)
+
     def create_collection(self, collection):
         url = f"{self._base_url}/collections"
         response = self.create_session().post(url, json=collection)
+        # NOTE: result if not found: {"code":"NotFoundError","description":"Collection Invalid-Collection not found"}
         return self._handle_response(response)
 
     def get_items(self, collection_id, **params):
