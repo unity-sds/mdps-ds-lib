@@ -131,7 +131,6 @@ class TestDsClientAdmin(TestCase):
         os.environ['TOKEN_FACTORY'] = 'COGNITO'
         token_retriever: TokenAbstract = TokenFactory().get_instance(os.getenv('TOKEN_FACTORY'))
         client = DsClientAdmin(token_retriever, 'https://d3vc8w9zcq658.cloudfront.net', 'am-uds-dapa')
-
         client.urn = 'URN'
         client.org = 'NASA'
         client.project = 'UNITY'
@@ -192,7 +191,6 @@ class TestDsClientAdmin(TestCase):
         os.environ['TOKEN_FACTORY'] = 'COGNITO'
         token_retriever: TokenAbstract = TokenFactory().get_instance(os.getenv('TOKEN_FACTORY'))
         client = DsClientUser(token_retriever, 'https://d3vc8w9zcq658.cloudfront.net', 'am-uds-dapa')
-
         client.urn = 'URN'
         client.org = 'NASA'
         client.project = 'UNITY'
@@ -212,7 +210,6 @@ class TestDsClientAdmin(TestCase):
         os.environ['TOKEN_FACTORY'] = 'COGNITO'
         token_retriever: TokenAbstract = TokenFactory().get_instance(os.getenv('TOKEN_FACTORY'))
         client = DsClientUser(token_retriever, 'https://d3vc8w9zcq658.cloudfront.net', 'am-uds-dapa')
-
         client.urn = 'URN'
         client.org = 'NASA'
         client.project = 'UNITY'
@@ -433,7 +430,6 @@ class TestDsClientAdmin(TestCase):
         token_retriever: TokenAbstract = TokenFactory().get_instance(os.getenv('TOKEN_FACTORY'))
         client = DsClientUser(token_retriever, 'https://d3vc8w9zcq658.cloudfront.net', 'am-uds-dapa')
         # client = DsClientAdmin(token_retriever, 'http://localhost:8005', 'data')
-
         client.urn = 'URN'
         client.org = 'NASA'
         client.project = 'UNITY'
