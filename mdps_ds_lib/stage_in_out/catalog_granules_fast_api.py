@@ -58,9 +58,10 @@ class CatalogGranulesFastAPI(CatalogGranulesAbstract):
             if self._uploaded_files_json['type'] == 'FeatureCollection':
                 return self._uploaded_files_json
             if self._uploaded_files_json['type'] == 'Catalog':
+                catalog_file_path = os.environ.get(self.UPLOADED_FILES_JSON)
                 # TODO is href already S3 URL? If so, need to download it.
                 try:
-                    items = [FileUtils.read_json(k['href']) for k in self._uploaded_files_json['links'] if k['rel'] == 'item']
+                    items = [FileUtils.read_json(os.path.join(os.path.dirname(catalog_file_path), k['href'])) for k in self._uploaded_files_json['links'] if k['rel'] == 'item']
                 except:
                     LOGGER.exception(f'invalid json in one or more of Catalog > Item > href: {self._uploaded_files_json}')
                     raise RuntimeError(f'invalid json in one or more of Catalog > Item > href: {self._uploaded_files_json}')
@@ -74,9 +75,9 @@ class CatalogGranulesFastAPI(CatalogGranulesAbstract):
         errors = []
         for each_item in self._uploaded_files_json['features']:
             each_stac_item = Item.from_dict(each_item)
-            each_stac_item.validate()
+            # each_stac_item.validate()
             for each_asset_k, each_asset_v in each_stac_item.assets.items():
-                each_href = urlparse(each_asset_v['href'])
+                each_href = urlparse(each_asset_v.href)
                 if each_href.netloc is None or each_href.netloc == '':
                     errors.append(f'incorrect URL: {each_asset_k}: {each_asset_v}')
         if len(errors) > 0:

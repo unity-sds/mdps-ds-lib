@@ -20,11 +20,11 @@ class SFAClientFactory(FactoryAbstract):
                 'SFA_USERNAME': 'username',
                 'SFA_PASSWORD': 'password'
             },
-            SFAClientFactory.BEARER_AUTH: {
+            SFAClientFactory.COOKIE_AUTH: {
                 'SFA_AUTH_KEY': 'auth_key',
                 'SFA_AUTH_VALUE': 'auth_value'
             },
-            SFAClientFactory.COOKIE_AUTH: {
+            SFAClientFactory.BEARER_AUTH: {
                 'SFA_BEARER_TOKEN': 'bearer_token',
             },
             SFAClientFactory.NO_AUTH: {

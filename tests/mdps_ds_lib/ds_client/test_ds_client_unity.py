@@ -36,6 +36,17 @@ class TestDsClientAdmin(TestCase):
         client.add_admin_group(['CREATE', 'READ', 'DELETE'], 'Unity_Viewer')
         return
 
+    def test_stac_get_collections_01(self):
+        my_session = 'b00e27e4-f7f6-4ee9-9f84-91fad175e438'
+        sfa_client = SFAClientFactory().get_instance(SFAClientFactory.COOKIE_AUTH, auth_key='mod_auth_openidc_session', auth_value=my_session, ds_url='https://www.dev.mdps.mcp.nasa.gov:4443', ds_stage='stac_fast_api')
+        my_collection = 'URN:NASA:UNITY:UDS_LOCAL_TEST_3:DEV:DDD-01___001'
+        result = sfa_client.get_collections()
+        print(json.dumps(result, indent=4))
+        # self.assertTrue('type' in result, f'missing type in result')
+        # self.assertEqual('FeatureCollection', result['type'], 'wrong FeatureCollection')
+        # self.assertTrue('features' in result, f'missing features in result')
+        return
+
     def test_stac_get_single_collection_01(self):
         my_session = 'e5f96453-d146-41e3-aba9-00e8a21fb826'
         sfa_client = SFAClientFactory().get_instance(SFAClientFactory.COOKIE_AUTH, auth_key='mod_auth_openidc_session', auth_value=my_session, ds_url='https://www.dev.mdps.mcp.nasa.gov:4443', ds_stage='stac_fast_api')
