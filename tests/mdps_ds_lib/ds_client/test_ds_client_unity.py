@@ -48,9 +48,10 @@ class TestDsClientAdmin(TestCase):
         return
 
     def test_stac_get_single_collection_01(self):
-        my_session = 'e5f96453-d146-41e3-aba9-00e8a21fb826'
+        my_session = '886dab98-5d3b-4e75-a190-31c08b35a5fc'
         sfa_client = SFAClientFactory().get_instance(SFAClientFactory.COOKIE_AUTH, auth_key='mod_auth_openidc_session', auth_value=my_session, ds_url='https://www.dev.mdps.mcp.nasa.gov:4443', ds_stage='stac_fast_api')
-        my_collection = 'URN:NASA:UNITY:UDS_LOCAL_TEST_3:DEV:DDD-01___001'
+        my_collection = 'S1A_IW_GRDH_1SDV'
+        # my_collection = 'S1B_IW_GRDH_2SDV'
         result = sfa_client.get_collection(my_collection)
         print(json.dumps(result, indent=4))
         # self.assertTrue('type' in result, f'missing type in result')
@@ -99,9 +100,10 @@ class TestDsClientAdmin(TestCase):
         return
 
     def test_stac_fast_get_granules_01(self):
-        my_session = 'd55aa6dd-c6af-49fb-9984-88ee8653102f'
+        my_session = 'a888cca4-a1e0-4dfa-9f14-0b3556bd9518'
         sfa_client = SFAClientFactory().get_instance(SFAClientFactory.COOKIE_AUTH, auth_key='mod_auth_openidc_session', auth_value=my_session, ds_url='https://www.dev.mdps.mcp.nasa.gov:4443', ds_stage='stac_fast_api')
-        my_collection = 'URN:NASA:UNITY:UDS_LOCAL_TEST_3:DEV:DDD-01___001'
+        my_collection = 'S1A_IW_GRDH_2SDV'
+        # my_collection = 'S1B_IW_GRDH_2SDV'
         result = sfa_client.get_items(my_collection)
         print(json.dumps(result, indent=4))
         self.assertTrue('type' in result, f'missing type in result')
@@ -174,14 +176,15 @@ class TestDsClientAdmin(TestCase):
         os.environ['TRUST_ENV'] = 'TRUE'
         os.environ['TOKEN_FACTORY'] = 'COGNITO'
         token_retriever: TokenAbstract = TokenFactory().get_instance(os.getenv('TOKEN_FACTORY'))
-        client = DsClientUser(token_retriever, 'https://d3vc8w9zcq658.cloudfront.net', 'am-uds-dapa')
+        client = DsClientUser(token_retriever, 'https://d2zjsabg0fonik.cloudfront.net', 'am-uds-dapa')
+        # URN:NASA:UNITY:unity:ops:TRPSYL2ALLCRS1MGLOS___2/
         client.urn = 'URN'
         client.org = 'NASA'
         client.project = 'UNITY'
-        client.tenant = 'UDS_LOCAL_TEST_3'
-        client.tenant_venue = 'DEV'
-        client.collection = 'DDD-01'
-        client.collection_venue = '001'
+        client.tenant = 'unity'
+        client.tenant_venue = 'ops'
+        client.collection = 'TRPSYL2ALLCRS1MGLOS'
+        client.collection_venue = '2'
 
         print(client.query_single_collection())
         return
@@ -230,17 +233,26 @@ class TestDsClientAdmin(TestCase):
         os.environ['TRUST_ENV'] = 'TRUE'
         os.environ['TOKEN_FACTORY'] = 'COGNITO'
         token_retriever: TokenAbstract = TokenFactory().get_instance(os.getenv('TOKEN_FACTORY'))
-        client = DsClientUser(token_retriever, 'https://d3vc8w9zcq658.cloudfront.net', 'am-uds-dapa')
-        # client = DsClientAdmin(token_retriever, 'http://localhost:8005', 'data')
-
-        # URN:NASA:UNITY:UDS_LOCAL_TEST_3:DEV:DDD-01___001
+        # client = DsClientUser(token_retriever, 'https://d3vc8w9zcq658.cloudfront.net', 'am-uds-dapa')
+        # # client = DsClientAdmin(token_retriever, 'http://localhost:8005', 'data')
+        #
+        # # URN:NASA:UNITY:UDS_LOCAL_TEST_3:DEV:DDD-01___001
+        # client.urn = 'URN'
+        # client.org = 'NASA'
+        # client.project = 'UNITY'
+        # client.tenant = 'UDS_LOCAL_TEST_3'
+        # client.tenant_venue = 'DEV'
+        # client.collection = 'DDD-01'
+        # client.collection_venue = '001'
+        client = DsClientUser(token_retriever, 'https://d2zjsabg0fonik.cloudfront.net', 'am-uds-dapa')
+        # URN:NASA:UNITY:unity:ops:TRPSYL2ALLCRS1MGLOS___2/
         client.urn = 'URN'
         client.org = 'NASA'
         client.project = 'UNITY'
-        client.tenant = 'UDS_LOCAL_TEST_3'
-        client.tenant_venue = 'DEV'
-        client.collection = 'DDD-01'
-        client.collection_venue = '001'
+        client.tenant = 'unity'
+        client.tenant_venue = 'ops'
+        client.collection = 'TRPSYL2ALLCRS1MGLOS'
+        client.collection_venue = '2'
         result = client.query_granules(sort_keys='+properties.datetime,-id')  # bbox='-114,32.5,-113,33.5'
 
         i = 1
@@ -253,8 +265,8 @@ class TestDsClientAdmin(TestCase):
             FileUtils.write_json(f'/tmp/sample_granules_{i}.json', each, overwrite=True, prettify=True)
             i += 1
 
-        # print(json.dumps(result, indent=4))
-        # print(json.dumps(client.query_granules_next(), indent=4))
+        print(json.dumps(result, indent=4))
+        print(json.dumps(client.query_granules_next(), indent=4))
         return
 
     def test_query_granules02(self):
@@ -451,4 +463,22 @@ class TestDsClientAdmin(TestCase):
             ]
         }
         print(client.add_archive_config(daac_config))
+        return
+
+    def test_get_archive_config(self):
+        os.environ['TRUST_ENV'] = 'TRUE'
+        # https://api.test.mdps.mcp.nasa.gov/am-uds-dapa/collections/URN:NASA:UNITY:unity:test:TRPSDL2ALLCRS1MGLOS___2/items
+        os.environ['TOKEN_FACTORY'] = 'COGNITO'
+        token_retriever: TokenAbstract = TokenFactory().get_instance(os.getenv('TOKEN_FACTORY'))
+        client = DsClientUser(token_retriever, 'https://d2zjsabg0fonik.cloudfront.net', 'am-uds-dapa')
+        client = DsClientUser(token_retriever, 'https://api.mdps.mcp.nasa.gov', 'am-uds-dapa')
+        # client = DsClientAdmin(token_retriever, 'http://localhost:8005', 'data')
+        client.urn = 'URN'
+        client.org = 'NASA'
+        client.project = 'UNITY'
+        client.tenant = 'unity'
+        client.tenant_venue = 'ops'
+        client.collection = 'TRPSYL2ALLCRS1MGLOS'
+        client.collection_venue = '2'
+        print(client.get_archive_config())
         return

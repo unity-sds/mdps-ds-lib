@@ -18,8 +18,8 @@ class TestDockerCatalog(TestCase):
         # Create a catalog.json file. This is a STAC catalog file.
         # Create an algorithm_output_1 directory inside hysds_stac_output
         # Create a file in algorithm_output_1 directory
-        # Create a "S1A_IW_GRDH_1SDV_20250330T171421_20250330T171446_058537_073E4F_985B-GRD_HD.json" file in algorithm_output_1
-        # This is a STAC item file which has "S1A_IW_GRDH_1SDV" as collection name and its name without extension as id.
+        # Create a "S1A_IW_GRDH_2SDV_20250330T171421_20250330T171446_058537_073E4F_985B-GRD_HD.json" file in algorithm_output_1
+        # This is a STAC item file which has "S1A_IW_GRDH_2SDV" as collection name and its name without extension as id.
         # It should have some assets which are URLs to dummy S3 locations. Each asset should have an "asset" key where 1 is data file and 3 metadat file including this one. 
 
         # Repeat similar directories for algorithm_output_2 to algorithm_output_5. Similar filename. Same collection. 
@@ -44,7 +44,7 @@ class TestDockerCatalog(TestCase):
             # Create algorithm_output directories and files
             stac_items = []
             
-            # algorithm_output_1 to algorithm_output_5 (S1A_IW_GRDH_1SDV collection)
+            # algorithm_output_1 to algorithm_output_5 (S1A_IW_GRDH_2SDV collection)
             for i in range(1, 6):
                 output_dir = os.path.join(hysds_dir, f'algorithm_output_{i}')
                 FileUtils.mk_dir_p(output_dir)
@@ -55,7 +55,7 @@ class TestDockerCatalog(TestCase):
                     f.write(f'Sample data for algorithm_output_{i}')
 
                 # Create STAC item file using PySTAC
-                stac_filename = f"S1A_IW_GRDH_1SDV_20250330T17142{i}_20250330T17144{i}_058537_073E4F_985B-GRD_HD.json"
+                stac_filename = f"S1A_IW_GRDH_2SDV_20250330T17142{i}_20250330T17144{i}_058537_073E4F_985B-GRD_HD.json"
                 stac_item_path = os.path.join(output_dir, stac_filename)
                 item_id = stac_filename.replace('.json', '')
 
@@ -66,7 +66,7 @@ class TestDockerCatalog(TestCase):
                     bbox=list(geometry.bounds),
                     datetime=datetime.fromisoformat(f"2025-03-30T17:14:2{i}+00:00"),
                     properties={},
-                    collection="S1A_IW_GRDH_1SDV"
+                    collection="S1A_IW_GRDH_2SDV"
                 )
 
                 # Add assets to the item
@@ -122,7 +122,7 @@ class TestDockerCatalog(TestCase):
                 bbox=list(geometry.bounds),
                 datetime=datetime.fromisoformat("2025-03-30T17:14:26+00:00"),
                 properties={},
-                collection="S1B_IW_GRDH_1SDV"
+                collection="S1B_IW_GRDH_2SDV"
             )
             
             # Add assets to the item
@@ -176,7 +176,7 @@ class TestDockerCatalog(TestCase):
             catalog_to_ds = CatalogGranulesFactory().get_instance(CatalogGranulesFactory.STAC_FAST_API)
 
             os.environ['SFA_AUTH_KEY'] = 'mod_auth_openidc_session'
-            os.environ['SFA_AUTH_VALUE'] = 'b00e27e4-f7f6-4ee9-9f84-91fad175e438'
+            os.environ['SFA_AUTH_VALUE'] = '886dab98-5d3b-4e75-a190-31c08b35a5fc'
             os.environ['DS_URL'] = 'https://www.dev.mdps.mcp.nasa.gov:4443'
             os.environ['DS_STAGE'] = 'stac_fast_api'
             os.environ['UPLOADED_FILES_JSON'] = catalog_path
