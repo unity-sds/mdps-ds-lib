@@ -290,6 +290,25 @@ class DsClientUser(DsClient):
         response = json.loads(response.text)
         return response
 
+    def get_archive_config(self):
+        if self.tenant is None or self.tenant_venue is None or self.collection is None:
+            raise ValueError(f'require to set tenant & tenant_venue & collection')
+        collection_id = ':'.join([self.urn, self.org, self.project, self.tenant, self.tenant_venue, self.get_complete_collection()])
+
+        request_url = f'{self._uds_url}collections/{collection_id}/archive/'
+        print(f'request_url: {request_url}')
+        print(f'token: {self._token_retriever.get_token()}')
+        s = requests.session()
+        s.trust_env = self._trust_env
+        response = s.get(url=request_url, headers={
+            'Authorization': f'Bearer {self._token_retriever.get_token()}',
+            'Content-Type': 'application/json',
+
+        }, verify=self._trust_env)
+        response.raise_for_status()
+        response = json.loads(response.text)
+        return response
+
     def archive_granule(self):
         if self.tenant is None or self.tenant_venue is None or self.collection is None or self.granule is None:
             raise ValueError(f'require to set tenant & tenant_venue & collection & granule')
