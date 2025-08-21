@@ -52,6 +52,22 @@ class DsClientUser(DsClient):
         response.raise_for_status()
         return response.text
 
+    def delete_collection(self):
+        request_url = f'{self._uds_url}collections/'
+        s = requests.session()
+        s.trust_env = self._trust_env
+        temp_collection_id = [
+            self.urn, self.org, self.project, self.tenant, self.tenant_venue, self.get_complete_collection()
+        ]
+        temp_collection_id = ':'.join(temp_collection_id)
+        request_url = f'{request_url}{temp_collection_id}/'
+
+        response = s.delete(url=request_url, headers={
+            'Authorization': f'Bearer {self._token_retriever.get_token()}',
+        }, verify=self._trust_env)
+        response.raise_for_status()
+        return response.text
+
     def query_custom_properties(self):
         if self.tenant is None or self.tenant_venue is None or self.collection is None:
             raise ValueError(f'require to set tenant & tenant_venue & collection & granule')
@@ -252,6 +268,42 @@ class DsClientUser(DsClient):
         s.trust_env = self._trust_env
         response = s.delete(url=request_url, headers={
             'Authorization': f'Bearer {self._token_retriever.get_token()}',
+        }, verify=self._trust_env)
+        response.raise_for_status()
+        response = json.loads(response.text)
+        return response
+
+    def add_archive_config(self, daac_config: dict):
+        if self.tenant is None or self.tenant_venue is None or self.collection is None:
+            raise ValueError(f'require to set tenant & tenant_venue & collection')
+        collection_id = ':'.join([self.urn, self.org, self.project, self.tenant, self.tenant_venue, self.get_complete_collection()])
+
+        request_url = f'{self._uds_url}collections/{collection_id}/archive/'
+        s = requests.session()
+        s.trust_env = self._trust_env
+        response = s.put(url=request_url, headers={
+            'Authorization': f'Bearer {self._token_retriever.get_token()}',
+            'Content-Type': 'application/json',
+
+        }, verify=self._trust_env, data = json.dumps(daac_config))
+        response.raise_for_status()
+        response = json.loads(response.text)
+        return response
+
+    def get_archive_config(self):
+        if self.tenant is None or self.tenant_venue is None or self.collection is None:
+            raise ValueError(f'require to set tenant & tenant_venue & collection')
+        collection_id = ':'.join([self.urn, self.org, self.project, self.tenant, self.tenant_venue, self.get_complete_collection()])
+
+        request_url = f'{self._uds_url}collections/{collection_id}/archive/'
+        print(f'request_url: {request_url}')
+        print(f'token: {self._token_retriever.get_token()}')
+        s = requests.session()
+        s.trust_env = self._trust_env
+        response = s.get(url=request_url, headers={
+            'Authorization': f'Bearer {self._token_retriever.get_token()}',
+            'Content-Type': 'application/json',
+
         }, verify=self._trust_env)
         response.raise_for_status()
         response = json.loads(response.text)

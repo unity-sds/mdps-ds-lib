@@ -5,6 +5,9 @@ class TokenFactory(FactoryAbstract):
     DUMMY = 'DUMMY'
     COGNITO = 'COGNITO'
 
+    def get_instance_from_env(self, **kwargs):
+        raise NotImplementedError('not yet')
+
     def get_instance(self, class_type, **kwargs):
         ct = class_type.upper()
         if ct == self.DUMMY:
