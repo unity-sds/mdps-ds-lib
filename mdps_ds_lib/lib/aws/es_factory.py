@@ -4,8 +4,7 @@ from mdps_ds_lib.lib.utils.factory_abstract import FactoryAbstract
 class ESFactory(FactoryAbstract):
     NO_AUTH = 'NO_AUTH'
     AWS = 'AWS'
-    AWS_OS = 'AWS_OS'
-    AWS_ASYNC = 'AWS_ASYNC'
+    AWS_ES = 'AWS_ES'
 
     def get_instance_from_env(self, **kwargs):
         raise NotImplementedError(f'not yet')
@@ -16,9 +15,9 @@ class ESFactory(FactoryAbstract):
             from mdps_ds_lib.lib.aws.es_middleware_no_auth import ESMiddlewareNoAuth
             return ESMiddlewareNoAuth(kwargs['index'], kwargs['base_url'], port=kwargs['port'])
         if ct == self.AWS:
-            from mdps_ds_lib.lib.aws.es_middleware_aws import EsMiddlewareAws
-            return EsMiddlewareAws(kwargs['index'], kwargs['base_url'], port=kwargs['port'])
-        if ct == self.AWS_OS:
             from mdps_ds_lib.lib.aws.os_middleware_aws import OsMiddlewareAws
             return OsMiddlewareAws(kwargs['index'], kwargs['base_url'], port=kwargs['port'])
+        if ct == self.AWS_ES:
+            from mdps_ds_lib.lib.aws.es_middleware_aws import EsMiddlewareAws
+            return EsMiddlewareAws(kwargs['index'], kwargs['base_url'], port=kwargs['port'])
         raise ModuleNotFoundError(f'cannot find ES class for {ct}')
