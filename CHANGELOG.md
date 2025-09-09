@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ===================================================================
 
+## [1.1.1.dev001000] - 2025-09-09
+### Changed
+- [#116](https://github.com/unity-sds/mdps-ds-lib/pull/116) feat: using opensearch instead of elasticsearch
+
 ## [1.1.1.dev000900] - 2025-08-21
 ### Changed
 - [#114](https://github.com/unity-sds/mdps-ds-lib/pull/114) feat: stage-out maap use case
