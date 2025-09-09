@@ -5,7 +5,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 class ESMiddlewareAbstract(ESAbstract):
-    def __init__(self, index, base_url, port=443) -> None:
+    def __init__(self, index, base_url, port=443, use_ssl=True) -> None:
         if any([k is None for k in [index, base_url]]):
             raise ValueError(f'index or base_url is None')
         self.__index = index

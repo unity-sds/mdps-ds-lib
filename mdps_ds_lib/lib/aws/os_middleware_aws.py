@@ -11,7 +11,7 @@ LOGGER = logging.getLogger(__name__)
 
 class OsMiddlewareAws(ESMiddlewareAbstract):
 
-    def __init__(self, index, base_url, port=443) -> None:
+    def __init__(self, index, base_url, port=443, use_ssl=True) -> None:
         super().__init__(index, base_url, port)
         base_url = base_url.replace('https://', '')  # hide https
         self._index = index
@@ -25,7 +25,7 @@ class OsMiddlewareAws(ESMiddlewareAbstract):
         self._engine = OpenSearch(
             hosts=[{'host': base_url, 'port': port}],
             http_auth=auth,
-            use_ssl=True,
+            use_ssl=use_ssl,
             verify_certs=True,
             connection_class=RequestsHttpConnection
         )

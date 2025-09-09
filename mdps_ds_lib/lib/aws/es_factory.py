@@ -13,11 +13,11 @@ class ESFactory(FactoryAbstract):
         ct = class_type.upper()
         if ct == self.NO_AUTH:
             from mdps_ds_lib.lib.aws.es_middleware_no_auth import ESMiddlewareNoAuth
-            return ESMiddlewareNoAuth(kwargs['index'], kwargs['base_url'], port=kwargs['port'])
+            return ESMiddlewareNoAuth(kwargs['index'], kwargs['base_url'], port=kwargs['port'], use_ssl=kwargs['use_ssl'])
         if ct == self.AWS:
             from mdps_ds_lib.lib.aws.os_middleware_aws import OsMiddlewareAws
-            return OsMiddlewareAws(kwargs['index'], kwargs['base_url'], port=kwargs['port'])
+            return OsMiddlewareAws(kwargs['index'], kwargs['base_url'], port=kwargs['port'], use_ssl=kwargs['use_ssl'])
         if ct == self.AWS_ES:
             from mdps_ds_lib.lib.aws.es_middleware_aws import EsMiddlewareAws
-            return EsMiddlewareAws(kwargs['index'], kwargs['base_url'], port=kwargs['port'])
+            return EsMiddlewareAws(kwargs['index'], kwargs['base_url'], port=kwargs['port'], use_ssl=kwargs['use_ssl'])
         raise ModuleNotFoundError(f'cannot find ES class for {ct}')
