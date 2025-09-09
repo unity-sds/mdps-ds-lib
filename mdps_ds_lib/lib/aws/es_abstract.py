@@ -6,9 +6,6 @@ DEFAULT_TYPE = '_doc'
 
 class ESAbstract(ABC):
     @abstractmethod
-    def migrate_index_data(self, old_index, new_index):
-        return
-    @abstractmethod
     def create_index(self, index_name, index_body):
         return
 
@@ -62,11 +59,11 @@ class ESAbstract(ABC):
         return
 
     @abstractmethod
-    def query(self, dsl, querying_index=None):
+    def delete_by_query(self, dsl, querying_index=None):
         return
 
     @abstractmethod
-    def delete_by_query(self, dsl, querying_index=None):
+    def query(self, dsl, querying_index=None):
         return
 
     @abstractmethod
@@ -74,5 +71,5 @@ class ESAbstract(ABC):
         return
 
     @abstractmethod
-    def query_by_id(self, doc_id, querying_index=None):
+    def query_by_id(self, doc_id):
         return

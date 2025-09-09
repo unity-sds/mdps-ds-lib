@@ -20,15 +20,15 @@ Issues = "https://github.com/unity-sds/sampleproject/issues"
 [tool.poetry.dependencies]
 python = "^3.9"
 boto3 = "^1.36.11"
-elasticsearch = "7.13.4"
+#elasticsearch = "7.13.4"
 fastjsonschema = "^2.19.1"
 requests-aws4auth="1.2.3"
 pystac="1.9.0"
 xmltodict="0.13.0"
-requests="2.31.0"
 tenacity="8.2.3"
 jsonschema = "^4.23.0"
 python-dotenv = "^1.0.1"
+opensearch-py = "^3.0.0"
 
 [project]
 name = "mdps-ds-lib"
