@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ===================================================================
 
+## [1.1.1.dev000900] - 2025-08-21
+### Changed
+- [#114](https://github.com/unity-sds/mdps-ds-lib/pull/114) feat: stage-out maap use case
+
 ## [1.1.1.dev000801] - 2025-06-03
 ### Fixed
 - [#112](https://github.com/unity-sds/mdps-ds-lib/pull/112) chore: unit client updates
