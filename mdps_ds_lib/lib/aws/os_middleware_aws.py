@@ -1,9 +1,7 @@
 import logging
 
-from lsmd.aws_base.aws_cred import AwsCred
-
+from mdps_ds_lib.lib.aws.aws_cred import AwsCred
 from opensearchpy import AWSV4SignerAuth, OpenSearch, RequestsHttpConnection
-
 from mdps_ds_lib.lib.aws.es_middleware_abstract import ESMiddlewareAbstract
 
 LOGGER = logging.getLogger(__name__)

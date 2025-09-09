@@ -1,9 +1,8 @@
 import logging
 
+from mdps_ds_lib.lib.aws.aws_cred import AwsCred
 from elasticsearch import Elasticsearch, RequestsHttpConnection
-from lsmd.aws_base.aws_cred import AwsCred
 from requests_aws4auth import AWS4Auth
-
 from mdps_ds_lib.lib.aws.es_middleware_abstract import ESMiddlewareAbstract
 
 LOGGER = logging.getLogger(__name__)
