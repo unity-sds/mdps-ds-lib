@@ -1,6 +1,4 @@
-import json
 import logging
-
 from mdps_ds_lib.lib.aws.es_abstract import ESAbstract, DEFAULT_TYPE
 
 LOGGER = logging.getLogger(__name__)
@@ -39,6 +37,25 @@ class ESMiddlewareAbstract(ESAbstract):
             return
         LOGGER.exception('failed to add some items. details: {}'.format(err_list))
         return err_list
+
+    def migrate_index_data(self, old_index, new_index, remove_old_data=True):
+        if not self.has_index(old_index) or not self.has_index(new_index):
+            raise ValueError(f'at least one of the indices do not exist: [{old_index}, {new_index}]')
+        result = self._engine.reindex(
+            body={
+                "source": {
+                    "index": old_index,
+                    # "query": {
+                    #     "match_all": {}
+                    # }
+                },
+                "dest": {
+                    "index": new_index
+                }
+            }
+        )
+        self.delete_by_query({'query': {'match_all': {}}}, old_index)
+        return result
 
     def create_index(self, index_name, index_body):
         result = self._engine.indices.create(index=index_name, body=index_body, include_type_name=False)
@@ -92,6 +109,7 @@ class ESMiddlewareAbstract(ESAbstract):
         return result['acknowledged']
 
     def index_many(self, docs=None, doc_ids=None, doc_dict=None, index=None):
+        # https://elasticsearch-py.readthedocs.io/en/v7.13.4/api.html#elasticsearch.Elasticsearch.bulk
         doc_dict = self.__get_doc_dict(docs, doc_ids, doc_dict)
         body = []
         for k, v in doc_dict.items():
@@ -232,8 +250,8 @@ class ESMiddlewareAbstract(ESAbstract):
             }
         }
 
-    def query_by_id(self, doc_id):
-        index = self.__validate_index(None)
+    def query_by_id(self, doc_id, querying_index=None):
+        index = self.__validate_index(querying_index)
         dsl = {
             'query': {
                 'term': {'_id': doc_id}
@@ -242,4 +260,4 @@ class ESMiddlewareAbstract(ESAbstract):
         result = self._engine.search(index=index, body=dsl)
         if self.get_result_size(result) < 1:
             return None
-        return result['hits']['hits'][0]
+        return result['hits']['hits'][0]['_source']
