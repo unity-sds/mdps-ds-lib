@@ -48,19 +48,13 @@ class DapaClient:
         LOGGER.debug(f'getting collection details for: {collection_id}')
         self.__get_token()
         header = {'Authorization': f'Bearer {self.__token}'}
-        dapa_collection_url = f'{self.__dapa_base_api}/{self.__api_base_prefix}/collections?limit=1000'
+        dapa_collection_url = f'{self.__dapa_base_api}/{self.__api_base_prefix}/collections/{collection_id}'
         response = requests.get(url=dapa_collection_url, headers=header, verify=self.__verify_ssl)
         if response.status_code > 400:
             raise RuntimeError(
                 f'querying collections ends in error. status_code: {response.status_code}. url: {dapa_collection_url}. details: {response.text}')
         collections_result = json.loads(response.text)
-        if 'features' not in collections_result:
-            raise RuntimeError(f'missing features in response. invalid response: response: {collections_result}')
-        collection_details = [each_collection for each_collection in collections_result['features'] if
-                              collection_id == each_collection["id"]]
-        if len(collection_details) < 1:
-            raise RuntimeError(f'unable to find collection in DAPA')
-        return collection_details[0]
+        return collections_result
 
     def get_all_granules(self, collection_id='*', limit=-1, date_from='', date_to=''):
         results = []

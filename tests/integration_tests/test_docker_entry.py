@@ -242,7 +242,7 @@ class TestDockerEntry(TestCase):
         argv.append('CATALOG')
         with tempfile.TemporaryDirectory() as tmp_dir_name:
             os.environ['OUTPUT_FILE'] = os.path.join(tmp_dir_name, 'some_output', 'output.json')
-            catalog_result_str = CatalogGranulesFactory().get_class(os.getenv('GRANULES_CATALOG_TYPE', 'MISSING_GRANULES_CATALOG_TYPE')).catalog()
+            catalog_result_str = CatalogGranulesFactory().get_instance(os.getenv('GRANULES_CATALOG_TYPE', 'MISSING_GRANULES_CATALOG_TYPE')).catalog()
             catalog_result = json.loads(catalog_result_str)
             self.assertEqual('registered', catalog_result, 'wrong status')
             self.assertTrue(FileUtils.file_exist(os.environ['OUTPUT_FILE']), f'missing output file')
@@ -269,7 +269,7 @@ class TestDockerEntry(TestCase):
             FileUtils.write_json(input_file_path, upload_result)
             os.environ['UPLOADED_FILES_JSON'] = input_file_path
             os.environ['OUTPUT_FILE'] = os.path.join(tmp_dir_name, 'some_output', 'output.json')
-            catalog_result_str = CatalogGranulesFactory().get_class(os.getenv('GRANULES_CATALOG_TYPE', 'MISSING_GRANULES_CATALOG_TYPE')).catalog()
+            catalog_result_str = CatalogGranulesFactory().get_instance(os.getenv('GRANULES_CATALOG_TYPE', 'MISSING_GRANULES_CATALOG_TYPE')).catalog()
             catalog_result = json.loads(catalog_result_str)
             self.assertTrue('cataloging_request_status' in catalog_result, f'missing cataloging_request_status')
             self.assertTrue('status_result' in catalog_result, f'missing status_result')
@@ -320,7 +320,7 @@ class TestDockerEntry(TestCase):
             FileUtils.write_json(input_file_path, upload_result)
             os.environ['UPLOADED_FILES_JSON'] = input_file_path
             os.environ['OUTPUT_FILE'] = os.path.join(tmp_dir_name, 'some_output', 'output.json')
-            catalog_result_str = CatalogGranulesFactory().get_class(os.getenv('GRANULES_CATALOG_TYPE', 'MISSING_GRANULES_CATALOG_TYPE')).catalog()
+            catalog_result_str = CatalogGranulesFactory().get_instance(os.getenv('GRANULES_CATALOG_TYPE', 'MISSING_GRANULES_CATALOG_TYPE')).catalog()
             catalog_result = json.loads(catalog_result_str)
             self.assertTrue('cataloging_request_status' in catalog_result, f'missing cataloging_request_status')
             self.assertTrue('status_result' in catalog_result, f'missing status_result')
@@ -358,7 +358,7 @@ class TestDockerEntry(TestCase):
             FileUtils.write_json(input_file_path, upload_result)
             os.environ['UPLOADED_FILES_JSON'] = input_file_path
             os.environ['OUTPUT_FILE'] = os.path.join(tmp_dir_name, 'some_output', 'output.json')
-            catalog_result_str = CatalogGranulesFactory().get_class(os.getenv('GRANULES_CATALOG_TYPE', 'MISSING_GRANULES_CATALOG_TYPE')).catalog()
+            catalog_result_str = CatalogGranulesFactory().get_instance(os.getenv('GRANULES_CATALOG_TYPE', 'MISSING_GRANULES_CATALOG_TYPE')).catalog()
             catalog_result = json.loads(catalog_result_str)
             self.assertTrue(isinstance(catalog_result, list), f'catalog_result is not list. {catalog_result}')
             self.assertEqual(len(catalog_result), math.ceil(len(upload_result['features']) / 250), f'mismatched catalog_result count')

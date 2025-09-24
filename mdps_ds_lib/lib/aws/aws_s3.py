@@ -222,3 +222,55 @@ class AwsS3(AwsCred):
         """
         bytestream = BytesIO(self.get_stream().read())  # get the bytes stream of zipped file
         return bytestream.read().decode('UTF-8')
+
+    def delete_one(self):
+        response = self.__s3_client.delete_object(
+            Bucket=self.__target_bucket,
+            Key=self.__target_key,
+            # MFA='string',
+            # VersionId='string',
+            # RequestPayer='requester',
+            # BypassGovernanceRetention=True | False,
+            # ExpectedBucketOwner='string',
+            # IfMatch='string',
+            # IfMatchLastModifiedTime=datetime(2015, 1, 1),
+            # IfMatchSize=123
+        )
+        return response
+
+    def delete_multiple(self, s3_urls: list=[], s3_bucket: str='', s3_paths: list=[]):
+        if len(s3_urls) < 1 and len(s3_paths) < 1:
+            raise ValueError(f'unable to delete empty list of URLs or Paths')
+        if len(s3_urls) < 1:
+            if s3_bucket == '':
+                raise ValueError(f'empty s3 bucket for paths')
+        else:
+            s3_splits = [self.split_s3_url(k) for k in s3_urls]
+            s3_bucket = list(set([k[0] for k in s3_splits]))
+            if len(s3_bucket) > 1:
+                raise ValueError(f'unable to delete multiple s3 buckets: {s3_bucket}')
+            s3_bucket = s3_bucket[0]
+            s3_paths = list(set([k[1] for k in s3_splits]))
+        s3_paths = [{'Key': k,
+                     # 'VersionId': 'string',
+                     # 'ETag': 'string',
+                     # 'LastModifiedTime': datetime(2015, 1, 1),
+                     # 'Size': 123
+                     } for k in s3_paths]
+        response = self.__s3_client.delete_objects(
+            Bucket=s3_bucket,
+            Delete={
+                'Objects': s3_paths,
+                'Quiet': True,  # True | False
+            },
+            # MFA='string',
+            # VersionId='string',
+            # RequestPayer='requester',
+            # BypassGovernanceRetention=True | False,
+            # ExpectedBucketOwner='string',
+            # IfMatch='string',
+            # IfMatchLastModifiedTime=datetime(2015, 1, 1),
+            # IfMatchSize=123
+        )
+        return response
+

@@ -14,3 +14,4 @@ __pycache__
 terraform.tf
 terraform.tfvars
 cumulus_lambda_functions_deployment.zip
+examples/**/*

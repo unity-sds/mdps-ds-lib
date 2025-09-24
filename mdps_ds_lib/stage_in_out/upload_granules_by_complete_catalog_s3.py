@@ -61,7 +61,7 @@ class UploadItemExecutor(JobExecutorAbstract):
                                   "type": "Point",
                                   "coordinates": [0.0, 0.0]
                               },
-                              bbox=[0.0, 0.0, 0.0, 0.0],
+                              bbox=[-180, -90, 180, 90],
                               datetime=TimeUtils().parse_from_unix(0, True).get_datetime_obj(),
                               collection='unknown')
             self.__error_list.put(error_item.to_dict(False, False))
@@ -94,7 +94,6 @@ class UploadItemExecutor(JobExecutorAbstract):
             current_granule_stac.id = current_granule_id
             current_granule_stac.collection_id = current_collection_id
             if uploading_current_granule_stac is not None:  # upload metadata file again
-                FileUtils.write_json(os.path.join(os.path.dirname()))
                 self.__s3.set_s3_url(uploading_current_granule_stac)
                 self.__s3.upload_bytes(json.dumps(current_granule_stac.to_dict(False, False)).encode())
             current_granule_stac.id = f'{current_collection_id}:{current_granule_id}'

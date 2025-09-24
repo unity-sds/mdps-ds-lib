@@ -1,22 +1,15 @@
 import logging
-
-from elasticsearch import Elasticsearch
-from elasticsearch.exceptions import NotFoundError
-
 from mdps_ds_lib.lib.aws.es_abstract import ESAbstract, DEFAULT_TYPE
 
 LOGGER = logging.getLogger(__name__)
 
 
-class ESMiddleware(ESAbstract):
-
-    def __init__(self, index, base_url, port=443) -> None:
+class ESMiddlewareAbstract(ESAbstract):
+    def __init__(self, index, base_url, port=443, use_ssl=True) -> None:
         if any([k is None for k in [index, base_url]]):
             raise ValueError(f'index or base_url is None')
         self.__index = index
-        base_url = base_url.replace('https://', '')  # hide https
-        # https://elasticsearch-py.readthedocs.io/en/v7.13.4/api.html#elasticsearch.Elasticsearch
-        self._engine = Elasticsearch(hosts=[{'host': base_url, 'port': port, 'use_ssl': True}])
+        self._engine = None
 
     def __validate_index(self, index):
         if index is not None:
@@ -73,9 +66,11 @@ class ESMiddleware(ESAbstract):
     def get_index_mapping(self, index_name):
         try:
             result = self._engine.indices.get_mapping(index=index_name)
-        except NotFoundError as e:
-            return None
-        return result
+        except Exception as e:
+            if e.error == 'index_not_found_exception':
+                return None
+            raise e
+        return result[index_name]
 
     def has_index(self, index_name):
         result = self._engine.indices.exists(index=index_name)
@@ -84,9 +79,10 @@ class ESMiddleware(ESAbstract):
     def swap_index_for_alias(self, alias_name, old_index_name, new_index_name):
         try:
             temp_result = self._engine.indices.delete_alias(index=old_index_name, name=alias_name)
-        except NotFoundError as ee:
-            LOGGER.exception(f'error while unlinking {old_index_name} from {alias_name}')
-            temp_result = {}
+        except Exception as ee:
+            if 'NotFoundError' in str(ee):
+                return {}
+            raise ee
         result = self.create_alias(new_index_name, alias_name)
         return result
 
@@ -94,8 +90,10 @@ class ESMiddleware(ESAbstract):
         # /Users/wphyo/anaconda3/envs/cumulus_py_3.9/lib/python3.9/site-packages/elasticsearch-7.13.4-py3.9.egg/elasticsearch/client/indices.py
         try:
             result = self._engine.indices.get_alias(name=alias_name)
-        except NotFoundError as ee:
-            return {}
+        except Exception as ee:
+            if 'NotFoundError' in str(ee):
+                return {}
+            raise ee
         return result
 
     def create_alias(self, index_name, alias_name):
@@ -124,7 +122,7 @@ class ESMiddleware(ESAbstract):
                                               body=body, doc_type=DEFAULT_TYPE)
             LOGGER.info('indexed. result: {}'.format(index_result))
             return self.__check_errors_for_bulk(index_result)
-        except:
+        except Exception as e:
             LOGGER.exception('cannot add indices with ids: {} for index: {}'.format(list(doc_dict.keys()), index))
             return doc_dict
         return
@@ -136,9 +134,9 @@ class ESMiddleware(ESAbstract):
                                               body=doc, doc_type=DEFAULT_TYPE, id=doc_id)
             LOGGER.info('indexed. result: {}'.format(index_result))
             pass
-        except Exception as e:
+        except:
             LOGGER.exception('cannot add a new index with id: {} for index: {}'.format(doc_id, index))
-            raise e
+            return None
         return self
 
     def update_many(self, docs=None, doc_ids=None, doc_dict=None, index=None):
@@ -208,13 +206,13 @@ class ESMiddleware(ESAbstract):
                 first_batch['hits']['hits'].extend(scrolled_result['hits']['hits'])
         return first_batch
 
+    def delete_by_query(self, dsl, querying_index=None):
+        index = self.__validate_index(querying_index)
+        return self._engine.delete_by_query(body=dsl, index=index, conflicts='proceed', request_timeout=120)
+
     def query(self, dsl, querying_index=None):
         index = self.__validate_index(querying_index)
         return self._engine.search(body=dsl, index=index)
-
-    def delete_by_query(self, dsl, querying_index=None):
-        index = self.__validate_index(querying_index)
-        return self._engine.delete_by_query(body=dsl, index=index)
 
     def __is_querying_next_page(self, targeted_size: int, current_size: int, total_size: int):
         if targeted_size < 0:

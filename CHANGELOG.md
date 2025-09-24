@@ -7,6 +7,74 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ===================================================================
 
+## [1.1.1.dev001100] - 2025-09-24
+### Changed
+- [#118](https://github.com/unity-sds/mdps-ds-lib/pull/118) feat: dist utils is obsolete. replace with shutil
+
+## [1.1.1.dev001000] - 2025-09-09
+### Changed
+- [#116](https://github.com/unity-sds/mdps-ds-lib/pull/116) feat: using opensearch instead of elasticsearch
+
+## [1.1.1.dev000900] - 2025-08-21
+### Changed
+- [#114](https://github.com/unity-sds/mdps-ds-lib/pull/114) feat: stage-out maap use case
+
+## [1.1.1.dev000801] - 2025-06-03
+### Fixed
+- [#112](https://github.com/unity-sds/mdps-ds-lib/pull/112) chore: unit client updates
+
+## [1.1.1.dev000800] - 2025-05-21
+### Changed
+- [#110](https://github.com/unity-sds/mdps-ds-lib/pull/110) feat: allow sns to set external roles to publish messages
+
+## [1.1.1.dev000702] - 2025-05-13
+### Fixed
+- [#108](https://github.com/unity-sds/mdps-ds-lib/pull/108) fix: stage out error
+
+## [1.1.1.dev000701] - 2025-04-24
+### Fixed
+- [#106](https://github.com/unity-sds/mdps-ds-lib/pull/106) fix: case insensitivity
+
+## [1.1.1.dev000700] - 2025-04-09
+### Changed
+- [#104](https://github.com/unity-sds/mdps-ds-lib/pull/104) feat: using single collection endpoint to retrieve the collection details
+
+## [1.1.1.dev000600] - 2025-04-07
+### Changed
+- [#102](https://github.com/unity-sds/mdps-ds-lib/pull/102) feat: item transfomer
+
+## [1.1.1.dev000500] - 2025-03-24
+### Changed
+- [#100](https://github.com/unity-sds/mdps-ds-lib/pull/100) feat: new client cli methods
+
+## [1.1.1.dev000401] - 2025-03-04
+### Fixed
+- [#98](https://github.com/unity-sds/mdps-ds-lib/pull/98) fix: client updates
+
+## [1.1.1.dev000400] - 2025-02-10
+### Changed
+- [#94](https://github.com/unity-sds/mdps-ds-lib/pull/94) feat: ds client library
+
+## [1.1.1.dev000300] - 2025-01-17
+### Changed
+- [#92](https://github.com/unity-sds/mdps-ds-lib/pull/92) feat: allow es connection with no ssl for demo purposes only
+
+## [1.1.1.dev000202] - 2025-01-09
+### Fixed
+- [#90](https://github.com/unity-sds/mdps-ds-lib/pull/90) fix: poetry error requires project.name
+
+## [1.1.1.dev000201] - 2025-01-08
+### Fixed
+- [#88](https://github.com/unity-sds/mdps-ds-lib/pull/88) fix: check bbox in granules stac
+
+## [1.1.1.dev000200] - 2024-12-16
+### Changed
+- [#86](https://github.com/unity-sds/mdps-ds-lib/pull/86) feat: s3 delete
+
+## [1.1.1.dev000100] - 2024-12-09
+### Changed
+- [#84](https://github.com/unity-sds/mdps-ds-lib/pull/84) feat: coginto class update
+
 ## [1.1.1] - 2024-12-09
 
 - [#81](https://github.com/unity-sds/mdps-ds-lib/pull/81) release attempt 2
