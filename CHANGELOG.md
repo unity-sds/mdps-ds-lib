@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ===================================================================
 
+## [1.2.0] - 2025-09-24
+
+- [#120](https://github.com/unity-sds/mdps-ds-lib/pull/120) release attempt
+
+-----------------------------------------
 ## [1.1.1.dev001100] - 2025-09-24
 ### Changed
 - [#118](https://github.com/unity-sds/mdps-ds-lib/pull/118) feat: dist utils is obsolete. replace with shutil
