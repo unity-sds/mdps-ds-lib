@@ -20,8 +20,8 @@ import re
 import zlib
 from functools import partial
 from pathlib import Path
+from shutil import copytree
 from subprocess import Popen, PIPE
-from distutils.dir_util import copy_tree
 
 
 class FileUtils:
@@ -45,8 +45,8 @@ class FileUtils:
         return
 
     @staticmethod
-    def copy_dir(source_dir, dest_dir):
-        copy_tree(source_dir, dest_dir)
+    def copy_dir(source_dir, dest_dir, overwrite=False):
+        copytree(source_dir, dest_dir, dirs_exist_ok=overwrite)
         return
 
     @staticmethod
