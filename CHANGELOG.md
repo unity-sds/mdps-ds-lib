@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ===================================================================
 
+## [1.1.1.dev001100] - 2025-09-24
+### Changed
+- [#118](https://github.com/unity-sds/mdps-ds-lib/pull/118) feat: dist utils is obsolete. replace with shutil
+
 ## [1.1.1.dev001000] - 2025-09-09
 ### Changed
 - [#116](https://github.com/unity-sds/mdps-ds-lib/pull/116) feat: using opensearch instead of elasticsearch
