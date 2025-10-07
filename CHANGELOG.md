@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ===================================================================
 
+## [1.2.0.dev000100] - 2025-10-07
+### Changed
+- [#123](https://github.com/unity-sds/mdps-ds-lib/pull/123) feat: get single granule stac fast
+
 ## [1.2.0] - 2025-09-24
 
 - [#120](https://github.com/unity-sds/mdps-ds-lib/pull/120) release attempt
