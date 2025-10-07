@@ -71,3 +71,8 @@ class SFAClientBase(ABC):
         my_session.headers.update({'Content-Type': 'application/json'})
         response = self.create_session().put(url, json=item) if update_whole else self.create_session().patch(url, json=item)
         return self._handle_response(response)
+
+    def get_item(self, collection_id, item_id, **params):
+        url = f"{self._base_url}/collections/{collection_id}/items/{item_id}"
+        response = self.create_session().get(url, params=params)
+        return self._handle_response(response)
