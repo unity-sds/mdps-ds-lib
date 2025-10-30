@@ -100,7 +100,7 @@ class TestDsClientAdmin(TestCase):
         return
 
     def test_stac_fast_get_granules_01(self):
-        my_session = 'a888cca4-a1e0-4dfa-9f14-0b3556bd9518'
+        my_session = '2039aafc-94e4-49b5-a90f-9173d88c7812'
         sfa_client = SFAClientFactory().get_instance(SFAClientFactory.COOKIE_AUTH, auth_key='mod_auth_openidc_session', auth_value=my_session, ds_url='https://www.dev.mdps.mcp.nasa.gov:4443', ds_stage='stac_fast_api')
         my_collection = 'S1A_IW_GRDH_2SDV'
         # my_collection = 'S1B_IW_GRDH_2SDV'
@@ -109,6 +109,20 @@ class TestDsClientAdmin(TestCase):
         self.assertTrue('type' in result, f'missing type in result')
         self.assertEqual('FeatureCollection', result['type'], 'wrong FeatureCollection')
         self.assertTrue('features' in result, f'missing features in result')
+        return
+
+    def test_stac_fast_get_granule_01(self):
+        my_session = '2039aafc-94e4-49b5-a90f-9173d88c7812'
+        sfa_client = SFAClientFactory().get_instance(SFAClientFactory.COOKIE_AUTH, auth_key='mod_auth_openidc_session', auth_value=my_session, ds_url='https://www.dev.mdps.mcp.nasa.gov:4443', ds_stage='stac_fast_api')
+        my_collection = 'S1A_IW_GRDH_2SDV'
+        my_item = 'S1A_IW_GRDH_2SDV_20250330T171425_20250330T171445_058537_073E4F_985B-GRD_HD'
+        # my_collection = 'S1B_IW_GRDH_2SDV'
+        result = sfa_client.get_item(my_collection, my_item)
+        print(json.dumps(result, indent=4))
+        self.assertTrue('type' in result, f'missing type in result')
+        self.assertEqual('Feature', result['type'], 'wrong FeatureCollection')
+        self.assertTrue('id' in result, f'missing features in result')
+        self.assertEqual(my_item, result['id'], f'missing features in result')
         return
 
     def test_stac_fast_add_granules_01(self):
@@ -245,28 +259,37 @@ class TestDsClientAdmin(TestCase):
         # client.collection = 'DDD-01'
         # client.collection_venue = '001'
         client = DsClientUser(token_retriever, 'https://d2zjsabg0fonik.cloudfront.net', 'am-uds-dapa')
+        client = DsClientUser(token_retriever, 'https://api.mdps.mcp.nasa.gov', 'am-uds-dapa')
         # URN:NASA:UNITY:unity:ops:TRPSYL2ALLCRS1MGLOS___2/
+        # URN:NASA:UNITY:unity:ops:TRPSDL2ALLCRS1MGLOS___2
         client.urn = 'URN'
         client.org = 'NASA'
         client.project = 'UNITY'
         client.tenant = 'unity'
         client.tenant_venue = 'ops'
-        client.collection = 'TRPSYL2ALLCRS1MGLOS'
+        client.collection = 'TRPSDL2ALLCRS1MGLOS'
         client.collection_venue = '2'
-        result = client.query_granules(sort_keys='+properties.datetime,-id')  # bbox='-114,32.5,-113,33.5'
+        result = client.query_granules(sort_keys='+properties.datetime,-id', limit=1000)  # bbox='-114,32.5,-113,33.5'
 
+        from mdps_ds_lib.lib.utils.file_utils import FileUtils
         i = 1
-        for each in result['features']:
-            from mdps_ds_lib.lib.utils.file_utils import FileUtils
-            FileUtils.write_json(f'/tmp/sample_granules_{i}.json', each, overwrite=True, prettify=True)
+        FileUtils.write_json(f'/tmp/sample_granules_{i}.json', result['features'], overwrite=True, prettify=True)
+        while len(result['features']) > 0:
             i += 1
-        for each in client.query_granules_next()['features']:
-            from mdps_ds_lib.lib.utils.file_utils import FileUtils
-            FileUtils.write_json(f'/tmp/sample_granules_{i}.json', each, overwrite=True, prettify=True)
-            i += 1
+            result = client.query_granules_next()
+            FileUtils.write_json(f'/tmp/sample_granules_{i}.json', result['features'], overwrite=True, prettify=True)
+        # i = 1
+        # for each in result['features']:
+        #     from mdps_ds_lib.lib.utils.file_utils import FileUtils
+        #     FileUtils.write_json(f'/tmp/sample_granules_{i}.json', each, overwrite=True, prettify=True)
+        #     i += 1
+        # for each in client.query_granules_next()['features']:
+        #     from mdps_ds_lib.lib.utils.file_utils import FileUtils
+        #     FileUtils.write_json(f'/tmp/sample_granules_{i}.json', each, overwrite=True, prettify=True)
+        #     i += 1
 
-        print(json.dumps(result, indent=4))
-        print(json.dumps(client.query_granules_next(), indent=4))
+        # print(json.dumps(result, indent=4))
+        # print(json.dumps(client.query_granules_next(), indent=4))
         return
 
     def test_query_granules02(self):
@@ -386,7 +409,7 @@ class TestDsClientAdmin(TestCase):
         token_retriever: TokenAbstract = TokenFactory().get_instance(os.getenv('TOKEN_FACTORY'))
         client = DsClientUser(token_retriever, 'https://api.test.mdps.mcp.nasa.gov', 'am-uds-dapa')
         # client = DsClientAdmin(token_retriever, 'http://localhost:8005', 'data')
-
+        # URN:NASA:UNITY:unity:ops:TRPSDL2ALLCRS1MGLOS___2
         client.urn = 'URN'
         client.org = 'NASA'
         client.project = 'UNITY'
@@ -417,22 +440,30 @@ class TestDsClientAdmin(TestCase):
 
     def test_archive_one(self):
         os.environ['TRUST_ENV'] = 'TRUE'
-        # https://api.test.mdps.mcp.nasa.gov/am-uds-dapa/collections/URN:NASA:UNITY:unity:test:TRPSDL2ALLCRS1MGLOS___2/items
         os.environ['TOKEN_FACTORY'] = 'COGNITO'
         token_retriever: TokenAbstract = TokenFactory().get_instance(os.getenv('TOKEN_FACTORY'))
-        client = DsClientUser(token_retriever, 'https://api.test.mdps.mcp.nasa.gov', 'am-uds-dapa')
-        # client = DsClientAdmin(token_retriever, 'http://localhost:8005', 'data')
 
+        client = DsClientUser(token_retriever, 'https://d2zjsabg0fonik.cloudfront.net', 'am-uds-dapa')
+        client = DsClientUser(token_retriever, 'https://api.mdps.mcp.nasa.gov', 'am-uds-dapa')
+        # URN:NASA:UNITY:unity:ops:TRPSYL2ALLCRS1MGLOS___2/
+        # URN:NASA:UNITY:unity:ops:TRPSDL2ALLCRS1MGLOS___2
         client.urn = 'URN'
         client.org = 'NASA'
         client.project = 'UNITY'
         client.tenant = 'unity'
-        client.tenant_venue = 'test'
+        client.tenant_venue = 'ops'
         client.collection = 'TRPSDL2ALLCRS1MGLOS'
         client.collection_venue = '2'
-        client.granule = 'TROPESS_CrIS-JPSS1_L2_Standard_NH3_20250108_MUSES_R1p23_megacity_los_angeles_MGLOS_F2p5_J0'
-        client.granule = 'TROPESS_CrIS-JPSS1_L2_Standard_TATM_20250108_MUSES_R1p23_megacity_los_angeles_MGLOS_F2p5_J0'
-        print(client.archive_granule())
+
+        granules = ['TROPESS_CrIS-JPSS1_L2_Standard_CH4_20250115_MUSES_R1p23_SC_MGLOS_F2p9_J0',
+         'TROPESS_CrIS-JPSS1_L2_Standard_TATM_20250114_MUSES_R1p23_SC_MGLOS_F2p9_J0',
+         'TROPESS_CrIS-JPSS1_L2_Standard_H2O_20250118_MUSES_R1p23_SC_MGLOS_F2p9_J0',
+         'TROPESS_CrIS-JPSS1_L2_Standard_CO_20250118_MUSES_R1p23_SC_MGLOS_F2p9_J0',
+         'TROPESS_CrIS-JPSS1_L2_Standard_TATM_20250118_MUSES_R1p23_SC_MGLOS_F2p9_J0']
+        granules = []  # TODO remove this to run again
+        for each in granules:
+            client.granule = each
+            print(client.archive_granule())
         return
 
     def test_add_archive_config(self):
