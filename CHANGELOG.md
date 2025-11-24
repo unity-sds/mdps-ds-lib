@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ===================================================================
 
+## [1.2.0.dev000300] - 2025-11-24
+### Changed
+- [#127](https://github.com/unity-sds/mdps-ds-lib/pull/127) feat: add ddb mw
+
 ## [1.2.0.dev000200] - 2025-10-30
 ### Changed
 - [#125](https://github.com/unity-sds/mdps-ds-lib/pull/125) feat: s3 copy method
