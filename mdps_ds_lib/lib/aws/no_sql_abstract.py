@@ -212,3 +212,7 @@ class NoSqlAbstract(ABC):
     @abstractmethod
     def query(self, conditions: dict, **kwargs):
         return
+
+    @abstractmethod
+    def query_gsi(self, index_name: str, key_condition: object = None, **kwargs):
+        return

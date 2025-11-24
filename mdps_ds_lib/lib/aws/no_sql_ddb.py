@@ -301,6 +301,54 @@ class NoSqlDdb(NoSqlAbstract):
             return None
         return self.__replace_decimals(item_result['Attributes'])
 
+    def query_gsi(self, index_name: str, key_condition: object = None, **kwargs):
+        """
+        Query a Global Secondary Index (GSI).
+
+        :param index_name: The name of the GSI to query
+        :param key_condition: boto3.dynamodb.conditions.Key condition (optional). If None, scans entire GSI.
+        :param kwargs: Additional options:
+            - projection_type: 'ALL_ATTRIBUTES' (default), 'ALL_PROJECTED_ATTRIBUTES', or 'SPECIFIC_ATTRIBUTES'
+            - attributes_to_get: list of attribute names (only used with projection_type='SPECIFIC_ATTRIBUTES')
+        :return: List of items from the GSI
+        """
+        LOGGER.info(f'querying GSI: {index_name}')
+        table = self.__ddb_resource.Table(self.__props.table)
+        projection_type = kwargs.get('projection_type', 'ALL_PROJECTED_ATTRIBUTES')
+
+        query_params = {
+            'IndexName': index_name,
+        }
+
+        # Set projection
+        if projection_type == 'SPECIFIC_ATTRIBUTES' and 'attributes_to_get' in kwargs:
+            query_params['ProjectionExpression'] = ','.join(kwargs['attributes_to_get'])
+        elif projection_type == 'ALL_PROJECTED_ATTRIBUTES':
+            query_params['Select'] = 'ALL_PROJECTED_ATTRIBUTES'
+        else:
+            query_params['Select'] = 'ALL_ATTRIBUTES'
+
+        # If key_condition is provided, use query operation
+        if key_condition is not None:
+            query_params['KeyConditionExpression'] = key_condition
+            response = table.query(**query_params)
+        else:
+            # If no key condition, scan the GSI
+            response = table.scan(**query_params)
+
+        all_results = response.get('Items', [])
+
+        # Handle pagination
+        while 'LastEvaluatedKey' in response:
+            query_params['ExclusiveStartKey'] = response['LastEvaluatedKey']
+            if key_condition is not None:
+                response = table.query(**query_params)
+            else:
+                response = table.scan(**query_params)
+            all_results.extend(response.get('Items', []))
+
+        return self.__replace_decimals(all_results) if all_results else None
+
     def query(self, conditions: dict, **kwargs):
         """
         TODO: currently it only supports Equal conditions. Other contidions need to be implemented. and refactor mongo_db at the same time.

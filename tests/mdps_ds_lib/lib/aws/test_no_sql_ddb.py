@@ -5,7 +5,6 @@ from unittest import TestCase
 from mdps_ds_lib.lib.aws.no_sql_abstract import NoSqlProps
 from mdps_ds_lib.lib.aws.no_sql_ddb import NoSqlDdb
 from mdps_ds_lib.lib.aws.no_sql_factory import NoSqlFactory
-from tests.get_aws_creds import export_as_env
 
 
 class TestNoSqlDdb(TestCase):
@@ -18,11 +17,6 @@ class TestNoSqlDdb(TestCase):
 
         param = ddb_props.to_json()
         param['file_repo'] = 'AWS_DDB'
-
-        aws_creds = export_as_env()
-        aws_creds['aws_region'] = 'us-west-2'
-        for k, v in aws_creds.items():
-            os.environ[k] = v
 
         ddb: NoSqlDdb = NoSqlFactory().get_instance(**param)
         self.assertTrue(isinstance(ddb, NoSqlDdb), 'not NoSqlDdb instance')
@@ -54,11 +48,6 @@ class TestNoSqlDdb(TestCase):
 
         param = ddb_props.to_json()
         param['file_repo'] = 'AWS_DDB'
-
-        aws_creds = export_as_env()
-        aws_creds['aws_region'] = 'us-west-2'
-        for k, v in aws_creds.items():
-            os.environ[k] = v
 
         ddb: NoSqlDdb = NoSqlFactory().get_instance(**param)
         self.assertTrue(ddb.has_table(), f'NO Table?')
@@ -117,11 +106,6 @@ class TestNoSqlDdb(TestCase):
         param = ddb_props.to_json()
         param['file_repo'] = 'AWS_DDB'
 
-        aws_creds = export_as_env()
-        aws_creds['aws_region'] = 'us-west-2'
-        for k, v in aws_creds.items():
-            os.environ[k] = v
-
         ddb: NoSqlDdb = NoSqlFactory().get_instance(**param)
         self.assertTrue(ddb.has_table(), f'NO Table?')
         results = ddb.get('A', secondary_key=None)
@@ -134,5 +118,20 @@ class TestNoSqlDdb(TestCase):
         self.assertEqual(results, None, f'wrong number of results: {results}')
         results = ddb.get('A', secondary_key='X:Y:L1_V1->M:N:L1.*', secondary_key_operation='eq')
         self.assertEqual(len(results), 1, f'wrong number of results: {results}')
+        debug = 1
+        return
+
+    def test_query_gsi(self):
+        ddb_props = NoSqlProps()
+        ddb_props.table = 'h5s_on_disk_william_local'
+        ddb_props.primary_key = 'userGroup'
+        ddb_props.secondary_key = 'projectMap'
+
+        param = ddb_props.to_json()
+        param['file_repo'] = 'AWS_DDB'
+
+        ddb: NoSqlDdb = NoSqlFactory().get_instance(**param)
+        self.assertTrue(ddb.has_table(), f'NO Table?')
+        result = ddb.query_gsi('GSI1_UserGroup')
         debug = 1
         return

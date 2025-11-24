@@ -1,9 +1,10 @@
 from copy import deepcopy
 from typing import Union
 
-from lsmd.external_io.no_sql_abstract import NoSqlAbstract, NoSqlProps
 from pymongo import MongoClient
 from pymongo.collection import Collection
+
+from mdps_ds_lib.lib.aws.no_sql_abstract import NoSqlAbstract, NoSqlProps
 
 
 class NoSqlMongoDb(NoSqlAbstract):
@@ -71,3 +72,6 @@ class NoSqlMongoDb(NoSqlAbstract):
     def query(self, conditions: dict, **kwargs):
         result = self.__table.find(conditions)
         return [k for k in result]
+
+    def query_gsi(self, index_name: str, key_condition: object = None, **kwargs):
+        raise NotImplementedError('GSI querying is not applicable for MongoDB')
