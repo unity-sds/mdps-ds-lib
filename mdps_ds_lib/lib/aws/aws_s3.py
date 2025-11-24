@@ -223,20 +223,23 @@ class AwsS3(AwsCred):
         bytestream = BytesIO(self.get_stream().read())  # get the bytes stream of zipped file
         return bytestream.read().decode('UTF-8')
 
-    def delete_one(self):
-        response = self.__s3_client.delete_object(
-            Bucket=self.__target_bucket,
-            Key=self.__target_key,
-            # MFA='string',
-            # VersionId='string',
-            # RequestPayer='requester',
-            # BypassGovernanceRetention=True | False,
-            # ExpectedBucketOwner='string',
-            # IfMatch='string',
-            # IfMatchLastModifiedTime=datetime(2015, 1, 1),
-            # IfMatchSize=123
-        )
-        return response
+    def delete_one(self, version_id: str = None):
+        params = {
+            'Bucket': self.__target_bucket,
+            'Key': self.__target_key,
+        }
+        # MFA='string',
+        # VersionId='string',
+        # RequestPayer='requester',
+        # BypassGovernanceRetention=True | False,
+        # ExpectedBucketOwner='string',
+        # IfMatch='string',
+        # IfMatchLastModifiedTime=datetime(2015, 1, 1),
+        # IfMatchSize=123
+
+        if version_id is not None:
+            params['VersionId'] = version_id
+        return self.__s3_client.delete_object(**params)
 
     def delete_multiple(self, s3_urls: list=[], s3_bucket: str='', s3_paths: list=[]):
         if len(s3_urls) < 1 and len(s3_paths) < 1:
@@ -274,3 +277,94 @@ class AwsS3(AwsCred):
         )
         return response
 
+    def get_tags(self, version_id: str = None) -> Union[dict, None]:
+        """
+        returning all the tags in a dictionary form
+
+        :param base_path: bucket
+        :param relative_path: s3 key
+        :return:
+        """
+        params = {
+            'Bucket': self.target_bucket,
+            'Key': self.target_key,
+        }
+        if version_id is not None:
+            params['VersionId'] = version_id
+        response = self.__s3_client.get_object_tagging(**params)
+        if 'TagSet' not in response:
+            return None
+        return {k['Key']: k['Value'] for k in response['TagSet']}
+
+    def copy_artifact(self, src_base_path: str, src_relative_path: str, dest_base_path: str, dest_relative_path: str,
+                      copy_tags: float = True, update_old_metadata_style: bool = True, delete_original: bool = False):
+        # https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3/client/head_object.html
+        try:
+            source_head = self.__s3_client.head_object(Bucket=src_base_path, Key=src_relative_path)
+        except Exception as e:
+            raise ValueError(f'missing source: {src_base_path} - {src_relative_path}')
+        storage_class = self.__s3_client.get_object_attributes(Bucket=src_base_path, Key=src_relative_path,
+                                                               ObjectAttributes=['StorageClass'])['StorageClass']
+        src_metadata = source_head['Metadata']
+        self.target_bucket, self.target_key = src_base_path, src_relative_path
+        src_tagging = self.get_tags() if copy_tags else {}
+        if update_old_metadata_style:
+            for k, v in src_metadata.items():
+                src_tagging[k] = v
+            src_metadata = {}
+
+        tags = [f'{k}={v}' for k, v in src_tagging.items()]
+        # https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3/client/copy.html
+        # /Users/wphyo/anaconda3/envs/lsmd_3.11__2/lib/python3.11/site-packages/s3transfer/manager.py#157
+        # https://boto3.amazonaws.com/v1/documentation/api/latest/reference/customizations/s3.html#boto3.s3.transfer.TransferConfig
+        copy_source = {'Bucket': src_base_path, 'Key': src_relative_path,}  # 'VersionId': 'string'
+        self.__s3_client.copy(copy_source, dest_base_path, dest_relative_path, ExtraArgs={
+        })
+        self.target_bucket, self.target_key = dest_base_path, dest_relative_path
+        self.add_tags_to_obj(src_tagging)
+        # https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3/client/copy_object.html
+        # self.__s3_client.copy_object(
+        #     # ACL='private'|'public-read'|'public-read-write'|'authenticated-read'|'aws-exec-read'|'bucket-owner-read'|'bucket-owner-full-control',
+        #     Bucket=dest_base_path,
+        #     Key=dest_relative_path,
+        #     ServerSideEncryption='AES256',  # 'aws:kms',
+        #     CopySource={'Bucket': src_base_path, 'Key': src_relative_path,},  # 'VersionId': 'string'
+        #     # CacheControl='string',
+        #     # ChecksumAlgorithm='CRC32'|'CRC32C'|'SHA1'|'SHA256',
+        #     # ContentDisposition='string',
+        #     # ContentEncoding='string',
+        #     # ContentLanguage='string',
+        #     # ContentType='string',
+        #     # CopySourceIfMatch='string',
+        #     # CopySourceIfModifiedSince=datetime(2015, 1, 1),
+        #     # CopySourceIfNoneMatch='string',
+        #     # CopySourceIfUnmodifiedSince=datetime(2015, 1, 1),
+        #     # Expires=datetime(2015, 1, 1),
+        #     # GrantFullControl='string',
+        #     # GrantRead='string',
+        #     # GrantReadACP='string',
+        #     # GrantWriteACP='string',
+        #     Metadata=src_metadata,
+        #     MetadataDirective='REPLACE',  # 'COPY'|'REPLACE',
+        #     TaggingDirective='REPLACE',  # 'COPY'|'REPLACE',
+        #     StorageClass=storage_class,  # 'STANDARD'|'REDUCED_REDUNDANCY'|'STANDARD_IA'|'ONEZONE_IA'|'INTELLIGENT_TIERING'|'GLACIER'|'DEEP_ARCHIVE'|'OUTPOSTS'|'GLACIER_IR'|'SNOW',
+        #     Tagging='&'.join(tags),
+        #     # WebsiteRedirectLocation='string',
+        #     # SSECustomerAlgorithm='string',
+        #     # SSECustomerKey='string',
+        #     # SSEKMSKeyId='string',
+        #     # SSEKMSEncryptionContext='string',
+        #     # BucketKeyEnabled=True|False,
+        #     # CopySourceSSECustomerAlgorithm='string',
+        #     # CopySourceSSECustomerKey='string',
+        #     # RequestPayer='requester',
+        #     # ObjectLockMode='GOVERNANCE'|'COMPLIANCE',
+        #     # ObjectLockRetainUntilDate=datetime(2015, 1, 1),
+        #     # ObjectLockLegalHoldStatus='ON'|'OFF',
+        #     # ExpectedBucketOwner='string',
+        #     # ExpectedSourceBucketOwner='string'
+        # )
+        if delete_original:
+            self.target_bucket, self.__target_key = src_base_path, src_relative_path
+            self.delete_one()
+        return f's3://{dest_base_path}/{dest_relative_path}'
