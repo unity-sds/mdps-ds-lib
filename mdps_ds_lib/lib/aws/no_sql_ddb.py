@@ -138,36 +138,55 @@ class NoSqlDdb(NoSqlAbstract):
         create_result = self.__ddb_client.create_table(**create_tbl_params)
         return create_result
 
+    def __actual_query(self, table, key_condition):
+        response = table.query(KeyConditionExpression=key_condition)
+        all_results = response.get('Items', [])
+        # Handle pagination
+        while 'LastEvaluatedKey' in response:
+            response = table.query(
+                KeyConditionExpression=key_condition,
+                ExclusiveStartKey=response['LastEvaluatedKey']
+            )
+            all_results.extend(response.get('Items', []))
+
+        return self.__replace_decimals(all_results) if all_results else None
+
     def get(self, primary_key: object, secondary_key: object, **kwargs):
+        """
+        Retrieve item(s) from DynamoDB table.
+
+        :param primary_key: The partition key value
+        :param secondary_key: The sort key value (can be None to retrieve all items with the partition key)
+        :param kwargs: Additional options:
+            - secondary_key_operation: 'eq' (default) or 'begins_with' - operation to use with secondary_key
+        :return: Single item (dict) when using get_item, or list of items when using query
+        """
         LOGGER.info('retrieving item(s) from DDB using the key')
+        table = self.__ddb_resource.Table(self.__props.table)
+        if self.__props.secondary_key is None:  # table has no secondary key.
+            LOGGER.debug('table has no SORT key. Ignoring that part. ')
+            query_key = {self.__props.primary_key: primary_key}
+            item_result = table.get_item(Key=query_key)
+            if 'Item' not in item_result:
+                return None
+            return self.__replace_decimals(item_result['Item'])
 
-        # If table has a sort key and it's not provided, use query to get all items with the partition key
-        if self.__props.secondary_key is not None and secondary_key is None:
-            from boto3.dynamodb.conditions import Key
-            table = self.__ddb_resource.Table(self.__props.table)
-            key_condition = Key(self.__props.primary_key).eq(primary_key)
+        from boto3.dynamodb.conditions import Key
+        key_condition = Key(self.__props.primary_key).eq(primary_key)
+        if secondary_key is None:
+            LOGGER.debug('request has no SORT key. Ignoring that part. ')
+            return self.__actual_query(table, key_condition)
 
-            response = table.query(KeyConditionExpression=key_condition)
-            all_results = response.get('Items', [])
-
-            # Handle pagination
-            while 'LastEvaluatedKey' in response:
-                response = table.query(
-                    KeyConditionExpression=key_condition,
-                    ExclusiveStartKey=response['LastEvaluatedKey']
-                )
-                all_results.extend(response.get('Items', []))
-
-            return self.__replace_decimals(all_results) if all_results else None
-
-        # Otherwise use get_item for single item retrieval
-        query_key = {self.__props.primary_key: primary_key}
-        if secondary_key is not None and self.__props.secondary_key is not None:
-            query_key[self.__props.secondary_key] = secondary_key
-        item_result = self.__ddb_resource.Table(self.__props.table).get_item(Key=query_key)
-        if 'Item' not in item_result:
-            return None
-        return self.__replace_decimals(item_result['Item'])
+        LOGGER.debug('request has SORT key. Adding that part. ')
+        secondary_key_operation = kwargs.get('secondary_key_operation', 'eq')
+        if secondary_key_operation == 'begins_with':
+            key_condition = key_condition & Key(self.__props.secondary_key).begins_with(secondary_key)
+        elif secondary_key_operation == 'eq':
+            key_condition = key_condition & Key(self.__props.secondary_key).eq(secondary_key)
+        else:
+            raise ValueError(
+                f"Unsupported secondary_key_operation: {secondary_key_operation}. Use 'eq' or 'begins_with'")
+        return self.__actual_query(table, key_condition)
 
     def delete(self, primary_key: object, secondary_key: object, **kwargs) -> object:
         LOGGER.info('deleting one item from DDB using they key')

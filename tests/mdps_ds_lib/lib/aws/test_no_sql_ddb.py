@@ -125,5 +125,14 @@ class TestNoSqlDdb(TestCase):
         ddb: NoSqlDdb = NoSqlFactory().get_instance(**param)
         self.assertTrue(ddb.has_table(), f'NO Table?')
         results = ddb.get('A', secondary_key=None)
+        self.assertEqual(len(results), 4, f'wrong number of results: {results}')
+        results = ddb.get('A', secondary_key='X:Y:L0.*', secondary_key_operation='begins_with')
+        self.assertEqual(len(results), 1, f'wrong number of results: {results}')
+        results = ddb.get('A', secondary_key='X:Y:L0', secondary_key_operation='begins_with')
+        self.assertEqual(len(results), 2, f'wrong number of results: {results}')
+        results = ddb.get('A', secondary_key='X:Y:L0', secondary_key_operation='eq')
+        self.assertEqual(results, None, f'wrong number of results: {results}')
+        results = ddb.get('A', secondary_key='X:Y:L1_V1->M:N:L1.*', secondary_key_operation='eq')
+        self.assertEqual(len(results), 1, f'wrong number of results: {results}')
         debug = 1
         return
