@@ -139,7 +139,28 @@ class NoSqlDdb(NoSqlAbstract):
         return create_result
 
     def get(self, primary_key: object, secondary_key: object, **kwargs):
-        LOGGER.info('retrieving one item from DDB using they key')
+        LOGGER.info('retrieving item(s) from DDB using the key')
+
+        # If table has a sort key and it's not provided, use query to get all items with the partition key
+        if self.__props.secondary_key is not None and secondary_key is None:
+            from boto3.dynamodb.conditions import Key
+            table = self.__ddb_resource.Table(self.__props.table)
+            key_condition = Key(self.__props.primary_key).eq(primary_key)
+
+            response = table.query(KeyConditionExpression=key_condition)
+            all_results = response.get('Items', [])
+
+            # Handle pagination
+            while 'LastEvaluatedKey' in response:
+                response = table.query(
+                    KeyConditionExpression=key_condition,
+                    ExclusiveStartKey=response['LastEvaluatedKey']
+                )
+                all_results.extend(response.get('Items', []))
+
+            return self.__replace_decimals(all_results) if all_results else None
+
+        # Otherwise use get_item for single item retrieval
         query_key = {self.__props.primary_key: primary_key}
         if secondary_key is not None and self.__props.secondary_key is not None:
             query_key[self.__props.secondary_key] = secondary_key

@@ -5,6 +5,7 @@ from time import sleep
 from unittest import TestCase
 
 from dotenv import load_dotenv
+from mdps_ds_lib.lib.utils.time_utils import TimeUtils
 from pystac import Collection, Extent, SpatialExtent, TemporalExtent, Provider, Summaries
 from requests import HTTPError
 
@@ -112,10 +113,10 @@ class TestDsClientAdmin(TestCase):
         return
 
     def test_stac_fast_get_granule_01(self):
-        my_session = '2039aafc-94e4-49b5-a90f-9173d88c7812'
+        my_session = 'e7e470a1-8781-4490-bbb6-83000d8dd976'
         sfa_client = SFAClientFactory().get_instance(SFAClientFactory.COOKIE_AUTH, auth_key='mod_auth_openidc_session', auth_value=my_session, ds_url='https://www.dev.mdps.mcp.nasa.gov:4443', ds_stage='stac_fast_api')
         my_collection = 'S1A_IW_GRDH_2SDV'
-        my_item = 'S1A_IW_GRDH_2SDV_20250330T171425_20250330T171445_058537_073E4F_985B-GRD_HD'
+        my_item = 'S1A_IW_GRDH_2SDV_20250330T171425_20250330T171445_058537_073E4F_985B-GRD_HD1'
         # my_collection = 'S1B_IW_GRDH_2SDV'
         result = sfa_client.get_item(my_collection, my_item)
         print(json.dumps(result, indent=4))
@@ -123,6 +124,16 @@ class TestDsClientAdmin(TestCase):
         self.assertEqual('Feature', result['type'], 'wrong FeatureCollection')
         self.assertTrue('id' in result, f'missing features in result')
         self.assertEqual(my_item, result['id'], f'missing features in result')
+
+        latest_daac_status = {
+            'archive_status': 'cnm_r_failed',
+            'archive_error_message': 'mock test',
+            'archive_error_code': '',
+        }
+        latest_daac_status['event_time'] = TimeUtils.get_current_time()
+        result['properties']['archival_statuses'] = result['properties']['archival_statuses'] + [latest_daac_status] if 'archival_statuses' in result['properties'] else [latest_daac_status]
+        result1 = sfa_client.update_item(my_collection, my_item, result, True)
+        debug = 1
         return
 
     def test_stac_fast_add_granules_01(self):
@@ -511,5 +522,5 @@ class TestDsClientAdmin(TestCase):
         client.tenant_venue = 'ops'
         client.collection = 'TRPSYL2ALLCRS1MGLOS'
         client.collection_venue = '2'
-        print(client.get_archive_config())
+        print(json.dumps(client.get_archive_config(), indent=4))
         return
