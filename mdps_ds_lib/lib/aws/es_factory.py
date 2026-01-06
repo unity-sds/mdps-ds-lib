@@ -6,6 +6,9 @@ class ESFactory(FactoryAbstract):
     AWS = 'AWS'
     AWS_ES = 'AWS_ES'
 
+    def get_instance_from_dict(self, env_dict: dict, **kwargs):
+        raise NotImplementedError('not a need yet')
+
     def get_instance_from_env(self, **kwargs):
         raise NotImplementedError(f'not yet')
 
