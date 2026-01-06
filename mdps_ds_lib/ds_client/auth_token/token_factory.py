@@ -5,6 +5,9 @@ class TokenFactory(FactoryAbstract):
     DUMMY = 'DUMMY'
     COGNITO = 'COGNITO'
 
+    def get_instance_from_dict(self, env_dict: dict, **kwargs):
+        raise NotImplementedError('not a need yet')
+
     def get_instance_from_env(self, **kwargs):
         raise NotImplementedError('not yet')
 

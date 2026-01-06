@@ -8,6 +8,13 @@ from mdps_ds_lib.lib.utils.factory_abstract import FactoryAbstract
 class JobManagerFactory(FactoryAbstract):
     MEMORY = 'MEMORY'
     LOCAL = 'LOCAL'
+
+    def get_instance_from_dict(self, env_dict: dict, **kwargs):
+        raise NotImplementedError('not a need yet')
+
+    def get_instance_from_env(self, **kwargs):
+        raise NotImplementedError('not a need yet')
+
     def get_instance(self, class_type, **kwargs):
         props = JobManagerProps().load_from_json(kwargs)
         fr = class_type.upper()
