@@ -1,3 +1,7 @@
+from uuid import uuid4
+
+from docutils.core import Publisher
+
 from mdps_ds_lib.lib.aws.aws_cred import AwsCred
 
 
@@ -30,19 +34,21 @@ class AwsSns(AwsCred):
         )
         return self
 
-    def publish_message(self, msg_str: str, is_with_daac_role: bool=False):
+    def publish_message(self, msg_str: str, is_with_daac_role: bool=False, msg_attrs={}):
         if self.__topic_arn == '':
             raise ValueError('missing topic arn to publish message')
         if is_with_daac_role and self.__special_sns_client is None:
             raise ValueError('sns client with external role NOT set')
         my_sns = self.__special_sns_client if is_with_daac_role else self.__sns_client
+        real_attrs = {k: {"DataType": "String", "StringValue": v} for k, v in msg_attrs.items() if v is not None and len(v.strip()) > 0}
         response = my_sns.publish(
             TopicArn=self.__topic_arn,
             # TargetArn='string',  # not needed coz of we are using topic arn
             # PhoneNumber='string',  # not needed coz of we are using topic arn
             Message=msg_str,
-            # Subject='optional string',
+            # Subject='optional string', \
             # MessageStructure='string',
+            MessageAttributes=real_attrs,
             # MessageAttributes={
             #     'string': {
             #         'DataType': 'string',
@@ -52,6 +58,52 @@ class AwsSns(AwsCred):
             # },
             # MessageDeduplicationId='string',
             # MessageGroupId='string'
+        )
+        return response
+
+    def publish_messages_batch(self, msg_list: list, is_with_daac_role: bool=False, msg_attrs_list: list=None, msg_ids: list=None):
+        # https://docs.aws.amazon.com/boto3/latest/reference/services/sns/client/publish_batch.html
+        if self.__topic_arn == '':
+            raise ValueError('missing topic arn to publish message')
+        if is_with_daac_role and self.__special_sns_client is None:
+            raise ValueError('sns client with external role NOT set')
+        my_sns = self.__special_sns_client if is_with_daac_role else self.__sns_client
+        if msg_ids is None:
+            msg_ids = [str(uuid4()) for _ in range(len(msg_list))]
+        if msg_attrs_list is None:
+            real_attrs_list = [{} for _ in range(len(msg_list))]
+        else:
+            real_attrs_list = [{k: {"DataType": "String", "StringValue": v} for k, v in msg_attrs.items() if v is not None and len(v.strip()) > 0} for msg_attrs in msg_attrs_list]
+
+        if len(msg_ids) != len(msg_list) or len(msg_list) != len(real_attrs_list):
+            raise ValueError(f'msg_ids ({len(msg_ids)}), msg_list ({len(msg_list)}), and msg_attrs_list ({len(real_attrs_list)}) must all have equal length')
+        sending_msg_list = [
+            {
+                'Id': x,  # Required
+                'Message': y,  # Required
+                'MessageAttributes': z
+            } for x,y,z in zip(msg_ids, msg_list, real_attrs_list)
+        ]
+        response = my_sns.publish_batch(
+            TopicArn=self.__topic_arn,
+            PublishBatchRequestEntries=sending_msg_list,
+            # PublishBatchRequestEntries=[
+            #     {
+            #         'Id': 'string', # Required
+            #         'Message': 'string', # Required
+            #         'Subject': 'string',
+            #         'MessageStructure': 'string',
+            #         'MessageAttributes': {
+            #             'string': {
+            #                 'DataType': 'string', # Required
+            #                 'StringValue': 'string',
+            #                 'BinaryValue': b'bytes'
+            #             }
+            #         },
+            #         'MessageDeduplicationId': 'string',
+            #         'MessageGroupId': 'string'
+            #     },
+            # ]
         )
         return response
 
