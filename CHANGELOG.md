@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ===================================================================
 
+## [1.2.0.dev000500] - 2026-07-22
+### Changed
+- [#131](https://github.com/unity-sds/mdps-ds-lib/pull/131) feat: sns batch send method
+
 ## [1.2.0.dev000400] - 2026-01-06
 ### Changed
 - [#129](https://github.com/unity-sds/mdps-ds-lib/pull/129) feat: get instance from dict
