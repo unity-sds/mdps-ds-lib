@@ -1,7 +1,5 @@
 from uuid import uuid4
 
-from docutils.core import Publisher
-
 from mdps_ds_lib.lib.aws.aws_cred import AwsCred
 
 
