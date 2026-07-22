@@ -1,3 +1,4 @@
+import json
 from unittest import TestCase
 
 from mdps_ds_lib.lib.aws.aws_message_transformers import AwsMessageTransformers
