@@ -1,3 +1,4 @@
+import json
 from unittest import TestCase
 
 from mdps_ds_lib.lib.aws.aws_message_transformers import AwsMessageTransformers
@@ -10,3 +11,39 @@ class TestAwsMessageTransformers(TestCase):
         self.assertTrue('collection' in input_event, f'missing collection')
         self.assertTrue('identifier' in input_event, f'missing identifier')
         return
+
+    def test_02(self):
+        s3_msg_str = "{\"Records\":[{\"eventVersion\":\"2.1\",\"eventSource\":\"aws:s3\",\"awsRegion\":\"us-gov-west-1\",\"eventTime\":\"2022-02-07T17:31:04.498Z\",\"eventName\":\"ObjectCreated:Put\",\"userIdentity\":{\"principalId\":\"AWS:AROAWM7XM4I6Z3NL2ST2J:wphyo\"},\"requestParameters\":{\"sourceIPAddress\":\"128.149.246.219\"},\"responseElements\":{\"x-amz-request-id\":\"FM1CHA780PBP0YEY\",\"x-amz-id-2\":\"Vp12Q/ok1+Y/0WonTCoUjCCREZhJU3CO82uDbve6m6FqJsFGTMBcLdunqeMLmQ11ZECV6z2WFsak6EbjdIZTi/jL+crmwops\"},\"s3\":{\"s3SchemaVersion\":\"1.0\",\"configurationId\":\"all-obj-create\",\"bucket\":{\"name\":\"lsmd-data-bucket\",\"ownerIdentity\":{\"principalId\":\"440216117821\"},\"arn\":\"arn:aws-us-gov:s3:::lsmd-data-bucket\"},\"object\":{\"key\":\"manual_test/zipped_upload/jpl.calendar.2022.png\",\"size\":841141,\"eTag\":\"1477b70ad2cd03be3d72a49dc58fb52a\",\"sequencer\":\"0062015756ACFAA1FD\"}}}]}"
+
+        sns_msg = {
+          "Type": "Notification",
+          "MessageId": "95df01b4-ee98-5cb9-9903-4c221d41eb5e",
+          "TopicArn": "arn:aws:sns:us-gov-west-1:440216117821:my-s3-topic",
+          "Subject": "Amazon S3 Notification",
+          "Message": s3_msg_str,
+          "Timestamp": "2024-02-07T19:37:27.321Z"
+        }
+
+        event = {
+            "Records": [
+                {
+                    "messageId": "6210f778-d081-4ae9-a861-8534d612dfae",
+                    "receiptHandle": "AQEBk55DchogyQzpVsH1A4YEj4K/PcVuIG9Em/a6/4AHIA4G5vLPiHVElNiuMfYc1ussk2U//JwZbD788Fv8u6W22L3AJ1U8EIcGJ57aibpmd6tSCWLS5q5FA4u2X2Jq5z+lCX5NZXzNDYMqMJaCGtBkcYi4a9LDXtD+U7HWX0V8OPhFFF2a1qUu+E05c16f5OmE7wRJ3SFrRmtJOhp2DigKKsw6VJtZklTm6uILMOL1ETOTlbA02dhF16fjcXlAACirDp0Yo9pi91FrpEljOYkqAO9AX4WMbEjAPZrnaATfYmRqCTOlnrIK8xvgEPgIu/OOub7KBYh6AQn7U8QBNoASkXkn31dqyM2I+KosKy2VeJO9cjPTahhXtkW7zUFA6863Czt2oHqL6Rvwsjr+7TikfQ==",
+                    "body": json.dumps(sns_msg),
+                    "attributes": {
+                        "ApproximateReceiveCount": "6",
+                        "SentTimestamp": "1644255065441",
+                        "SenderId": "AIDALVP5ID7KAVBU2CQ3O",
+                        "ApproximateFirstReceiveTimestamp": "1644255065441"
+                    },
+                    "messageAttributes": {},
+                    "md5OfBody": "00cb0a5ed122862537ab6115dae36f69",
+                    "eventSource": "aws:sqs",
+                    "eventSourceARN": "arn:aws-us-gov:sqs:us-gov-west-1:440216117821:send_records_to_es",
+                    "awsRegion": "us-gov-west-1"
+                }
+            ]
+        }
+        result = AwsMessageTransformers().sqs_sns(event)
+        result1 = AwsMessageTransformers().get_s3_from_sns(result)
+        print(result1)

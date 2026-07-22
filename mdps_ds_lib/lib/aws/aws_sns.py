@@ -62,7 +62,15 @@ class AwsSns(AwsCred):
         return response
 
     def publish_messages_batch(self, msg_list: list, is_with_daac_role: bool=False, msg_attrs_list: list=None, msg_ids: list=None):
-        # https://docs.aws.amazon.com/boto3/latest/reference/services/sns/client/publish_batch.html
+        """
+        Publish a batch of messages to the configured SNS topic.
+        https://docs.aws.amazon.com/boto3/latest/reference/services/sns/client/publish_batch.html
+
+        :param msg_list: list of str - the message bodies to publish
+        :param is_with_daac_role: bool - whether to use the external role SNS client
+        :param msg_ids: list of str - unique IDs for each message; auto-generated UUIDs if None
+        :param msg_attrs_list: list of dict - each dict maps attribute name (str) to string value (str); defaults to empty dicts if None
+        """
         if self.__topic_arn == '':
             raise ValueError('missing topic arn to publish message')
         if is_with_daac_role and self.__special_sns_client is None:
