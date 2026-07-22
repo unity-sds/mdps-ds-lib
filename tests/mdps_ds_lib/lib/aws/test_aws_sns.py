@@ -40,7 +40,11 @@ class TestAwsSns(TestCase):
 
     def test_publish_messages_batch_matching_lengths_succeeds(self):
         sns, mock_sns_client = self._make_sns()
-        mock_sns_client.publish_batch.return_value = {'Successful': [], 'Failed': []}
+        mock_sns_client.publish_batch.return_value = {
+            'Successful': [{'Id': 'id1', 'MessageId': 'mid1', 'SequenceNumber': '1'},
+                           {'Id': 'id2', 'MessageId': 'mid2', 'SequenceNumber': '2'}],
+            'Failed': [],
+        }
         result = sns.publish_messages_batch(
             msg_list=['msg1', 'msg2'],
             msg_ids=['id1', 'id2'],
@@ -54,6 +58,25 @@ class TestAwsSns(TestCase):
         self.assertEqual(entries[0]['Message'], 'msg1')
         self.assertEqual(entries[1]['Id'], 'id2')
         self.assertEqual(entries[1]['Message'], 'msg2')
+        # response is restructured keyed by Id
+        self.assertIn('id1', result)
+        self.assertIn('id2', result)
+        self.assertEqual(result['id1']['status'], 'Successful')
+        self.assertEqual(result['id2']['status'], 'Successful')
+
+    def test_publish_messages_batch_with_failures(self):
+        sns, mock_sns_client = self._make_sns()
+        mock_sns_client.publish_batch.return_value = {
+            'Successful': [{'Id': 'id1', 'MessageId': 'mid1', 'SequenceNumber': '1'}],
+            'Failed': [{'Id': 'id2', 'Code': 'InvalidParameter', 'Message': 'bad msg', 'SenderFault': True}],
+        }
+        result = sns.publish_messages_batch(
+            msg_list=['msg1', 'msg2'],
+            msg_ids=['id1', 'id2'],
+        )
+        self.assertEqual(result['id1']['status'], 'Successful')
+        self.assertEqual(result['id2']['status'], 'Failed')
+        self.assertIn('InvalidParameter', result['id2']['errorMessage'])
 
     def test_publish_messages_batch_auto_generated_ids(self):
         sns, mock_sns_client = self._make_sns()
@@ -62,10 +85,23 @@ class TestAwsSns(TestCase):
         call_kwargs = mock_sns_client.publish_batch.call_args[1]
         entries = call_kwargs['PublishBatchRequestEntries']
         self.assertEqual(len(entries), 2)
-        # IDs should be auto-generated UUIDs (non-empty strings)
-        self.assertTrue(len(entries[0]['Id']) > 0)
-        self.assertTrue(len(entries[1]['Id']) > 0)
+        # IDs should follow the pattern {index:04d}__{uuid4()}
+        self.assertTrue(entries[0]['Id'].startswith('0000__'))
+        self.assertTrue(entries[1]['Id'].startswith('0001__'))
         self.assertNotEqual(entries[0]['Id'], entries[1]['Id'])
+
+    def test_publish_messages_batch_msg_attrs_are_transformed(self):
+        sns, mock_sns_client = self._make_sns()
+        mock_sns_client.publish_batch.return_value = {'Successful': [], 'Failed': []}
+        sns.publish_messages_batch(
+            msg_list=['msg1'],
+            msg_ids=['id1'],
+            msg_attrs_list=[{'collection': 'col1', 'provider': 'prov1'}],
+        )
+        call_kwargs = mock_sns_client.publish_batch.call_args[1]
+        entry = call_kwargs['PublishBatchRequestEntries'][0]
+        self.assertEqual(entry['MessageAttributes']['collection'], {'DataType': 'String', 'StringValue': 'col1'})
+        self.assertEqual(entry['MessageAttributes']['provider'], {'DataType': 'String', 'StringValue': 'prov1'})
 
     def test_publish_messages_batch_missing_topic_arn_raises(self):
         with patch('mdps_ds_lib.lib.aws.aws_sns.AwsCred.get_client'):

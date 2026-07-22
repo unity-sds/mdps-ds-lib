@@ -77,7 +77,7 @@ class AwsSns(AwsCred):
             raise ValueError('sns client with external role NOT set')
         my_sns = self.__special_sns_client if is_with_daac_role else self.__sns_client
         if msg_ids is None:
-            msg_ids = [str(uuid4()) for _ in range(len(msg_list))]
+            msg_ids = [f'{i:04d}__{str(uuid4())}' for i in range(len(msg_list))]
         if msg_attrs_list is None:
             real_attrs_list = [{} for _ in range(len(msg_list))]
         else:
@@ -113,7 +113,36 @@ class AwsSns(AwsCred):
             #     },
             # ]
         )
-        return response
+        # Example Response: {
+        #     'Successful': [
+        #         {
+        #             'Id': 'string',
+        #             'MessageId': 'string',
+        #             'SequenceNumber': 'string'
+        #         },
+        #     ],
+        #     'Failed': [
+        #         {
+        #             'Id': 'string',
+        #             'Code': 'string',
+        #             'Message': 'string',
+        #             'SenderFault': True|False
+        #         },
+        #     ]
+        # }
+        response_1 = {
+            k['Id']: {
+                'status': 'Successful'
+            } for k in response['Successful']
+        }
+        response_2 = {
+            k['Id']: {
+                'status': 'Failed',
+                'errorMessage': f"{k['Code']} -- k['Message']",
+            } for k in response['Failed']
+        }
+        response_star = {**response_1, **response_2}
+        return response_star
 
     def create_sqs_subscription(self, sqs_arn):
         # https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/sns/client/subscribe.html
