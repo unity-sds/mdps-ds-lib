@@ -192,7 +192,13 @@ class TestDsClientAdmin(TestCase):
         os.environ['TRUST_ENV'] = 'TRUE'
         os.environ['TOKEN_FACTORY'] = 'COGNITO'
         token_retriever: TokenAbstract = TokenFactory().get_instance(os.getenv('TOKEN_FACTORY'))
-        client = DsClientUser(token_retriever, 'https://d3vc8w9zcq658.cloudfront.net', 'am-uds-dapa')
+        client = DsClientUser(token_retriever, 'https://d2zjsabg0fonik.cloudfront.net', 'am-uds-dapa')
+        client.urn = 'URN'
+        client.org = 'NASA'
+        client.project = 'UNITY'
+        client.tenant = 'unity'
+        client.tenant_venue = 'ops'
+
         print(client.query_collections(10))
         print(client.query_collections_next())
         return
@@ -270,7 +276,7 @@ class TestDsClientAdmin(TestCase):
         # client.collection = 'DDD-01'
         # client.collection_venue = '001'
         client = DsClientUser(token_retriever, 'https://d2zjsabg0fonik.cloudfront.net', 'am-uds-dapa')
-        client = DsClientUser(token_retriever, 'https://api.mdps.mcp.nasa.gov', 'am-uds-dapa')
+        # client = DsClientUser(token_retriever, 'https://api.mdps.mcp.nasa.gov', 'am-uds-dapa')
         # URN:NASA:UNITY:unity:ops:TRPSYL2ALLCRS1MGLOS___2/
         # URN:NASA:UNITY:unity:ops:TRPSDL2ALLCRS1MGLOS___2
         client.urn = 'URN'
@@ -278,8 +284,8 @@ class TestDsClientAdmin(TestCase):
         client.project = 'UNITY'
         client.tenant = 'unity'
         client.tenant_venue = 'ops'
-        client.collection = 'TRPSDL2ALLCRS1MGLOS'
-        client.collection_venue = '2'
+        client.collection = 'MUSES-CRS1-MGLOS'
+        client.collection_venue = '1'
         result = client.query_granules(sort_keys='+properties.datetime,-id', limit=1000)  # bbox='-114,32.5,-113,33.5'
 
         from mdps_ds_lib.lib.utils.file_utils import FileUtils
@@ -374,17 +380,18 @@ class TestDsClientAdmin(TestCase):
         os.environ['TRUST_ENV'] = 'TRUE'
         os.environ['TOKEN_FACTORY'] = 'COGNITO'
         token_retriever: TokenAbstract = TokenFactory().get_instance(os.getenv('TOKEN_FACTORY'))
-        client = DsClientAdmin(token_retriever, 'https://d3vc8w9zcq658.cloudfront.net', 'am-uds-dapa')
+        client = DsClientAdmin(token_retriever, 'https://d2zjsabg0fonik.cloudfront.net', 'am-uds-dapa')
 
         # URN:NASA:UNITY:UDS_LOCAL_TEST_3:DEV:DDD-01___001:test_file10
         client.urn = 'URN'
         client.org = 'NASA'
         client.project = 'UNITY'
-        client.tenant = 'UDS_LOCAL_TEST_3'
-        client.tenant_venue = 'DEV'
-        client.collection = 'DDD-01'
-        client.collection_venue = '001'
-        client.add_admin_group(['CREATE', 'READ', 'DELETE'], 'wphyo')
+        client.tenant = 'unity'
+        client.tenant_venue = 'ops'
+        # client.collection = 'DDD-01'
+        # client.collection_venue = '001'
+        # client.add_admin_group(['CREATE', 'READ', 'DELETE'], 'wphyo')
+        print(client.list_admin_group())
         return
 
     def test_delete_single_granule(self):

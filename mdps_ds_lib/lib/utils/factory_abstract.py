@@ -7,5 +7,9 @@ class FactoryAbstract(ABC):
         return
 
     @abstractmethod
+    def get_instance_from_dict(self, env_dict: dict, **kwargs):
+        return
+
+    @abstractmethod
     def get_instance_from_env(self, **kwargs):
         return

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ===================================================================
 
+## [1.2.0.dev000400] - 2026-01-06
+### Changed
+- [#129](https://github.com/unity-sds/mdps-ds-lib/pull/129) feat: get instance from dict
+
 ## [1.2.0.dev000300] - 2025-11-24
 ### Changed
 - [#127](https://github.com/unity-sds/mdps-ds-lib/pull/127) feat: add ddb mw
